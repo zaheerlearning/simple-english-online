@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Grammar Lessons - Simple English Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .lesson-card { transition: all 0.3s ease; }
+        .lesson-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        .correct { background-color: #d1fae5; border-color: #10b981; }
+        .incorrect { background-color: #fee2e2; border-color: #ef4444; }
+        .progress-bar { transition: width 0.5s ease; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">Simple English Online</span>
+                </a>
+                <a href="index.html" class="text-purple-600 hover:text-purple-700 font-semibold">
+                    <i class="fas fa-home mr-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg pt-24 pb-12 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Free Grammar Lessons</h1>
+            <p class="text-xl text-white/90 mb-6">Master English grammar with interactive lessons and instant feedback</p>
+            <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 inline-block">
+                <p class="text-white font-semibold">
+                    <i class="fas fa-check-circle mr-2"></i>50+ Grammar Topics
+                    <i class="fas fa-check-circle ml-4 mr-2"></i>Interactive Exercises
+                    <i class="fas fa-check-circle ml-4 mr-2"></i>Instant Feedback
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Progress Dashboard -->
+    <section class="max-w-7xl mx-auto px-4 -mt-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Your Progress</h3>
+                <button onclick="resetProgress()" class="text-sm text-gray-600 hover:text-red-600">
+                    <i class="fas fa-redo mr-1"></i>Reset Progress
+                </button>
+            </div>
+            <div class="grid md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <p class="text-3xl font-bold text-purple-600" id="lessonsCompleted">0</p>
+                    <p class="text-sm text-gray-600">Lessons Completed</p>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <p class="text-3xl font-bold text-green-600" id="quizzesCompleted">0</p>
+                    <p class="text-sm text-gray-600">Quizzes Completed</p>
+                </div>
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <p class="text-3xl font-bold text-blue-600" id="averageScore">0%</p>
+                    <p class="text-sm text-gray-600">Average Score</p>
+                </div>
+                <div class="text-center p-4 bg-orange-50 rounded-lg">
+                    <p class="text-3xl font-bold text-orange-600" id="studyStreak">0</p>
+                    <p class="text-sm text-gray-600">Day Streak</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="max-w-7xl mx-auto px-4 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex flex-wrap items-center gap-4">
+                <div>
+                    <label class="text-sm font-semibold text-gray-700 mb-2 block">Filter by Level:</label>
+                    <select id="levelFilter" class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                        <option value="all">All Levels</option>
+                        <option value="A1">A1 - Beginner</option>
+                        <option value="A2">A2 - Elementary</option>
+                        <option value="B1">B1 - Intermediate</option>
+                        <option value="B2">B2 - Upper Intermediate</option>
+                        <option value="C1">C1 - Advanced</option>
+                        <option value="C2">C2 - Proficient</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm font-semibold text-gray-700 mb-2 block">Search:</label>
+                    <input type="text" id="searchBox" placeholder="Search grammar topics..." 
+                           class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none w-64">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grammar Lessons Grid -->
+    <section class="max-w-7xl mx-auto px-4 pb-20">
+        <div id="lessonsGrid" class="grid md:grid-cols-3 gap-6">
+            <!-- Lessons will be dynamically loaded here -->
+        </div>
+    </section>
+
+    <!-- Lesson Modal -->
+    <div id="lessonModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Grammar Lessons Data
+        const grammarLessons = [
+            {
+                id: 1,
+                title: "Present Simple Tense",
+                level: "A1",
+                description: "Learn how to form and use the present simple tense for routines, facts, and habits.",
+                explanation: `The Present Simple tense is used to describe habits, unchanging situations, general truths, and fixed arrangements. It's one of the most common tenses in English.
+
+**Formation:**
+- Positive: Subject + base verb (+ s/es for he/she/it)
+- Negative: Subject + do/does + not + base verb
+- Question: Do/Does + subject + base verb?
+
+**Common Uses:**
+1. Habits and routines: "I wake up at 7 AM every day."
+2. General truths: "Water boils at 100°C."
+3. Permanent situations: "She lives in New York."
+4. Timetables: "The train leaves at 9:00 PM."`,
+                examples: [
+                    "I work in an office.",
+                    "She plays tennis every weekend.",
+                    "They don't like coffee.",
+                    "Do you speak Spanish?",
+                    "He doesn't watch TV."
+                ],
+                commonMistakes: [
+                    "✗ He work every day. → ✓ He works every day.",
+                    "✗ She don't like pizza. → ✓ She doesn't like pizza.",
+                    "✗ Do he play football? → ✓ Does he play football?"
+                ],
+                quiz: [
+                    {
+                        question: "She ___ to school every day.",
+                        options: ["go", "goes", "going", "is going"],
+                        correct: 1,
+                        explanation: "Use 'goes' (base verb + s) for third person singular (he/she/it) in present simple."
+                    },
+                    {
+                        question: "They ___ watch TV in the evening.",
+                        options: ["doesn't", "don't", "isn't", "aren't"],
+                        correct: 1,
+                        explanation: "Use 'don't' (do not) for negative sentences with plural subjects or I/you/we/they."
+                    },
+                    {
+                        question: "___ you like coffee?",
+                        options: ["Do", "Does", "Are", "Is"],
+                        correct: 0,
+                        explanation: "Use 'Do' for questions with I/you/we/they in present simple."
+                    },
+                    {
+                        question: "Water ___ at 100 degrees Celsius.",
+                        options: ["boil", "boils", "boiling", "is boiling"],
+                        correct: 1,
+                        explanation: "Use present simple for general truths and facts. 'Water' is singular, so use 'boils'."
+                    },
+                    {
+                        question: "My brother ___ play video games.",
+                        options: ["don't", "doesn't", "isn't", "aren't"],
+                        correct: 1,
+                        explanation: "Use 'doesn't' (does not) for negative sentences with third person singular (he/she/it)."
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Present Continuous Tense",
+                level: "A1",
+                description: "Discover how to talk about actions happening right now or temporary situations.",
+                explanation: `The Present Continuous (also called Present Progressive) describes actions happening at the moment of speaking or temporary situations.
+
+**Formation:**
+- Positive: Subject + am/is/are + verb-ing
+- Negative: Subject + am/is/are + not + verb-ing
+- Question: Am/Is/Are + subject + verb-ing?
+
+**Common Uses:**
+1. Actions happening now: "I am studying English."
+2. Temporary situations: "She is living in Paris for a month."
+3. Future arrangements: "We are meeting tomorrow."
+4. Changing situations: "The weather is getting warmer."`,
+                examples: [
+                    "I am reading a book right now.",
+                    "She is working on a project.",
+                    "They are not listening to music.",
+                    "Are you watching TV?",
+                    "He is studying for his exam."
+                ],
+                commonMistakes: [
+                    "✗ I am work now. → ✓ I am working now.",
+                    "✗ She playing tennis. → ✓ She is playing tennis.",
+                    "✗ Are you listen? → ✓ Are you listening?"
+                ],
+                quiz: [
+                    {
+                        question: "I ___ my homework right now.",
+                        options: ["do", "doing", "am doing", "does"],
+                        correct: 2,
+                        explanation: "Use 'am doing' for actions happening at the moment of speaking."
+                    },
+                    {
+                        question: "She ___ to music at the moment.",
+                        options: ["listen", "listens", "is listening", "are listening"],
+                        correct: 2,
+                        explanation: "Use 'is listening' (is + verb-ing) for third person singular in present continuous."
+                    },
+                    {
+                        question: "___ they playing football?",
+                        options: ["Do", "Does", "Are", "Is"],
+                        correct: 2,
+                        explanation: "Use 'Are' for questions with plural subjects in present continuous."
+                    },
+                    {
+                        question: "We ___ not going to the party.",
+                        options: ["am", "is", "are", "do"],
+                        correct: 2,
+                        explanation: "Use 'are' with 'we' in present continuous negative sentences."
+                    },
+                    {
+                        question: "Look! It ___.",
+                        options: ["rain", "rains", "is raining", "are raining"],
+                        correct: 2,
+                        explanation: "'Look!' indicates an action happening right now, so use present continuous 'is raining'."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Past Simple Tense",
+                level: "A2",
+                description: "Learn to talk about completed actions in the past.",
+                explanation: `The Past Simple tense describes completed actions in the past. It's essential for telling stories and talking about history.
+
+**Formation:**
+- Regular verbs: Add -ed (walked, played, worked)
+- Irregular verbs: Special forms (went, saw, ate)
+- Negative: Subject + did not (didn't) + base verb
+- Question: Did + subject + base verb?
+
+**Common Uses:**
+1. Completed actions: "I visited Paris last year."
+2. Past habits: "She always walked to school."
+3. Series of actions: "He opened the door and entered."`,
+                examples: [
+                    "I watched a movie yesterday.",
+                    "She didn't go to work last Monday.",
+                    "Did you see him at the party?",
+                    "They played football last weekend.",
+                    "He didn't finish his homework."
+                ],
+                commonMistakes: [
+                    "✗ I didn't went there. → ✓ I didn't go there.",
+                    "✗ Did she called you? → ✓ Did she call you?",
+                    "✗ He goed to school. → ✓ He went to school."
+                ],
+                quiz: [
+                    {
+                        question: "I ___ to the cinema yesterday.",
+                        options: ["go", "goes", "went", "going"],
+                        correct: 2,
+                        explanation: "'Went' is the past simple form of 'go'. Use it for completed past actions."
+                    },
+                    {
+                        question: "She ___ her keys last night.",
+                        options: ["lose", "losed", "lost", "losing"],
+                        correct: 2,
+                        explanation: "'Lost' is the irregular past simple form of 'lose'."
+                    },
+                    {
+                        question: "They ___ play tennis yesterday.",
+                        options: ["don't", "didn't", "doesn't", "aren't"],
+                        correct: 1,
+                        explanation: "Use 'didn't' (did not) for negative past simple sentences."
+                    },
+                    {
+                        question: "___ you enjoy the concert?",
+                        options: ["Do", "Does", "Did", "Are"],
+                        correct: 2,
+                        explanation: "Use 'Did' for questions in past simple."
+                    },
+                    {
+                        question: "We ___ a delicious meal at the restaurant.",
+                        options: ["eat", "eated", "ate", "eating"],
+                        correct: 2,
+                        explanation: "'Ate' is the irregular past simple form of 'eat'."
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Modal Verbs (Can, Could, Should)",
+                level: "A2",
+                description: "Express ability, possibility, and advice using modal verbs.",
+                explanation: `Modal verbs are special verbs that modify other verbs. They express ability, permission, possibility, obligation, and advice.
+
+**Key Modals:**
+- Can/Could: ability, permission
+- Should: advice, recommendation
+- Must: strong obligation
+- May/Might: possibility
+
+**Formation:**
+- Positive: Subject + modal + base verb
+- Negative: Subject + modal + not + base verb
+- Question: Modal + subject + base verb?`,
+                examples: [
+                    "I can speak three languages.",
+                    "You should see a doctor.",
+                    "Could you help me, please?",
+                    "She can't swim very well.",
+                    "We should study more."
+                ],
+                commonMistakes: [
+                    "✗ He cans play guitar. → ✓ He can play guitar.",
+                    "✗ You should to go. → ✓ You should go.",
+                    "✗ Can you to help me? → ✓ Can you help me?"
+                ],
+                quiz: [
+                    {
+                        question: "I ___ play the piano when I was five.",
+                        options: ["can", "could", "should", "must"],
+                        correct: 1,
+                        explanation: "Use 'could' (past form of 'can') to talk about past ability."
+                    },
+                    {
+                        question: "You ___ eat more vegetables. It's healthy.",
+                        options: ["can", "could", "should", "must"],
+                        correct: 2,
+                        explanation: "Use 'should' to give advice or recommendations."
+                    },
+                    {
+                        question: "___ you speak English?",
+                        options: ["Do", "Are", "Can", "Should"],
+                        correct: 2,
+                        explanation: "Use 'Can' to ask about ability."
+                    },
+                    {
+                        question: "She ___ drive a car.",
+                        options: ["can't", "don't can", "not can", "doesn't can"],
+                        correct: 0,
+                        explanation: "Use 'can't' (cannot) for negative sentences with modal 'can'."
+                    },
+                    {
+                        question: "We ___ be quiet in the library.",
+                        options: ["can", "could", "should", "may"],
+                        correct: 2,
+                        explanation: "Use 'should' to express what is the right thing to do."
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Present Perfect Tense",
+                level: "B1",
+                description: "Connect the past with the present using present perfect.",
+                explanation: `The Present Perfect connects past actions with the present. It emphasizes the result or experience rather than when it happened.
+
+**Formation:**
+- Positive: Subject + have/has + past participle
+- Negative: Subject + have/has + not + past participle
+- Question: Have/Has + subject + past participle?
+
+**Common Uses:**
+1. Life experiences: "I have visited Japan."
+2. Unfinished time: "She has worked here since 2020."
+3. Recent actions: "They have just arrived."
+4. Changes: "He has become more confident."`,
+                examples: [
+                    "I have finished my homework.",
+                    "She has lived in London for five years.",
+                    "Have you ever been to Italy?",
+                    "They haven't seen that movie yet.",
+                    "He has just left the office."
+                ],
+                commonMistakes: [
+                    "✗ I have see him yesterday. → ✓ I saw him yesterday.",
+                    "✗ She has went there. → ✓ She has gone there.",
+                    "✗ Have you finish? → ✓ Have you finished?"
+                ],
+                quiz: [
+                    {
+                        question: "I ___ never ___ sushi.",
+                        options: ["have / eat", "have / eaten", "has / eaten", "had / eaten"],
+                        correct: 1,
+                        explanation: "Use 'have eaten' (have + past participle) for life experiences."
+                    },
+                    {
+                        question: "She ___ in this company since 2018.",
+                        options: ["works", "worked", "has worked", "is working"],
+                        correct: 2,
+                        explanation: "Use present perfect with 'since' for actions that started in the past and continue now."
+                    },
+                    {
+                        question: "___ you ___ your homework yet?",
+                        options: ["Do / finish", "Have / finished", "Did / finish", "Are / finishing"],
+                        correct: 1,
+                        explanation: "Use present perfect with 'yet' for actions we expect to be completed."
+                    },
+                    {
+                        question: "They ___ just ___ their lunch.",
+                        options: ["have / finish", "have / finished", "has / finished", "had / finished"],
+                        correct: 1,
+                        explanation: "Use present perfect with 'just' for very recent actions."
+                    },
+                    {
+                        question: "He ___ been to Paris three times.",
+                        options: ["have", "has", "had", "is"],
+                        correct: 1,
+                        explanation: "Use 'has' (not 'have') with third person singular (he/she/it)."
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "Comparative and Superlative Adjectives",
+                level: "A2",
+                description: "Compare people, places, and things using comparative and superlative forms.",
+                explanation: `Comparative adjectives compare two things, while superlative adjectives describe the extreme quality among three or more things.
+
+**Formation:**
+Short adjectives (1 syllable):
+- Comparative: adjective + -er (taller, faster)
+- Superlative: the + adjective + -est (the tallest, the fastest)
+
+Long adjectives (2+ syllables):
+- Comparative: more + adjective (more beautiful)
+- Superlative: the most + adjective (the most beautiful)
+
+Irregular forms: good → better → best, bad → worse → worst`,
+                examples: [
+                    "My house is bigger than yours.",
+                    "This is the most expensive restaurant in town.",
+                    "She is taller than her brother.",
+                    "This is the best movie I've ever seen.",
+                    "Today is hotter than yesterday."
+                ],
+                commonMistakes: [
+                    "✗ She is more tall than me. → ✓ She is taller than me.",
+                    "✗ This is the most cheap. → ✓ This is the cheapest.",
+                    "✗ He is the goodest player. → ✓ He is the best player."
+                ],
+                quiz: [
+                    {
+                        question: "My car is ___ than yours.",
+                        options: ["fast", "faster", "fastest", "more fast"],
+                        correct: 1,
+                        explanation: "Use '-er' for short adjectives in comparative form."
+                    },
+                    {
+                        question: "This is the ___ book I've ever read.",
+                        options: ["interesting", "more interesting", "most interesting", "interestingest"],
+                        correct: 2,
+                        explanation: "Use 'most' before long adjectives for superlative form."
+                    },
+                    {
+                        question: "She is ___ student in the class.",
+                        options: ["good", "better", "the best", "the better"],
+                        correct: 2,
+                        explanation: "'Best' is the irregular superlative form of 'good'."
+                    },
+                    {
+                        question: "This exercise is ___ than the last one.",
+                        options: ["easy", "easier", "easiest", "more easy"],
+                        correct: 1,
+                        explanation: "Change 'y' to 'i' and add '-er' for comparative: easy → easier."
+                    },
+                    {
+                        question: "Mount Everest is ___ mountain in the world.",
+                        options: ["high", "higher", "highest", "the highest"],
+                        correct: 3,
+                        explanation: "Use 'the' before superlative adjectives: 'the highest'."
+                    }
+                ]
+            }
+        ];
+
+        // Load lessons from localStorage or initialize
+        let userProgress = JSON.parse(localStorage.getItem('grammarProgress')) || {
+            completedLessons: [],
+            quizScores: [],
+            lastVisit: new Date().toISOString()
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayLessons();
+            updateProgressDashboard();
+            updateStreak();
+            
+            // Event listeners
+            document.getElementById('levelFilter').addEventListener('change', filterLessons);
+            document.getElementById('searchBox').addEventListener('input', filterLessons);
+        });
+
+        function displayLessons() {
+            const grid = document.getElementById('lessonsGrid');
+            grid.innerHTML = '';
+            
+            grammarLessons.forEach(lesson => {
+                const isCompleted = userProgress.completedLessons.includes(lesson.id);
+                const card = document.createElement('div');
+                card.className = 'lesson-card bg-white rounded-xl shadow-lg p-6 cursor-pointer';
+                card.setAttribute('data-level', lesson.level);
+                card.setAttribute('data-title', lesson.title.toLowerCase());
+                
+                card.innerHTML = `
+                    ${isCompleted ? '<div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm"><i class="fas fa-check mr-1"></i>Completed</div>' : ''}
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-book text-purple-600 text-2xl"></i>
+                        </div>
+                        <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">${lesson.level}</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">${lesson.title}</h3>
+                    <p class="text-gray-600 mb-4">${lesson.description}</p>
+                    <button class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition">
+                        ${isCompleted ? 'Review Lesson' : 'Start Learning'}
+                    </button>
+                `;
+                
+                card.addEventListener('click', () => openLesson(lesson));
+                grid.appendChild(card);
+            });
+        }
+
+        function filterLessons() {
+            const level = document.getElementById('levelFilter').value;
+            const search = document.getElementById('searchBox').value.toLowerCase();
+            const cards = document.querySelectorAll('.lesson-card');
+            
+            cards.forEach(card => {
+                const cardLevel = card.getAttribute('data-level');
+                const cardTitle = card.getAttribute('data-title');
+                const matchesLevel = level === 'all' || cardLevel === level;
+                const matchesSearch = cardTitle.includes(search);
+                
+                card.style.display = matchesLevel && matchesSearch ? 'block' : 'none';
+            });
+        }
+
+        function openLesson(lesson) {
+            const modal = document.getElementById('lessonModal');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <div class="sticky top-0 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-t-2xl">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="bg-white/20 px-3 py-1 rounded-full text-sm">${lesson.level}</span>
+                            <h2 class="text-3xl font-bold mt-2">${lesson.title}</h2>
+                        </div>
+                        <button onclick="closeLesson()" class="text-white hover:text-purple-200 text-3xl">&times;</button>
+                    </div>
+                </div>
+                
+                <div class="p-8">
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Explanation</h3>
+                        <div class="text-gray-700 leading-relaxed whitespace-pre-line">${lesson.explanation}</div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Examples</h3>
+                        <ul class="space-y-2">
+                            ${lesson.examples.map(ex => `
+                                <li class="flex items-start gap-3 bg-green-50 p-3 rounded-lg">
+                                    <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                    <span class="text-gray-700">${ex}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Common Mistakes</h3>
+                        <ul class="space-y-2">
+                            ${lesson.commonMistakes.map(mistake => `
+                                <li class="bg-red-50 p-3 rounded-lg text-gray-700">${mistake}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-purple-50 border-2 border-purple-200 rounded-xl p-6 mb-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Practice Quiz</h3>
+                        <p class="text-gray-700 mb-4">Test your understanding with these practice questions!</p>
+                        <button onclick="startQuiz(${lesson.id})" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:shadow-lg transition">
+                            <i class="fas fa-play mr-2"></i>Start Quiz
+                        </button>
+                    </div>
+                    
+                    <button onclick="markAsComplete(${lesson.id})" class="w-full bg-green-500 text-white py-4 rounded-lg font-bold hover:bg-green-600 transition">
+                        <i class="fas fa-check mr-2"></i>Mark as Complete
+                    </button>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeLesson() {
+            const modal = document.getElementById('lessonModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function startQuiz(lessonId) {
+            const lesson = grammarLessons.find(l => l.id === lessonId);
+            const content = document.getElementById('modalContent');
+            let currentQuestion = 0;
+            let score = 0;
+            let answers = [];
+            
+            function displayQuestion() {
+                const q = lesson.quiz[currentQuestion];
+                content.innerHTML = `
+                    <div class="sticky top-0 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-t-2xl">
+                        <h2 class="text-2xl font-bold">${lesson.title} - Quiz</h2>
+                        <div class="mt-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span>Question ${currentQuestion + 1} of ${lesson.quiz.length}</span>
+                                <span>Score: ${score}/${currentQuestion}</span>
+                            </div>
+                            <div class="bg-white/20 rounded-full h-2">
+                                <div class="progress-bar bg-white rounded-full h-2" style="width: ${((currentQuestion) / lesson.quiz.length) * 100}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">${q.question}</h3>
+                        <div class="space-y-3" id="quizOptions">
+                            ${q.options.map((opt, idx) => `
+                                <button onclick="selectAnswer(${lessonId}, ${currentQuestion}, ${idx})" 
+                                        class="quiz-option w-full text-left p-4 border-2 border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div id="feedback" class="mt-6 hidden"></div>
+                    </div>
+                `;
+            }
+            
+            window.selectAnswer = function(lessonId, questionIdx, answerIdx) {
+                const lesson = grammarLessons.find(l => l.id === lessonId);
+                const q = lesson.quiz[questionIdx];
+                const isCorrect = answerIdx === q.correct;
+                
+                if (isCorrect) score++;
+                answers.push({ question: questionIdx, answer: answerIdx, correct: isCorrect });
+                
+                const options = document.querySelectorAll('.quiz-option');
+                options.forEach((opt, idx) => {
+                    opt.disabled = true;
+                    if (idx === q.correct) {
+                        opt.classList.add('correct', 'border-green-500');
+                    } else if (idx === answerIdx && !isCorrect) {
+                        opt.classList.add('incorrect', 'border-red-500');
+                    }
+                });
+                
+                const feedback = document.getElementById('feedback');
+                feedback.className = `mt-6 p-4 rounded-lg ${isCorrect ? 'bg-green-50 border-2 border-green-200' : 'bg-red-50 border-2 border-red-200'}`;
+                feedback.innerHTML = `
+                    <p class="font-bold ${isCorrect ? 'text-green-700' : 'text-red-700'} mb-2">
+                        ${isCorrect ? '✓ Correct!' : '✗ Incorrect'}
+                    </p>
+                    <p class="text-gray-700">${q.explanation}</p>
+                    <button onclick="nextQuestion(${lessonId})" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-purple-700">
+                        ${currentQuestion < lesson.quiz.length - 1 ? 'Next Question' : 'See Results'}
+                    </button>
+                `;
+                feedback.classList.remove('hidden');
+            };
+            
+            window.nextQuestion = function(lessonId) {
+                currentQuestion++;
+                if (currentQuestion < lesson.quiz.length) {
+                    displayQuestion();
+                } else {
+                    showResults(lessonId, score, lesson.quiz.length);
+                }
+            };
+            
+            displayQuestion();
+        }
+
+        function showResults(lessonId, score, total) {
+            const percentage = Math.round((score / total) * 100);
+            const lesson = grammarLessons.find(l => l.id === lessonId);
+            const content = document.getElementById('modalContent');
+            
+            // Save quiz score
+            userProgress.quizScores.push({ lessonId, score, total, date: new Date().toISOString() });
+            localStorage.setItem('grammarProgress', JSON.stringify(userProgress));
+            updateProgressDashboard();
+            
+            let message, emoji;
+            if (percentage >= 80) {
+                message = "Excellent work!";
+                emoji = "🎉";
+            } else if (percentage >= 60) {
+                message = "Good job!";
+                emoji = "👍";
+            } else {
+                message = "Keep practicing!";
+                emoji = "💪";
+            }
+            
+            content.innerHTML = `
+                <div class="p-8 text-center">
+                    <div class="text-6xl mb-4">${emoji}</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">${message}</h2>
+                    <p class="text-xl text-gray-600 mb-8">You scored ${score} out of ${total}</p>
+                    
+                    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full h-8 mb-8">
+                        <div class="bg-white rounded-full h-8 flex items-center justify-center text-purple-600 font-bold" style="width: ${percentage}%">
+                            ${percentage}%
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="startQuiz(${lessonId})" class="bg-purple-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-purple-700">
+                            <i class="fas fa-redo mr-2"></i>Retry Quiz
+                        </button>
+                        <button onclick="closeLesson()" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-bold hover:bg-gray-300">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function markAsComplete(lessonId) {
+            if (!userProgress.completedLessons.includes(lessonId)) {
+                userProgress.completedLessons.push(lessonId);
+                localStorage.setItem('grammarProgress', JSON.stringify(userProgress));
+                updateProgressDashboard();
+                displayLessons();
+                
+                alert('🎉 Congratulations! Lesson marked as complete!');
+            } else {
+                alert('You have already completed this lesson!');
+            }
+        }
+
+        function updateProgressDashboard() {
+            document.getElementById('lessonsCompleted').textContent = userProgress.completedLessons.length;
+            document.getElementById('quizzesCompleted').textContent = userProgress.quizScores.length;
+            
+            if (userProgress.quizScores.length > 0) {
+                const avgScore = userProgress.quizScores.reduce((acc, s) => acc + (s.score / s.total * 100), 0) / userProgress.quizScores.length;
+                document.getElementById('averageScore').textContent = Math.round(avgScore) + '%';
+            }
+        }
+
+        function updateStreak() {
+            const today = new Date().toDateString();
+            const lastVisit = new Date(userProgress.lastVisit).toDateString();
+            
+            if (!userProgress.streak) userProgress.streak = 0;
+            
+            if (today !== lastVisit) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastVisit === yesterday.toDateString()) {
+                    userProgress.streak++;
+                } else {
+                    userProgress.streak = 1;
+                }
+                
+                userProgress.lastVisit = new Date().toISOString();
+                localStorage.setItem('grammarProgress', JSON.stringify(userProgress));
+            }
+            
+            document.getElementById('studyStreak').textContent = userProgress.streak || 0;
+        }
+
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all your progress? This cannot be undone.')) {
+                localStorage.removeItem('grammarProgress');
+                userProgress = {
+                    completedLessons: [],
+                    quizScores: [],
+                    lastVisit: new Date().toISOString()
+                };
+                updateProgressDashboard();
+                displayLessons();
+                alert('Progress has been reset!');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('lessonModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLesson();
+            }
+        });
+    </script>
+</body>
+</html>

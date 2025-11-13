@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Dictionary - Simple English Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .word-card { transition: all 0.3s ease; }
+        .word-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .search-autocomplete { max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">Simple English Online</span>
+                </a>
+                <a href="index.html" class="text-purple-600 hover:text-purple-700 font-semibold">
+                    <i class="fas fa-home mr-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Search -->
+    <section class="gradient-bg pt-24 pb-16 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">English Dictionary</h1>
+            <p class="text-xl text-white/90 mb-8">Search 100,000+ words with definitions, pronunciations, and examples</p>
+            
+            <!-- Main Search Box -->
+            <div class="relative">
+                <div class="bg-white rounded-2xl shadow-2xl p-2 flex items-center">
+                    <i class="fas fa-search text-gray-400 text-xl mx-4"></i>
+                    <input type="text" 
+                           id="mainSearch" 
+                           placeholder="Type any word to search..." 
+                           class="flex-1 text-lg py-3 focus:outline-none"
+                           autocomplete="off">
+                    <button onclick="searchWord()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg transition">
+                        Search
+                    </button>
+                </div>
+                <!-- Autocomplete Dropdown -->
+                <div id="autocomplete" class="absolute w-full bg-white rounded-xl shadow-xl mt-2 hidden search-autocomplete z-10"></div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="flex justify-center gap-4 mt-6 flex-wrap">
+                <button onclick="getRandomWord()" class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg font-semibold transition">
+                    <i class="fas fa-random mr-2"></i>Random Word
+                </button>
+                <button onclick="showWordOfDay()" class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg font-semibold transition">
+                    <i class="fas fa-star mr-2"></i>Word of the Day
+                </button>
+                <button onclick="showSavedWords()" class="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg font-semibold transition">
+                    <i class="fas fa-bookmark mr-2"></i>Saved Words (<span id="savedCount">0</span>)
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <section class="max-w-7xl mx-auto px-4 -mt-8 pb-20">
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Left Sidebar - Search History & Saved Words -->
+            <div class="md:col-span-1">
+                <!-- Recent Searches -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
+                        <span><i class="fas fa-history mr-2 text-purple-600"></i>Recent Searches</span>
+                        <button onclick="clearHistory()" class="text-sm text-gray-500 hover:text-red-600">Clear</button>
+                    </h3>
+                    <div id="recentSearches" class="space-y-2">
+                        <p class="text-gray-500 text-sm">No recent searches</p>
+                    </div>
+                </div>
+                
+                <!-- Popular Words -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">
+                        <i class="fas fa-fire mr-2 text-orange-500"></i>Popular Words
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        ${['hello', 'beautiful', 'success', 'happy', 'learn', 'achieve', 'wonder', 'excellent'].map(word => `
+                            <button onclick="lookupWord('${word}')" class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm hover:bg-purple-200 transition">
+                                ${word}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content - Word Definition -->
+            <div class="md:col-span-2">
+                <div id="wordResult" class="bg-white rounded-xl shadow-lg p-8">
+                    <!-- Welcome Message -->
+                    <div class="text-center py-12">
+                        <div class="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-book-open text-purple-600 text-4xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Search for any English word</h2>
+                        <p class="text-gray-600 mb-6">Get definitions, pronunciation, examples, synonyms, and more!</p>
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <button onclick="lookupWord('extraordinary')" class="text-purple-600 hover:underline">Try "extraordinary"</button>
+                            <button onclick="lookupWord('perseverance')" class="text-purple-600 hover:underline">Try "perseverance"</button>
+                            <button onclick="lookupWord('serendipity')" class="text-purple-600 hover:underline">Try "serendipity"</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Sample dictionary data (in production, this would be API or database)
+        const dictionaryData = {
+            'hello': {
+                word: 'hello',
+                phonetic: '/həˈloʊ/',
+                partOfSpeech: 'interjection, noun',
+                level: 'A1',
+                definitions: [
+                    'Used as a greeting or to begin a conversation',
+                    'An utterance of "hello"; a greeting'
+                ],
+                examples: [
+                    'Hello! How are you today?',
+                    'She said hello to everyone in the room.',
+                    'I called out a friendly hello as I entered.'
+                ],
+                synonyms: ['hi', 'hey', 'greetings', 'good morning', 'good afternoon'],
+                antonyms: ['goodbye', 'farewell', 'bye'],
+                etymology: 'First recorded in 1883; variant of hallo, hollo'
+            },
+            'beautiful': {
+                word: 'beautiful',
+                phonetic: '/ˈbjuːtɪfəl/',
+                partOfSpeech: 'adjective',
+                level: 'A2',
+                definitions: [
+                    'Pleasing the senses or mind aesthetically',
+                    'Of a very high standard; excellent'
+                ],
+                examples: [
+                    'What a beautiful sunset!',
+                    'She has a beautiful voice.',
+                    'That was a beautiful piece of music.',
+                    'The weather is beautiful today.'
+                ],
+                synonyms: ['lovely', 'gorgeous', 'stunning', 'attractive', 'pretty', 'handsome'],
+                antonyms: ['ugly', 'unattractive', 'hideous'],
+                etymology: 'Middle English: from Old French beauteful'
+            },
+            'learn': {
+                word: 'learn',
+                phonetic: '/lɜːrn/',
+                partOfSpeech: 'verb',
+                level: 'A1',
+                definitions: [
+                    'To gain or acquire knowledge of or skill in something by study, experience, or being taught',
+                    'To become aware of something by information or from observation'
+                ],
+                examples: [
+                    'I am learning English.',
+                    'She learned to drive when she was 18.',
+                    'We learned a lot from that experience.',
+                    'Children learn through play.'
+                ],
+                synonyms: ['study', 'acquire', 'grasp', 'master', 'understand'],
+                antonyms: ['forget', 'unlearn'],
+                etymology: 'Old English leornian, of West Germanic origin'
+            },
+            'success': {
+                word: 'success',
+                phonetic: '/səkˈses/',
+                partOfSpeech: 'noun',
+                level: 'B1',
+                definitions: [
+                    'The accomplishment of an aim or purpose',
+                    'The attainment of popularity or profit',
+                    'A person or thing that achieves desired aims or attains prosperity'
+                ],
+                examples: [
+                    'The success of the project was remarkable.',
+                    'Hard work is the key to success.',
+                    'She achieved great success in her career.',
+                    'The party was a huge success.'
+                ],
+                synonyms: ['achievement', 'accomplishment', 'triumph', 'victory', 'prosperity'],
+                antonyms: ['failure', 'defeat', 'disaster'],
+                etymology: 'Mid 16th century: from Latin successus, from succedere'
+            },
+            'extraordinary': {
+                word: 'extraordinary',
+                phonetic: '/ɪkˈstrɔːrdəneri/',
+                partOfSpeech: 'adjective',
+                level: 'B2',
+                definitions: [
+                    'Very unusual or remarkable',
+                    'Unusually great',
+                    '(of a meeting) specially convened'
+                ],
+                examples: [
+                    'She has an extraordinary talent for music.',
+                    'The team achieved extraordinary results.',
+                    'It was an extraordinary coincidence.',
+                    'He showed extraordinary courage.'
+                ],
+                synonyms: ['remarkable', 'exceptional', 'amazing', 'incredible', 'outstanding'],
+                antonyms: ['ordinary', 'common', 'usual', 'typical'],
+                etymology: 'Late Middle English: from Latin extraordinarius'
+            },
+            'perseverance': {
+                word: 'perseverance',
+                phonetic: '/ˌpɜːrsəˈvɪrəns/',
+                partOfSpeech: 'noun',
+                level: 'C1',
+                definitions: [
+                    'Persistence in doing something despite difficulty or delay in achieving success',
+                    'Continued effort to do or achieve something despite difficulties, failure, or opposition'
+                ],
+                examples: [
+                    'Success requires perseverance and hard work.',
+                    'Her perseverance paid off in the end.',
+                    'Through perseverance, he overcame all obstacles.',
+                    'The project demanded patience and perseverance.'
+                ],
+                synonyms: ['persistence', 'determination', 'tenacity', 'dedication', 'stamina'],
+                antonyms: ['irresolution', 'weakness', 'hesitation'],
+                etymology: 'Middle English: from Old French perseverance'
+            },
+            'serendipity': {
+                word: 'serendipity',
+                phonetic: '/ˌserənˈdɪpəti/',
+                partOfSpeech: 'noun',
+                level: 'C2',
+                definitions: [
+                    'The occurrence and development of events by chance in a happy or beneficial way',
+                    'The faculty or phenomenon of finding valuable or agreeable things not sought for'
+                ],
+                examples: [
+                    'Meeting her was pure serendipity.',
+                    'A fortunate stroke of serendipity brought them together.',
+                    'The discovery was a happy serendipity.',
+                    'Life is full of serendipitous moments.'
+                ],
+                synonyms: ['chance', 'luck', 'fortune', 'coincidence', 'fate'],
+                antonyms: ['misfortune', 'bad luck', 'design', 'planning'],
+                etymology: '1754: coined by Horace Walpole'
+            }
+        };
+
+        // Initialize
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        let savedWords = JSON.parse(localStorage.getItem('savedWords')) || [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSearchHistory();
+            updateSavedCount();
+            
+            // Search on Enter key
+            document.getElementById('mainSearch').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchWord();
+                }
+            });
+            
+            // Autocomplete
+            document.getElementById('mainSearch').addEventListener('input', showAutocomplete);
+            
+            // Click outside to close autocomplete
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#mainSearch') && !e.target.closest('#autocomplete')) {
+                    document.getElementById('autocomplete').classList.add('hidden');
+                }
+            });
+        });
+
+        function showAutocomplete() {
+            const input = document.getElementById('mainSearch').value.toLowerCase();
+            const autocomplete = document.getElementById('autocomplete');
+            
+            if (input.length < 2) {
+                autocomplete.classList.add('hidden');
+                return;
+            }
+            
+            const matches = Object.keys(dictionaryData).filter(word => 
+                word.toLowerCase().startsWith(input)
+            ).slice(0, 5);
+            
+            if (matches.length > 0) {
+                autocomplete.innerHTML = matches.map(word => `
+                    <div onclick="lookupWord('${word}')" class="px-6 py-3 hover:bg-purple-50 cursor-pointer border-b last:border-b-0">
+                        <span class="font-semibold">${word}</span>
+                        <span class="text-sm text-gray-500 ml-2">${dictionaryData[word].partOfSpeech}</span>
+                    </div>
+                `).join('');
+                autocomplete.classList.remove('hidden');
+            } else {
+                autocomplete.classList.add('hidden');
+            }
+        }
+
+        function searchWord() {
+            const input = document.getElementById('mainSearch').value.trim().toLowerCase();
+            if (input) {
+                lookupWord(input);
+            }
+        }
+
+        function lookupWord(word) {
+            word = word.toLowerCase();
+            document.getElementById('mainSearch').value = word;
+            document.getElementById('autocomplete').classList.add('hidden');
+            
+            // Add to search history
+            if (!searchHistory.includes(word)) {
+                searchHistory.unshift(word);
+                if (searchHistory.length > 10) searchHistory.pop();
+                localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+                updateSearchHistory();
+            }
+            
+            // Get word data
+            const wordData = dictionaryData[word];
+            
+            if (wordData) {
+                displayWordResult(wordData);
+            } else {
+                displayNotFound(word);
+            }
+        }
+
+        function displayWordResult(data) {
+            const isSaved = savedWords.some(w => w.word === data.word);
+            
+            const result = document.getElementById('wordResult');
+            result.innerHTML = `
+                <div class="border-b pb-6 mb-6">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h2 class="text-4xl font-bold text-gray-800 mb-2">${data.word}</h2>
+                            <div class="flex items-center gap-4 mb-4">
+                                <span class="text-xl text-purple-600">${data.phonetic}</span>
+                                <button onclick="pronounceWord('${data.word}')" class="bg-purple-100 hover:bg-purple-200 text-purple-700 px-4 py-2 rounded-lg font-semibold transition">
+                                    <i class="fas fa-volume-up mr-2"></i>Listen
+                                </button>
+                                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">${data.level}</span>
+                            </div>
+                            <p class="text-gray-600 italic">${data.partOfSpeech}</p>
+                        </div>
+                        <button onclick="toggleSaveWord('${data.word}')" id="saveBtn" class="text-3xl ${isSaved ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-500 transition">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Definitions</h3>
+                    <ol class="list-decimal list-inside space-y-3">
+                        ${data.definitions.map(def => `
+                            <li class="text-gray-700 leading-relaxed">${def}</li>
+                        `).join('')}
+                    </ol>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Examples</h3>
+                    <div class="space-y-3">
+                        ${data.examples.map(ex => `
+                            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                                <p class="text-gray-700 italic">"${ex}"</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Synonyms</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${data.synonyms.map(syn => `
+                                <button onclick="lookupWord('${syn}')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm hover:bg-blue-200 transition">
+                                    ${syn}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Antonyms</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${data.antonyms.map(ant => `
+                                <button onclick="lookupWord('${ant}')" class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm hover:bg-red-200 transition">
+                                    ${ant}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 border-2 border-purple-200 rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Etymology</h3>
+                    <p class="text-gray-700">${data.etymology}</p>
+                </div>
+            `;
+        }
+
+        function displayNotFound(word) {
+            const result = document.getElementById('wordResult');
+            result.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-search text-red-600 text-4xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Word Not Found</h2>
+                    <p class="text-gray-600 mb-6">Sorry, we couldn't find "${word}" in our dictionary.</p>
+                    <p class="text-gray-600 mb-8">Try searching for another word or check your spelling.</p>
+                    <div class="flex justify-center gap-3">
+                        <button onclick="getRandomWord()" class="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                            Try Random Word
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function pronounceWord(word) {
+            // Use Web Speech API for text-to-speech
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Text-to-speech not supported in your browser');
+            }
+        }
+
+        function toggleSaveWord(word) {
+            const wordData = dictionaryData[word];
+            const index = savedWords.findIndex(w => w.word === word);
+            
+            if (index > -1) {
+                savedWords.splice(index, 1);
+                alert('Word removed from saved list');
+            } else {
+                savedWords.push(wordData);
+                alert('Word saved to your vocabulary!');
+            }
+            
+            localStorage.setItem('savedWords', JSON.stringify(savedWords));
+            updateSavedCount();
+            lookupWord(word); // Refresh display
+        }
+
+        function showSavedWords() {
+            if (savedWords.length === 0) {
+                alert('You haven\'t saved any words yet. Click the bookmark icon to save words!');
+                return;
+            }
+            
+            const result = document.getElementById('wordResult');
+            result.innerHTML = `
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-bookmark text-yellow-500 mr-2"></i>Saved Words
+                    </h2>
+                    <p class="text-gray-600">You have saved ${savedWords.length} word${savedWords.length !== 1 ? 's' : ''}</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    ${savedWords.map(word => `
+                        <div class="word-card bg-gradient-to-br from-purple-50 to-indigo-50 p-6 rounded-xl border-2 border-purple-200 cursor-pointer" onclick="lookupWord('${word.word}')">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">${word.word}</h3>
+                            <p class="text-purple-600 mb-2">${word.phonetic}</p>
+                            <p class="text-gray-600 text-sm">${word.definitions[0]}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getRandomWord() {
+            const words = Object.keys(dictionaryData);
+            const randomWord = words[Math.floor(Math.random() * words.length)];
+            lookupWord(randomWord);
+        }
+
+        function showWordOfDay() {
+            // In production, this would change daily
+            const wordOfDay = 'perseverance';
+            alert('🌟 Today\'s Word of the Day: ' + wordOfDay);
+            lookupWord(wordOfDay);
+        }
+
+        function updateSearchHistory() {
+            const container = document.getElementById('recentSearches');
+            if (searchHistory.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm">No recent searches</p>';
+            } else {
+                container.innerHTML = searchHistory.map(word => `
+                    <button onclick="lookupWord('${word}')" class="block w-full text-left px-3 py-2 rounded-lg hover:bg-purple-50 transition text-gray-700">
+                        <i class="fas fa-history text-gray-400 mr-2"></i>${word}
+                    </button>
+                `).join('');
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('Clear all search history?')) {
+                searchHistory = [];
+                localStorage.removeItem('searchHistory');
+                updateSearchHistory();
+            }
+        }
+
+        function updateSavedCount() {
+            document.getElementById('savedCount').textContent = savedWords.length;
+        }
+    </script>
+</body>
+</html>
