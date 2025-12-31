@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VQB8P8EWFK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-VQB8P8EWFK');
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SimpleEnglishOnline - Master 18 Languages from Zero to Hero</title>
@@ -130,21 +139,23 @@
 
         nav {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
             align-items: center;
+            padding-bottom: 0.5rem;
         }
 
         .nav-btn {
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            white-space: nowrap;
         }
 
         .nav-btn:hover {
@@ -918,8 +929,10 @@
                 <button class="nav-btn active" onclick="showSection('home')">Home</button>
                 <button class="nav-btn" onclick="showSection('translator')">Translator</button>
                 <button class="nav-btn" onclick="showSection('languages')">Languages</button>
+                <button class="nav-btn" onclick="showSection('kids')">Kids Zone</button>
                 <button class="nav-btn" onclick="showSection('quranic')">Quranic Arabic</button>
                 <button class="nav-btn" onclick="showSection('games')">Games</button>
+                <button class="nav-btn" onclick="showSection('audio')">Audio Lessons</button>
                 <button class="nav-btn" onclick="showSection('videos')">Videos</button>
                 <button class="nav-btn" onclick="showSection('islamic')">Islamic</button>
                 <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
@@ -970,6 +983,13 @@
                     <p class="card-description">Comprehensive learning paths for 15 languages with grammar, vocabulary, and cultural insights.</p>
                 </div>
 
+                <div class="card" onclick="showSection('kids')">
+                    <div class="card-icon">🧒</div>
+                    <h3 class="card-title">Kids Zone</h3>
+                    <p class="card-subtitle">Fun Learning for Children</p>
+                    <p class="card-description">Colorful, interactive activities designed for kids ages 4-12 to learn languages through play!</p>
+                </div>
+
                 <div class="card" onclick="showSection('quranic')">
                     <div class="card-icon">🕌</div>
                     <h3 class="card-title">Quranic Arabic</h3>
@@ -984,6 +1004,13 @@
                     <p class="card-description">Flashcards, matching games, quizzes, and more to make learning fun and engaging.</p>
                 </div>
 
+                <div class="card" onclick="showSection('audio')">
+                    <div class="card-icon">🎧</div>
+                    <h3 class="card-title">Audio Lessons</h3>
+                    <p class="card-subtitle">Listen & Learn</p>
+                    <p class="card-description">Native pronunciation lessons in 16 languages - perfect for commutes!</p>
+                </div>
+
                 <div class="card" onclick="showSection('videos')">
                     <div class="card-icon">📺</div>
                     <h3 class="card-title">Video Lessons</h3>
@@ -996,6 +1023,19 @@
                     <h3 class="card-title">Islamic Content</h3>
                     <p class="card-subtitle">Daily Inspiration</p>
                     <p class="card-description">Daily duas, 99 Names of Allah, Hadith, and prayer guides in multiple languages.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audio Lessons Section -->
+        <section id="audio" class="section">
+            <h2 class="section-title">🎧 Audio Pronunciation Lessons</h2>
+            <p class="section-subtitle">Listen to native speakers and perfect your pronunciation</p>
+
+            <div id="audioLessonsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎧</div>
+                    <p>Loading audio lessons...</p>
                 </div>
             </div>
         </section>
@@ -1072,7 +1112,7 @@
                     </div>
                 </div>
 
-                <button class="translate-btn" onclick="translate()">
+                <button class="translate-btn" onclick="doTranslate()">
                     🌐 Translate
                 </button>
 
@@ -1256,6 +1296,103 @@
             </div>
         </section>
 
+        <!-- Kids Zone Section -->
+        <section id="kids" class="section">
+            <h2 class="section-title">🧒 Kids Zone - Fun Language Learning!</h2>
+            <p class="section-subtitle">Colorful, interactive activities designed for children ages 4-12</p>
+
+            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 2rem; border-radius: 20px; margin-bottom: 3rem; text-align: center;">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem;">🎨 Learning Made Fun!</h3>
+                <p style="font-size: 1.2rem; opacity: 0.95;">Games, colors, and rewards to keep kids engaged while learning languages!</p>
+            </div>
+
+            <h3 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--text);">🎮 Fun Learning Games</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+                <div class="card" onclick="showKidsActivity('colors')" style="cursor: pointer; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🎨</div>
+                    <h3 class="card-title" style="color: white;">Color & Learn</h3>
+                    <p class="card-description" style="color: rgba(255,255,255,0.9);">Learn colors and numbers in 16 languages with fun animations!</p>
+                    <button class="mode-btn" style="margin-top: 1rem; width: 100%; background: white; color: #667eea;">Start Playing</button>
+                </div>
+
+                <div class="card" onclick="showKidsActivity('animals')" style="cursor: pointer; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🦁</div>
+                    <h3 class="card-title" style="color: white;">Animal Friends</h3>
+                    <p class="card-description" style="color: rgba(255,255,255,0.9);">Discover animal names in different languages with sounds and pictures!</p>
+                    <button class="mode-btn" style="margin-top: 1rem; width: 100%; background: white; color: #f5576c;">Start Playing</button>
+                </div>
+
+                <div class="card" onclick="showKidsActivity('alphabet')" style="cursor: pointer; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🔤</div>
+                    <h3 class="card-title" style="color: white;">Alphabet Adventure</h3>
+                    <p class="card-description" style="color: rgba(255,255,255,0.9);">Learn letters and sounds in Spanish, French, Arabic, and more!</p>
+                    <button class="mode-btn" style="margin-top: 1rem; width: 100%; background: white; color: #00f2fe;">Start Playing</button>
+                </div>
+
+                <div class="card" onclick="showKidsActivity('songs')" style="cursor: pointer; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🎵</div>
+                    <h3 class="card-title" style="color: white;">Sing Along</h3>
+                    <p class="card-description" style="color: rgba(255,255,255,0.9);">Fun songs and rhymes to learn greetings and basic phrases!</p>
+                    <button class="mode-btn" style="margin-top: 1rem; width: 100%; background: white; color: #fa709a;">Start Playing</button>
+                </div>
+
+                <div class="card" onclick="showKidsActivity('family')" style="cursor: pointer; background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">👨‍👩‍👧‍👦</div>
+                    <h3 class="card-title" style="color: white;">My Family</h3>
+                    <p class="card-description" style="color: rgba(255,255,255,0.9);">Learn family words: Mom, Dad, Sister, Brother in many languages!</p>
+                    <button class="mode-btn" style="margin-top: 1rem; width: 100%; background: white; color: #330867;">Start Playing</button>
+                </div>
+
+                <div class="card" onclick="showKidsActivity('rewards')" style="cursor: pointer; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #1e293b;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">⭐</div>
+                    <h3 class="card-title">Rewards & Badges</h3>
+                    <p class="card-description">Earn stars and badges for completing activities!</p>
+                    <button class="mode-btn" style="margin-top: 1rem; width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">View Rewards</button>
+                </div>
+            </div>
+
+            <!-- Kids Videos Section -->
+            <h3 style="font-size: 1.8rem; margin: 4rem 0 1.5rem 0; color: var(--text);">📺 Safe Cartoons & Videos</h3>
+            <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Carefully curated, clean, and educational videos for children</p>
+            
+            <div id="kidsVideosGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📺</div>
+                    <p>Loading videos...</p>
+                </div>
+            </div>
+
+            <!-- Kids Audio Section -->
+            <h3 style="font-size: 1.8rem; margin: 4rem 0 1.5rem 0; color: var(--text);">🎧 Calm Audio Stories & Lessons</h3>
+            <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Relaxing audio content perfect for bedtime, car rides, or quiet time</p>
+            
+            <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 2rem; border-radius: 20px; margin-bottom: 2rem;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h4 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 0.5rem;">🌙 Perfect for Quiet Time</h4>
+                    <p style="color: #475569;">Gentle voices • Calming music • Educational content</p>
+                </div>
+            </div>
+
+            <div id="kidsAudioGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎧</div>
+                    <p>Loading audio content...</p>
+                </div>
+            </div>
+
+            <div style="background: #fef3c7; border: 3px dashed #fbbf24; border-radius: 20px; padding: 2rem; margin-top: 2rem;">
+                <h3 style="color: #92400e; font-size: 1.5rem; margin-bottom: 1rem;">👨‍👩‍👧 Parents' Corner</h3>
+                <ul style="color: #78350f; line-height: 2; margin-left: 1.5rem;">
+                    <li><strong>Age-appropriate:</strong> Designed for kids 3-12 years old</li>
+                    <li><strong>Safe & Ad-Free:</strong> No ads, no external links, completely safe</li>
+                    <li><strong>Calming Content:</strong> Perfect for bedtime and relaxation</li>
+                    <li><strong>Educational:</strong> Learn while having fun</li>
+                    <li><strong>Multilingual:</strong> Stories in multiple languages</li>
+                    <li><strong>Islamic Values:</strong> Wholesome, family-friendly content</li>
+                </ul>
+            </div>
+        </section>
+
         <!-- Quranic Arabic Section -->
         <section id="quranic" class="section">
             <h2 class="section-title">🕌 Quranic Arabic - Understand the Quran</h2>
@@ -1267,37 +1404,37 @@
                     <p>Learn to read, understand, and reflect upon the Quran through comprehensive Quranic Arabic lessons.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Script & Pronunciation module...')">
+                <div class="card" onclick="showQuranicModule('script')">
                     <div class="card-icon">✍️</div>
                     <h3 class="card-title">Script & Pronunciation</h3>
                     <p class="card-description">Arabic alphabet, Tajweed basics, articulation points, and proper recitation.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Grammar Essentials module...')">
+                <div class="card" onclick="showQuranicModule('grammar')">
                     <div class="card-icon">📖</div>
                     <h3 class="card-title">Grammar Essentials</h3>
                     <p class="card-description">Quranic grammar patterns, verb forms, noun cases, and sentence structures.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Vocabulary Builder module...')">
+                <div class="card" onclick="showQuranicModule('vocabulary')">
                     <div class="card-icon">🔤</div>
                     <h3 class="card-title">Vocabulary Builder</h3>
                     <p class="card-description">100-500 most common Quranic words covering 50-70% of the Quran.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Surah Studies module...')">
+                <div class="card" onclick="showQuranicModule('surahs')">
                     <div class="card-icon">📚</div>
                     <h3 class="card-title">Understanding Surahs</h3>
                     <p class="card-description">Surah Al-Fatiha, Juz Amma, and common prayer verses with word-by-word analysis.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Practice Exercises module...')">
+                <div class="card" onclick="showQuranicModule('practice')">
                     <div class="card-icon">✏️</div>
                     <h3 class="card-title">Practice Exercises</h3>
                     <p class="card-description">Root word identification, sentence parsing, vocabulary flashcards, and more.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Resources module...')">
+                <div class="card" onclick="showQuranicModule('resources')">
                     <div class="card-icon">📱</div>
                     <h3 class="card-title">Resources</h3>
                     <p class="card-description">Recommended books, apps, courses, and YouTube channels for Quranic Arabic.</p>
@@ -1374,108 +1511,42 @@
 
         <!-- Videos Section -->
         <section id="videos" class="section">
-            <h2 class="section-title">📺 Video Lessons</h2>
-            
-            <div class="video-grid">
-                <div class="video-card">
-                    <div class="video-thumbnail">📹</div>
-                    <div class="video-info">
-                        <div class="video-title">English Pronunciation Guide</div>
-                        <div class="video-description">Master English pronunciation with native speakers</div>
-                    </div>
-                </div>
+            <h2 class="section-title">📺 Video Learning Corner</h2>
+            <p class="section-subtitle">Educational videos for teens and adults - Language learning, Islamic knowledge, and inspiration</p>
 
-                <div class="video-card">
-                    <div class="video-thumbnail">📹</div>
-                    <div class="video-info">
-                        <div class="video-title">Mandarin Tones Explained</div>
-                        <div class="video-description">Understanding the 4 tones in Mandarin Chinese</div>
-                    </div>
-                </div>
+            <!-- Category Filters -->
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin: 2rem 0; padding: 1.5rem; background: var(--card-light); border-radius: 16px;">
+                <button class="mode-btn active" onclick="filterVideos('all')" id="filter-all" style="padding: 0.75rem 1.5rem;">
+                    🎬 All Videos
+                </button>
+                <button class="mode-btn" onclick="filterVideos('language')" id="filter-language" style="padding: 0.75rem 1.5rem;">
+                    🗣️ Language Learning
+                </button>
+                <button class="mode-btn" onclick="filterVideos('islamic')" id="filter-islamic" style="padding: 0.75rem 1.5rem;">
+                    ☪️ Islamic Knowledge
+                </button>
+                <button class="mode-btn" onclick="filterVideos('inspiration')" id="filter-inspiration" style="padding: 0.75rem 1.5rem;">
+                    ✨ Inspiration & Motivation
+                </button>
+            </div>
 
-                <div class="video-card">
-                    <div class="video-thumbnail">📹</div>
-                    <div class="video-info">
-                        <div class="video-title">Spanish Conversation Practice</div>
-                        <div class="video-description">Real-world Spanish dialogues for beginners</div>
-                    </div>
-                </div>
-
-                <div class="video-card">
-                    <div class="video-thumbnail">📹</div>
-                    <div class="video-info">
-                        <div class="video-title">Quranic Arabic - Tajweed Basics</div>
-                        <div class="video-description">Learn proper Quran recitation with Tajweed rules</div>
-                    </div>
-                </div>
-
-                <div class="video-card">
-                    <div class="video-thumbnail">📹</div>
-                    <div class="video-info">
-                        <div class="video-title">Urdu Poetry & Literature</div>
-                        <div class="video-description">Explore the beauty of Urdu ghazals and nazms</div>
-                    </div>
-                </div>
-
-                <div class="video-card">
-                    <div class="video-thumbnail">📹</div>
-                    <div class="video-info">
-                        <div class="video-title">Japanese Hiragana & Katakana</div>
-                        <div class="video-description">Master Japanese writing systems step by step</div>
-                    </div>
+            <!-- Video Grid -->
+            <div id="videoGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem;">
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📺</div>
+                    <p>Loading videos...</p>
                 </div>
             </div>
 
-            <h3 class="section-title" style="margin-top: 4rem; font-size: 2rem;">🎬 Learn from Movies & Animation</h3>
-            <p style="text-align: center; color: #64748b; margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-                Watch clean, family-friendly movies and animated films to learn languages naturally through immersion!
-            </p>
-
-            <div class="video-grid">
-                <div class="video-card">
-                    <div class="video-thumbnail" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🎭</div>
-                    <div class="video-info">
-                        <div class="video-title">🇪🇸 Coco (Spanish)</div>
-                        <div class="video-description">Learn Spanish through this beautiful Pixar film about Mexican culture</div>
-                    </div>
-                </div>
-
-                <div class="video-card">
-                    <div class="video-thumbnail" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🎭</div>
-                    <div class="video-info">
-                        <div class="video-title">🇫🇷 Ratatouille (French)</div>
-                        <div class="video-description">Learn French through this charming story set in Paris</div>
-                    </div>
-                </div>
-
-                <div class="video-card">
-                    <div class="video-thumbnail" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🎭</div>
-                    <div class="video-info">
-                        <div class="video-title">🇯🇵 Spirited Away (Japanese)</div>
-                        <div class="video-description">Learn Japanese through Studio Ghibli's masterpiece</div>
-                    </div>
-                </div>
-
-                <div class="video-card">
-                    <div class="video-thumbnail" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">🎭</div>
-                    <div class="video-info">
-                        <div class="video-title">🇸🇦 The Breadwinner (Arabic)</div>
-                        <div class="video-description">Learn Arabic through this powerful animated story</div>
-                    </div>
-                </div>
-
-                <div class="video-card">
-                    <div class="video-thumbnail" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">🎭</div>
-                    <div class="video-info">
-                        <div class="video-title">🇮🇳 Bahubali (Hindi/Telugu)</div>
-                        <div class="video-description">Epic Indian film to learn Hindi and Telugu vocabulary</div>
-                    </div>
-                </div>
-
-                <div class="video-card">
-                    <div class="video-thumbnail" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">🎭</div>
-                    <div class="video-info">
-                        <div class="video-title">🇵🇰 3 Bahadur (Urdu)</div>
+            <!-- Note about Kids Videos -->
+            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 2rem; border-radius: 20px; margin-top: 3rem; text-align: center;">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">🧒 Looking for Kids' Videos?</h3>
+                <p style="font-size: 1.1rem; opacity: 0.95; margin-bottom: 1.5rem;">Visit our Kids Zone for safe, educational cartoons and stories!</p>
+                <button class="mode-btn" onclick="showSection('kids')" style="background: white; color: #f5576c; padding: 1rem 2rem; font-size: 1.1rem;">
+                    Go to Kids Zone →
+                </button>
+            </div>
+        </section>
                         <div class="video-description">Pakistani animated film perfect for learning Urdu</div>
                     </div>
                 </div>
@@ -1578,31 +1649,31 @@
                     <p>"Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire."</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening 99 Names of Allah...')">
+                <div class="card" onclick="showIslamicContent('names')">
                     <div class="card-icon">🕌</div>
                     <h3 class="card-title">99 Names of Allah</h3>
                     <p class="card-description">Asma ul Husna with meanings, translations, and explanations in all languages.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Hadith of the Day...')">
+                <div class="card" onclick="showIslamicContent('hadith')">
                     <div class="card-icon">📿</div>
                     <h3 class="card-title">Hadith of the Day</h3>
                     <p class="card-description">Daily authentic Hadith with Arabic text, translation, and commentary.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Quranic Verse...')">
+                <div class="card" onclick="showIslamicContent('verse')">
                     <div class="card-icon">📖</div>
                     <h3 class="card-title">Verse of the Day</h3>
                     <p class="card-description">Daily Quranic verse with word-by-word analysis and tafsir.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Salah Guide...')">
+                <div class="card" onclick="showIslamicContent('salah')">
                     <div class="card-icon">🤲</div>
                     <h3 class="card-title">Salah Guide</h3>
                     <p class="card-description">Complete prayer guide in all languages with pronunciations.</p>
                 </div>
 
-                <div class="card" onclick="alert('Opening Hajj & Umrah Guide...')">
+                <div class="card" onclick="showIslamicContent('hajj')">
                     <div class="card-icon">🕋</div>
                     <h3 class="card-title">Hajj & Umrah</h3>
                     <p class="card-description">Phrasebook and guide for pilgrimage in Arabic, English, and Urdu.</p>
@@ -1614,12 +1685,21 @@
     <!-- API Key Modal -->
     <div class="modal" id="apiModal">
         <div class="modal-content">
-            <h3 class="modal-title">🔑 Setup Claude API</h3>
-            <p style="margin-bottom: 1rem; color: #64748b;">To use the AI-powered translator, please enter your Anthropic Claude API key. Get one at <a href="https://console.anthropic.com" target="_blank" style="color: var(--primary);">console.anthropic.com</a></p>
-            <input type="password" class="modal-input" id="apiKeyInput" placeholder="sk-ant-...">
+            <h3 class="modal-title">🔑 AI Translator Access</h3>
+            <p style="margin-bottom: 1rem; color: #64748b;">Unlock AI-powered translation in all 18 languages</p>
+            
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h4 style="margin-bottom: 0.75rem; font-size: 1.2rem;">💎 Get Instant Access</h4>
+                <p style="margin-bottom: 0.5rem; opacity: 0.95; font-size: 1.1rem;">📧 Email: <strong>zaheerlearning@gmail.com</strong></p>
+                <p style="opacity: 0.95; font-size: 1.3rem; font-weight: 700;">💵 Pay $5 for 30 minutes</p>
+            </div>
+            
+            <p style="color: #64748b; margin-bottom: 1rem; font-size: 0.95rem;">After payment, you'll receive an access key via email. Enter it below to start translating!</p>
+            
+            <input type="password" class="modal-input" id="apiKeyInput" placeholder="Enter your access key">
             <div class="modal-actions">
                 <button class="modal-btn secondary" onclick="closeApiModal()">Cancel</button>
-                <button class="modal-btn primary" onclick="saveApiKey()">Save Key</button>
+                <button class="modal-btn primary" onclick="saveApiKey()">Activate</button>
             </div>
         </div>
     </div>
@@ -1639,6 +1719,21 @@
             if (isDarkMode) {
                 document.body.classList.add('dark-mode');
                 document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+            
+            // Populate audio lessons grid
+            const audioGrid = document.getElementById('audioLessonsGrid');
+            if (audioGrid) {
+                audioGrid.innerHTML = Object.entries(LANGUAGES_DATA).map(([key, lang]) => `
+                    <div class="card">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">${lang.flag}</div>
+                        <h3 class="card-title">${lang.name} Pronunciation</h3>
+                        <p class="card-description">10 essential phrases with native audio</p>
+                        <button class="mode-btn" onclick="showAudioLesson('${key}', '${lang.name}')" style="margin-top: 1rem; width: 100%;">
+                            🎧 Start Listening
+                        </button>
+                    </div>
+                `).join('');
             }
         });
 
@@ -1688,7 +1783,7 @@
             toLang.value = temp;
         }
 
-        async function translate() {
+        async function doTranslate() {
             const inputText = document.getElementById('inputText').value.trim();
             const fromLang = document.getElementById('fromLang').value;
             const toLang = document.getElementById('toLang').value;
@@ -1699,7 +1794,10 @@
             }
 
             if (!apiKey) {
-                document.getElementById('apiModal').classList.add('active');
+                showToast('🔑 Access key required - Click to get one for $5!');
+                setTimeout(() => {
+                    document.getElementById('apiModal').classList.add('active');
+                }, 500);
                 return;
             }
 
@@ -1737,7 +1835,7 @@
 
             } catch (error) {
                 console.error('Translation error:', error);
-                showToast('Translation failed. Please check your API key.');
+                showToast('Translation failed. Please check your access key.');
             } finally {
                 translateBtn.disabled = false;
                 translateBtn.innerHTML = '🌐 Translate';
@@ -1829,30 +1927,1799 @@
                 apiKey = key;
                 localStorage.setItem('claudeApiKey', key);
                 closeApiModal();
-                showToast('API key saved successfully!');
+                showToast('Access key activated successfully!');
             } else {
-                showToast('Please enter a valid API key');
+                showToast('Please enter a valid access key');
             }
         }
 
         // Language Functions
-        function openLanguage(lang) {
-            showToast(`Opening ${lang.charAt(0).toUpperCase() + lang.slice(1)} course...`);
-            // This would open a detailed language course page
+        // Game Functions
+        const LANGUAGES_DATA = {
+            spanish: { name: 'Spanish', flag: '🇪🇸', code: 'es' },
+            french: { name: 'French', flag: '🇫🇷', code: 'fr' },
+            german: { name: 'German', flag: '🇩🇪', code: 'de' },
+            italian: { name: 'Italian', flag: '🇮🇹', code: 'it' },
+            portuguese: { name: 'Portuguese', flag: '🇵🇹', code: 'pt' },
+            russian: { name: 'Russian', flag: '🇷🇺', code: 'ru' },
+            mandarin: { name: 'Mandarin', flag: '🇨🇳', code: 'zh' },
+            japanese: { name: 'Japanese', flag: '🇯🇵', code: 'ja' },
+            korean: { name: 'Korean', flag: '🇰🇷', code: 'ko' },
+            arabic: { name: 'Arabic', flag: '🇸🇦', code: 'ar' },
+            urdu: { name: 'Urdu', flag: '🇵🇰', code: 'ur' },
+            hindi: { name: 'Hindi', flag: '🇮🇳', code: 'hi' },
+            telugu: { name: 'Telugu', flag: '🇮🇳', code: 'te' },
+            bengali: { name: 'Bengali', flag: '🇧🇩', code: 'bn' },
+            farsi: { name: 'Farsi', flag: '🇮🇷', code: 'fa' },
+            turkish: { name: 'Turkish', flag: '🇹🇷', code: 'tr' }
+        };
+
+        // Universal vocabulary for all languages - using quiz data
+        const UNIVERSAL_VOCAB = {
+            'Hello': { es: 'Hola', fr: 'Bonjour', de: 'Hallo', it: 'Ciao', pt: 'Olá', ru: 'Привет', zh: '你好', ja: 'こんにちは', ko: '안녕하세요', ar: 'مرحبا', ur: 'السلام علیکم', hi: 'नमस्ते', te: 'హలో', bn: 'হ্যালো', fa: 'سلام', tr: 'Merhaba' },
+            'Thank you': { es: 'Gracias', fr: 'Merci', de: 'Danke', it: 'Grazie', pt: 'Obrigado', ru: 'Спасибо', zh: '谢谢', ja: 'ありがとう', ko: '감사합니다', ar: 'شكرا', ur: 'شکریہ', hi: 'धन्यवाद', te: 'ధన్యవాదాలు', bn: 'ধন্যবাদ', fa: 'متشکرم', tr: 'Teşekkürler' },
+            'Goodbye': { es: 'Adiós', fr: 'Au revoir', de: 'Auf Wiedersehen', it: 'Arrivederci', pt: 'Adeus', ru: 'До свидания', zh: '再见', ja: 'さようなら', ko: '안녕히 가세요', ar: 'مع السلامة', ur: 'خدا حافظ', hi: 'अलविदा', te: 'వీడ్కోలు', bn: 'বিদায়', fa: 'خداحافظ', tr: 'Hoşça kal' },
+            'Please': { es: 'Por favor', fr: "S'il vous plaît", de: 'Bitte', it: 'Per favore', pt: 'Por favor', ru: 'Пожалуйста', zh: '请', ja: 'お願いします', ko: '부탁합니다', ar: 'من فضلك', ur: 'برائے مہربانی', hi: 'कृपया', te: 'దయచేసి', bn: 'দয়া করে', fa: 'لطفا', tr: 'Lütfen' },
+            'Yes': { es: 'Sí', fr: 'Oui', de: 'Ja', it: 'Sì', pt: 'Sim', ru: 'Да', zh: '是', ja: 'はい', ko: '네', ar: 'نعم', ur: 'جی ہاں', hi: 'हाँ', te: 'అవును', bn: 'হ্যাঁ', fa: 'بله', tr: 'Evet' },
+            'No': { es: 'No', fr: 'Non', de: 'Nein', it: 'No', pt: 'Não', ru: 'Нет', zh: '不', ja: 'いいえ', ko: '아니요', ar: 'لا', ur: 'نہیں', hi: 'नहीं', te: 'కాదు', bn: 'না', fa: 'نه', tr: 'Hayır' },
+            'Water': { es: 'Agua', fr: 'Eau', de: 'Wasser', it: 'Acqua', pt: 'Água', ru: 'Вода', zh: '水', ja: '水', ko: '물', ar: 'ماء', ur: 'پانی', hi: 'पानी', te: 'నీరు', bn: 'পানি', fa: 'آب', tr: 'Su' },
+            'Food': { es: 'Comida', fr: 'Nourriture', de: 'Essen', it: 'Cibo', pt: 'Comida', ru: 'Еда', zh: '食物', ja: '食べ物', ko: '음식', ar: 'طعام', ur: 'کھانا', hi: 'खाना', te: 'ఆహారం', bn: 'খাবার', fa: 'غذا', tr: 'Yemek' },
+            'Friend': { es: 'Amigo', fr: 'Ami', de: 'Freund', it: 'Amico', pt: 'Amigo', ru: 'Друг', zh: '朋友', ja: '友達', ko: '친구', ar: 'صديق', ur: 'دوست', hi: 'दोस्त', te: 'స్నేహితుడు', bn: 'বন্ধু', fa: 'دوست', tr: 'Arkadaş' },
+            'Family': { es: 'Familia', fr: 'Famille', de: 'Familie', it: 'Famiglia', pt: 'Família', ru: 'Семья', zh: '家人', ja: '家族', ko: '가족', ar: 'عائلة', ur: 'خاندان', hi: 'परिवार', te: 'కుటుంబం', bn: 'পরিবার', fa: 'خانواده', tr: 'Aile' },
+            'House': { es: 'Casa', fr: 'Maison', de: 'Haus', it: 'Casa', pt: 'Casa', ru: 'Дом', zh: '房子', ja: '家', ko: '집', ar: 'بيت', ur: 'گھر', hi: 'घर', te: 'ఇల్లు', bn: 'বাড়ি', fa: 'خانه', tr: 'Ev' },
+            'Book': { es: 'Libro', fr: 'Livre', de: 'Buch', it: 'Libro', pt: 'Livro', ru: 'Книга', zh: '书', ja: '本', ko: '책', ar: 'كتاب', ur: 'کتاب', hi: 'किताब', te: 'పుస్తకం', bn: 'বই', fa: 'کتاب', tr: 'Kitap' },
+            'School': { es: 'Escuela', fr: 'École', de: 'Schule', it: 'Scuola', pt: 'Escola', ru: 'Школа', zh: '学校', ja: '学校', ko: '학교', ar: 'مدرسة', ur: 'اسکول', hi: 'स्कूल', te: 'పాఠశాల', bn: 'স্কুল', fa: 'مدرسه', tr: 'Okul' },
+            'Red': { es: 'Rojo', fr: 'Rouge', de: 'Rot', it: 'Rosso', pt: 'Vermelho', ru: 'Красный', zh: '红色', ja: '赤', ko: '빨간색', ar: 'أحمر', ur: 'لال', hi: 'लाल', te: 'ఎరుపు', bn: 'লাল', fa: 'قرمز', tr: 'Kırmızı' },
+            'Blue': { es: 'Azul', fr: 'Bleu', de: 'Blau', it: 'Blu', pt: 'Azul', ru: 'Синий', zh: '蓝色', ja: '青', ko: '파란색', ar: 'أزرق', ur: 'نیلا', hi: 'नीला', te: 'నీలం', bn: 'নীল', fa: 'آبی', tr: 'Mavi' },
+            'One': { es: 'Uno', fr: 'Un', de: 'Eins', it: 'Uno', pt: 'Um', ru: 'Один', zh: '一', ja: '一', ko: '하나', ar: 'واحد', ur: 'ایک', hi: 'एक', te: 'ఒకటి', bn: 'এক', fa: 'یک', tr: 'Bir' }
+        };
+
+        // Romanization for Arabic and Urdu
+        const ROMANIZATION = {
+            ar: {
+                'مرحبا': 'Marhaba',
+                'شكرا': 'Shukran',
+                'مع السلامة': 'Ma\'a salama',
+                'من فضلك': 'Min fadlak',
+                'نعم': 'Na\'am',
+                'لا': 'La',
+                'ماء': 'Maa',
+                'طعام': 'Ta\'am',
+                'صديق': 'Sadeeq',
+                'عائلة': 'Aa\'ila',
+                'بيت': 'Bayt',
+                'كتاب': 'Kitab',
+                'مدرسة': 'Madrasa',
+                'أحمر': 'Ahmar',
+                'أزرق': 'Azraq',
+                'واحد': 'Wahid'
+            },
+            ur: {
+                'السلام علیکم': 'Assalam alaikum',
+                'شکریہ': 'Shukriya',
+                'خدا حافظ': 'Khuda hafiz',
+                'برائے مہربانی': 'Barae meherbani',
+                'جی ہاں': 'Ji haan',
+                'نہیں': 'Nahin',
+                'پانی': 'Pani',
+                'کھانا': 'Khana',
+                'دوست': 'Dost',
+                'خاندان': 'Khandaan',
+                'گھر': 'Ghar',
+                'کتاب': 'Kitab',
+                'اسکول': 'School',
+                'لال': 'Laal',
+                'نیلا': 'Neela',
+                'ایک': 'Aik'
+            }
+        };
+
+        // Helper function to add romanization
+        function addRomanization(text, langCode) {
+            if (langCode === 'ar' || langCode === 'ur') {
+                const roman = ROMANIZATION[langCode][text];
+                return roman ? `${text} (${roman})` : text;
+            }
+            return text;
         }
 
-        // Game Functions
-        function startGame(game) {
-            if (game === 'quiz') {
-                showQuizGame();
-            } else if (game === 'flashcards') {
-                showFlashcards();
-            } else {
-                showToast(`${game} game coming soon! Quiz and Flashcards are ready now.`);
+        // Kids Videos Database
+        const KIDS_VIDEOS = [
+            {
+                title: "Omar & Hana - Islamic Cartoons",
+                description: "Fun Islamic lessons with songs and stories",
+                age: "3-8 years",
+                duration: "5-10 min",
+                language: "English/Arabic",
+                emoji: "🌙",
+                gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                channel: "Omar Hana Official",
+                topics: "Islamic values, Duas, Good manners"
+            },
+            {
+                title: "Zaky & Friends",
+                description: "Educational Islamic cartoons teaching manners",
+                age: "3-10 years",
+                duration: "10-15 min",
+                language: "English",
+                emoji: "🧸",
+                gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                channel: "One4Kids TV",
+                topics: "Faith, Kindness, Sharing"
+            },
+            {
+                title: "Dora the Explorer - Spanish",
+                description: "Learn Spanish through fun adventures",
+                age: "3-7 years",
+                duration: "20 min",
+                language: "Spanish/English",
+                emoji: "🎒",
+                gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+                channel: "Dora Official",
+                topics: "Spanish words, Numbers, Colors"
+            },
+            {
+                title: "Peppa Pig - Multiple Languages",
+                description: "Simple language learning for young kids",
+                age: "2-6 years",
+                duration: "5 min",
+                language: "Multiple",
+                emoji: "🐷",
+                gradient: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+                channel: "Peppa Pig Official",
+                topics: "Family, Friends, Daily activities"
+            },
+            {
+                title: "Adam's World",
+                description: "Islamic stories and lessons for children",
+                age: "5-12 years",
+                duration: "15-20 min",
+                language: "English",
+                emoji: "🌟",
+                gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+                channel: "Sound Vision",
+                topics: "Prophets, Islamic history, Values"
+            },
+            {
+                title: "Little Muslims TV",
+                description: "Quran, Duas, and Islamic values",
+                age: "3-10 years",
+                duration: "5-15 min",
+                language: "English/Arabic",
+                emoji: "📖",
+                gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                channel: "Little Muslims",
+                topics: "Quran, Prayer, Islamic teachings"
+            },
+            {
+                title: "Pocoyo - Learn Languages",
+                description: "Fun cartoons in multiple languages",
+                age: "2-5 years",
+                duration: "7 min",
+                language: "Multiple",
+                emoji: "🎨",
+                gradient: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+                channel: "Pocoyo English",
+                topics: "Colors, Shapes, Basic words"
+            },
+            {
+                title: "Nurul & Hasan Stories",
+                description: "Beautiful Islamic stories with morals",
+                age: "5-12 years",
+                duration: "10-15 min",
+                language: "English",
+                emoji: "🕌",
+                gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+                channel: "Islamic Kids Stories",
+                topics: "Morals, Kindness, Faith"
+            }
+        ];
+
+        // Kids Audio Database
+        const KIDS_AUDIO = [
+            {
+                title: "Bedtime Quran Stories",
+                description: "Gentle Quranic stories told with calming voice",
+                age: "3-10 years",
+                duration: "10-20 min",
+                mood: "Calming",
+                emoji: "🌙",
+                gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                topics: "Prophets, Islamic lessons, Peace"
+            },
+            {
+                title: "Arabic Alphabet Songs",
+                description: "Learn Arabic letters with gentle melodies",
+                age: "3-8 years",
+                duration: "5-10 min",
+                mood: "Upbeat but calm",
+                emoji: "🔤",
+                gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                topics: "Arabic alphabet, Pronunciation, Songs"
+            },
+            {
+                title: "Spanish for Kids - Audio Lessons",
+                description: "Relaxing Spanish lessons with nature sounds",
+                age: "5-12 years",
+                duration: "15 min",
+                mood: "Peaceful",
+                emoji: "🇪🇸",
+                gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+                topics: "Spanish words, Phrases, Culture"
+            },
+            {
+                title: "Islamic Duas for Children",
+                description: "Daily duas recited slowly and clearly",
+                age: "3-12 years",
+                duration: "10-15 min",
+                mood: "Serene",
+                emoji: "🤲",
+                gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+                topics: "Daily prayers, Morning/evening duas"
+            },
+            {
+                title: "World Fairy Tales (Multiple Languages)",
+                description: "Classic stories in English, Spanish, French",
+                age: "4-10 years",
+                duration: "15-25 min",
+                mood: "Engaging but calm",
+                emoji: "📚",
+                gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                topics: "Stories, Morals, Vocabulary"
+            },
+            {
+                title: "Nature Sounds with Language Learning",
+                description: "Learn vocabulary with peaceful nature backgrounds",
+                age: "3-8 years",
+                duration: "10-20 min",
+                mood: "Very calming",
+                emoji: "🌿",
+                gradient: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+                topics: "Animals, Nature, Relaxation"
+            },
+            {
+                title: "French Lullabies & Songs",
+                description: "Gentle French songs perfect for quiet time",
+                age: "2-8 years",
+                duration: "20-30 min",
+                mood: "Soothing",
+                emoji: "🎵",
+                gradient: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+                topics: "French language, Music, Sleep"
+            },
+            {
+                title: "Islamic History Audio Stories",
+                description: "Engaging stories about companions and prophets",
+                age: "7-12 years",
+                duration: "20-30 min",
+                mood: "Inspiring",
+                emoji: "📿",
+                gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+                topics: "History, Faith, Role models"
+            }
+        ];
+
+        // Adult Videos Database  
+        const ADULT_VIDEOS = {
+            language: [
+                {
+                    title: "Learn Spanish - Complete Beginner Course",
+                    description: "Structured lessons from zero to conversational",
+                    level: "Beginner",
+                    duration: "15-20 min/lesson",
+                    emoji: "🇪🇸",
+                    gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                    channel: "SpanishDict / Butterfly Spanish"
+                },
+                {
+                    title: "Arabic for Beginners",
+                    description: "Modern Standard Arabic with native speakers",
+                    level: "Beginner",
+                    duration: "10-15 min",
+                    emoji: "🇸🇦",
+                    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    channel: "ArabicPod101"
+                },
+                {
+                    title: "French Conversation Practice",
+                    description: "Real-life French dialogues and situations",
+                    level: "Intermediate",
+                    duration: "20-30 min",
+                    emoji: "🇫🇷",
+                    gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                    channel: "Learn French with Alexa"
+                },
+                {
+                    title: "Urdu Language Course",
+                    description: "Complete Urdu from basics to fluency",
+                    level: "Beginner",
+                    duration: "15-20 min",
+                    emoji: "🇵🇰",
+                    gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+                    channel: "UrduPod101"
+                },
+                {
+                    title: "Quranic Arabic Intensive",
+                    description: "Understand Quran through Arabic grammar",
+                    level: "Intermediate",
+                    duration: "25-35 min",
+                    emoji: "📖",
+                    gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+                    channel: "Bayyinah Institute / Arabic101"
+                },
+                {
+                    title: "German Language Basics",
+                    description: "Essential German for beginners",
+                    level: "Beginner",
+                    duration: "15-20 min",
+                    emoji: "🇩🇪",
+                    gradient: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+                    channel: "Easy German"
+                }
+            ],
+            islamic: [
+                {
+                    title: "Stories of the Prophets",
+                    description: "Detailed series on prophets in Islam",
+                    level: "All ages",
+                    duration: "30-45 min",
+                    emoji: "🕌",
+                    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    channel: "Free Quran Education"
+                },
+                {
+                    title: "Mufti Menk - Inspirational Lectures",
+                    description: "Faith, life lessons, and Islamic guidance",
+                    level: "Teens/Adults",
+                    duration: "20-60 min",
+                    emoji: "🎙️",
+                    gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+                    channel: "Mufti Menk Official"
+                },
+                {
+                    title: "Tajweed Rules Explained",
+                    description: "Master Quran recitation step by step",
+                    level: "All levels",
+                    duration: "15-25 min",
+                    emoji: "📿",
+                    gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                    channel: "Tajweed Made Easy"
+                },
+                {
+                    title: "Islamic History & Civilization",
+                    description: "Golden age of Islam and contributions",
+                    level: "Teens/Adults",
+                    duration: "30-50 min",
+                    emoji: "🏛️",
+                    gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+                    channel: "Islamic History Series"
+                },
+                {
+                    title: "Nouman Ali Khan - Quran Tafsir",
+                    description: "Deep insights into Quranic verses",
+                    level: "Adults",
+                    duration: "30-90 min",
+                    emoji: "📚",
+                    gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+                    channel: "Bayyinah TV"
+                }
+            ],
+            inspiration: [
+                {
+                    title: "Islamic Motivation - Overcome Challenges",
+                    description: "Inspirational talks on perseverance",
+                    level: "All ages",
+                    duration: "10-20 min",
+                    emoji: "💪",
+                    gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                    channel: "Merciful Servant"
+                },
+                {
+                    title: "Success in Both Worlds",
+                    description: "Balance dunya and akhirah",
+                    level: "Teens/Adults",
+                    duration: "20-30 min",
+                    emoji: "⚖️",
+                    gradient: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+                    channel: "One Islam Productions"
+                },
+                {
+                    title: "Purpose of Life - Islamic Perspective",
+                    description: "Finding meaning through faith",
+                    level: "Adults",
+                    duration: "30-45 min",
+                    emoji: "🎯",
+                    gradient: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+                    channel: "The Daily Reminder"
+                }
+            ]
+        };
+
+        // Initialize Kids Videos
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... existing code ...
+            
+            // Load Kids Videos
+            const kidsVideosGrid = document.getElementById('kidsVideosGrid');
+            if (kidsVideosGrid) {
+                kidsVideosGrid.innerHTML = KIDS_VIDEOS.map((video, index) => `
+                    <div class="card kids-video-card" data-video-index="${index}" style="background: ${video.gradient}; color: white; cursor: pointer;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">${video.emoji}</div>
+                        <h3 class="card-title" style="color: white;">${video.title}</h3>
+                        <p style="margin: 0.5rem 0; opacity: 0.95;"><strong>Age:</strong> ${video.age}</p>
+                        <p style="margin: 0.5rem 0; opacity: 0.95;"><strong>Duration:</strong> ${video.duration}</p>
+                        <p style="margin: 0.5rem 0; opacity: 0.95;"><strong>Language:</strong> ${video.language}</p>
+                        <p class="card-description" style="color: rgba(255,255,255,0.95); margin-top: 1rem;">${video.description}</p>
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.2); border-radius: 8px; font-size: 0.9rem;">
+                            📺 Topics: ${video.topics}
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Add click handlers
+                document.querySelectorAll('.kids-video-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.videoIndex);
+                        const video = KIDS_VIDEOS[index];
+                        playKidsVideo(video.title, video.channel);
+                    });
+                });
+            }
+
+            // Load Kids Audio
+            const kidsAudioGrid = document.getElementById('kidsAudioGrid');
+            if (kidsAudioGrid) {
+                kidsAudioGrid.innerHTML = KIDS_AUDIO.map((audio, index) => `
+                    <div class="card kids-audio-card" data-audio-index="${index}" style="background: ${audio.gradient}; color: white; cursor: pointer;">
+                        <div style="font-size: 3.5rem; margin-bottom: 1rem;">${audio.emoji}</div>
+                        <h3 class="card-title" style="color: white;">${audio.title}</h3>
+                        <p style="margin: 0.5rem 0; opacity: 0.95;"><strong>Age:</strong> ${audio.age}</p>
+                        <p style="margin: 0.5rem 0; opacity: 0.95;"><strong>Duration:</strong> ${audio.duration}</p>
+                        <p style="margin: 0.5rem 0; opacity: 0.95;"><strong>Mood:</strong> ${audio.mood}</p>
+                        <p class="card-description" style="color: rgba(255,255,255,0.95); margin-top: 1rem;">${audio.description}</p>
+                        <button class="mode-btn" style="margin-top: 1rem; width: 100%; background: rgba(255,255,255,0.3); color: white; border: 2px solid white;" onmouseover="this.style.background='rgba(255,255,255,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.3)'">
+                            🎧 Listen Now
+                        </button>
+                    </div>
+                `).join('');
+                
+                // Add click handlers
+                document.querySelectorAll('.kids-audio-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.audioIndex);
+                        const audio = KIDS_AUDIO[index];
+                        playKidsAudio(audio.title);
+                    });
+                });
+            }
+
+            // Load Adult Videos (initially all)
+            loadAdultVideos('all');
+        });
+
+        // Kids Video Player
+        // Kids Video Player
+        function playKidsVideo(title, channel) {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'kidsVideoModal';
+            
+            const searchQuery = title + ' ' + channel;
+            const youtubeUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
+            
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <h3 class="modal-title">📺 ${title}</h3>
+                    <div style="background: #f1f5f9; padding: 2rem; border-radius: 12px; text-align: center; margin: 2rem 0;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🎬</div>
+                        <p style="color: #64748b; font-size: 1.1rem; margin-bottom: 1rem;">To watch this video, search for:</p>
+                        <div style="background: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <strong style="color: #1e293b; font-size: 1.2rem;">"${title}"</strong>
+                        </div>
+                        <p style="color: #64748b;">on <strong>${channel}</strong> YouTube channel</p>
+                    </div>
+                    <div style="background: #fef3c7; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <p style="color: #92400e;"><strong>👨‍👩‍👧 Parent Tip:</strong> We recommend watching together with your child for the best learning experience!</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" id="openYoutubeBtn">
+                            Open on YouTube
+                        </button>
+                        <button class="modal-btn secondary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add click handler after modal is in DOM
+            document.getElementById('openYoutubeBtn').addEventListener('click', function() {
+                window.open(youtubeUrl, '_blank');
+                showToast('Opening on YouTube...');
+            });
+        }
+
+        // Kids Audio Player
+        function playKidsAudio(title) {
+            showToast(`🎧 ${title} - Search on YouTube or Spotify for kids' audio content!`);
+        }
+
+        // Adult Videos Filter
+        function filterVideos(category) {
+            // Update active button
+            document.querySelectorAll('[id^="filter-"]').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`filter-${category}`).classList.add('active');
+            
+            // Load videos
+            loadAdultVideos(category);
+        }
+
+        function loadAdultVideos(category) {
+            const grid = document.getElementById('videoGrid');
+            if (!grid) return;
+
+            let videos = [];
+            if (category === 'all') {
+                videos = [...ADULT_VIDEOS.language, ...ADULT_VIDEOS.islamic, ...ADULT_VIDEOS.inspiration];
+            } else if (ADULT_VIDEOS[category]) {
+                videos = ADULT_VIDEOS[category];
+            }
+
+            grid.innerHTML = videos.map((video, index) => `
+                <div class="card adult-video-card" data-video-title="${video.title.replace(/"/g, '&quot;')}" data-video-channel="${video.channel}" style="background: ${video.gradient}; color: white; cursor: pointer;">
+                    <div style="font-size: 3.5rem; margin-bottom: 1rem;">${video.emoji}</div>
+                    <h3 class="card-title" style="color: white;">${video.title}</h3>
+                    <p style="margin: 0.5rem 0; opacity: 0.95;"><strong>Level:</strong> ${video.level}</p>
+                    <p style="margin: 0.5rem 0; opacity: 0.95;"><strong>Duration:</strong> ${video.duration}</p>
+                    <p class="card-description" style="color: rgba(255,255,255,0.95); margin-top: 1rem;">${video.description}</p>
+                    <button class="mode-btn" style="margin-top: 1rem; width: 100%; background: white; color: #667eea;">
+                        Watch Now →
+                    </button>
+                </div>
+            `).join('');
+            
+            // Add click handlers
+            document.querySelectorAll('.adult-video-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.dataset.videoTitle;
+                    const channel = this.dataset.videoChannel;
+                    playAdultVideo(title, channel);
+                });
+            });
+        }
+
+        // Adult Video Player
+        function playAdultVideo(title, channel) {
+            window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(title + ' ' + channel)}`, '_blank');
+            showToast(`Opening "${title}" on YouTube...`);
+        }
+
+        // Kids Zone Activities
+        function showKidsActivity(activityType) {
+            const activities = {
+                'colors': {
+                    title: '🎨 Color & Learn',
+                    subtitle: 'Learn colors in different languages!',
+                    content: generateColorsActivity
+                },
+                'animals': {
+                    title: '🦁 Animal Friends',
+                    subtitle: 'Discover animals around the world!',
+                    content: generateAnimalsActivity
+                },
+                'alphabet': {
+                    title: '🔤 Alphabet Adventure',
+                    subtitle: 'Learn letters and sounds!',
+                    content: generateAlphabetActivity
+                },
+                'songs': {
+                    title: '🎵 Sing Along',
+                    subtitle: 'Fun songs in many languages!',
+                    content: generateSongsActivity
+                },
+                'family': {
+                    title: '👨‍👩‍👧‍👦 My Family',
+                    subtitle: 'Learn family words!',
+                    content: generateFamilyActivity
+                },
+                'rewards': {
+                    title: '⭐ Your Rewards',
+                    subtitle: 'See your stars and badges!',
+                    content: generateRewardsActivity
+                }
+            };
+
+            const activity = activities[activityType];
+            if (!activity) return;
+
+            // Remove existing modal if any
+            const existing = document.getElementById('kidsActivityModal');
+            if (existing) existing.remove();
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'kidsActivityModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px; position: relative;">
+                    <button id="closeModalBtn" style="position: absolute; top: 1rem; right: 1rem; background: #ef4444; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.3s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
+                        ×
+                    </button>
+                    <h3 class="modal-title">${activity.title}</h3>
+                    <p style="color: #64748b; margin-bottom: 2rem; font-size: 1.1rem;">${activity.subtitle}</p>
+                    ${activity.content()}
+                    <div class="modal-actions" style="margin-top: 2rem;">
+                        <button class="modal-btn secondary" id="closeBottomBtn">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add event listeners
+            setTimeout(() => {
+                const closeModalBtn = document.getElementById('closeModalBtn');
+                const closeBottomBtn = document.getElementById('closeBottomBtn');
+                
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', function() {
+                        modal.remove();
+                    });
+                }
+                
+                if (closeBottomBtn) {
+                    closeBottomBtn.addEventListener('click', function() {
+                        modal.remove();
+                    });
+                }
+            }, 0);
+        }
+
+        function generateColorsActivity() {
+            const colors = [
+                { name: 'Red', hex: '#ef4444', emoji: '❤️', es: 'Rojo', fr: 'Rouge', ar: 'أحمر' },
+                { name: 'Blue', hex: '#3b82f6', emoji: '💙', es: 'Azul', fr: 'Bleu', ar: 'أزرق' },
+                { name: 'Yellow', hex: '#eab308', emoji: '💛', es: 'Amarillo', fr: 'Jaune', ar: 'أصفر' },
+                { name: 'Green', hex: '#22c55e', emoji: '💚', es: 'Verde', fr: 'Vert', ar: 'أخضر' },
+                { name: 'Orange', hex: '#f97316', emoji: '🧡', es: 'Naranja', fr: 'Orange', ar: 'برتقالي' },
+                { name: 'Purple', hex: '#a855f7', emoji: '💜', es: 'Morado', fr: 'Violet', ar: 'بنفسجي' }
+            ];
+
+            return `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    ${colors.map(color => `
+                        <div onclick="playColorAudio('${color.name}')" style="background: ${color.hex}; color: white; padding: 2rem; border-radius: 16px; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">${color.emoji}</div>
+                            <div style="font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem;">${color.name}</div>
+                            <div style="font-size: 0.9rem; opacity: 0.95;">
+                                🇪🇸 ${color.es}<br>
+                                🇫🇷 ${color.fr}<br>
+                                🇸🇦 ${addRomanization(color.ar, 'ar')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <p style="text-align: center; margin-top: 1.5rem; color: #64748b;">Click any color to hear it pronounced! 🔊</p>
+            `;
+        }
+
+        function generateAnimalsActivity() {
+            const animals = [
+                { name: 'Lion', emoji: '🦁', sound: 'Roar!', es: 'León', fr: 'Lion', ar: 'أسد' },
+                { name: 'Cat', emoji: '🐱', sound: 'Meow!', es: 'Gato', fr: 'Chat', ar: 'قطة' },
+                { name: 'Dog', emoji: '🐕', sound: 'Woof!', es: 'Perro', fr: 'Chien', ar: 'كلب' },
+                { name: 'Bird', emoji: '🐦', sound: 'Tweet!', es: 'Pájaro', fr: 'Oiseau', ar: 'طائر' },
+                { name: 'Fish', emoji: '🐟', sound: 'Blub!', es: 'Pez', fr: 'Poisson', ar: 'سمكة' },
+                { name: 'Elephant', emoji: '🐘', sound: 'Trumpet!', es: 'Elefante', fr: 'Éléphant', ar: 'فيل' }
+            ];
+
+            return `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    ${animals.map(animal => `
+                        <div onclick="showToast('${animal.sound}')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 16px; text-align: center; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1) rotate(5deg)'" onmouseout="this.style.transform='scale(1) rotate(0deg)'">
+                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">${animal.emoji}</div>
+                            <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem;">${animal.name}</div>
+                            <div style="font-size: 0.85rem; opacity: 0.95; line-height: 1.6;">
+                                🇪🇸 ${animal.es}<br>
+                                🇫🇷 ${animal.fr}<br>
+                                🇸🇦 ${addRomanization(animal.ar, 'ar')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <p style="text-align: center; margin-top: 1.5rem; color: #64748b;">Click any animal to hear their sound! 🎵</p>
+            `;
+        }
+
+        function generateAlphabetActivity() {
+            return `
+                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 2rem; border-radius: 16px; text-align: center; margin-bottom: 2rem;">
+                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">🔤 Choose Your Language</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+                        ${['Spanish 🇪🇸', 'French 🇫🇷', 'Arabic 🇸🇦', 'German 🇩🇪', 'Italian 🇮🇹', 'Urdu 🇵🇰'].map(lang => `
+                            <button class="mode-btn" onclick="showToast('Learning ${lang} alphabet!')" style="background: white; color: #00f2fe; padding: 1rem;">
+                                ${lang}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+                <div style="text-align: center; padding: 2rem; background: #f1f5f9; border-radius: 12px;">
+                    <p style="font-size: 1.1rem; color: #64748b; margin-bottom: 1rem;">Practice writing letters with interactive games!</p>
+                    <p style="color: #94a3b8;">Coming soon: Interactive letter tracing and pronunciation!</p>
+                </div>
+            `;
+        }
+
+        function generateSongsActivity() {
+            const songs = [
+                { title: 'Hello Song', emoji: '👋', languages: 'Spanish, French, Arabic' },
+                { title: 'Number Song', emoji: '🔢', languages: 'Count 1-10 in any language' },
+                { title: 'Colors Rainbow', emoji: '🌈', languages: 'Learn colors through music' },
+                { title: 'Family Song', emoji: '👨‍👩‍👧', languages: 'Mom, Dad, Sister, Brother' }
+            ];
+
+            return `
+                <div style="display: grid; gap: 1.5rem;">
+                    ${songs.map(song => `
+                        <div onclick="showToast('🎵 Playing ${song.title}!')" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 1.5rem; border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 1.5rem; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(10px)'" onmouseout="this.style.transform='translateX(0)'">
+                            <div style="font-size: 3rem;">${song.emoji}</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;">${song.title}</div>
+                                <div style="opacity: 0.95;">${song.languages}</div>
+                            </div>
+                            <div style="font-size: 2rem;">▶️</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: #fef3c7; border-radius: 12px;">
+                    <p style="color: #92400e; font-weight: 600;">🎤 Coming soon: Sing along with lyrics and animations!</p>
+                </div>
+            `;
+        }
+
+        function generateFamilyActivity() {
+            const familyWords = {
+                'Mother': { emoji: '👩', es: 'Madre', fr: 'Mère', ar: 'أم', ur: 'ماں' },
+                'Father': { emoji: '👨', es: 'Padre', fr: 'Père', ar: 'أب', ur: 'والد' },
+                'Sister': { emoji: '👧', es: 'Hermana', fr: 'Sœur', ar: 'أخت', ur: 'بہن' },
+                'Brother': { emoji: '👦', es: 'Hermano', fr: 'Frère', ar: 'أخ', ur: 'بھائی' }
+            };
+
+            return `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    ${Object.entries(familyWords).map(([eng, data]) => `
+                        <div style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white; padding: 2rem; border-radius: 16px; text-align: center;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">${data.emoji}</div>
+                            <div style="font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem;">${eng}</div>
+                            <div style="font-size: 1rem; line-height: 1.8; opacity: 0.95;">
+                                🇪🇸 ${data.es}<br>
+                                🇫🇷 ${data.fr}<br>
+                                🇸🇦 ${addRomanization(data.ar, 'ar')}<br>
+                                🇵🇰 ${addRomanization(data.ur, 'ur')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function generateRewardsActivity() {
+            return `
+                <div style="text-align: center;">
+                    <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: white; padding: 3rem; border-radius: 20px; margin-bottom: 2rem;">
+                        <div style="font-size: 5rem; margin-bottom: 1rem;">🏆</div>
+                        <h3 style="font-size: 2rem; margin-bottom: 1rem;">Great Job!</h3>
+                        <p style="font-size: 1.2rem; opacity: 0.95;">Keep learning to earn more rewards!</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        ${['⭐', '🌟', '✨', '💫', '🎖️', '🏅'].map(badge => `
+                            <div style="background: #f1f5f9; padding: 2rem; border-radius: 12px; font-size: 3rem;">
+                                ${badge}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: #e0e7ff; border-radius: 12px;">
+                        <p style="color: #4338ca; font-weight: 600;">🎯 Complete activities to unlock special badges!</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function playColorAudio(colorName) {
+            showToast(`🔊 ${colorName}!`);
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(colorName);
+                utterance.rate = 0.7;
+                window.speechSynthesis.speak(utterance);
             }
         }
 
-        // Quiz Game Implementation
+        // Audio Pronunciation Lessons
+        function showAudioLesson(langKey, langName) {
+            const langCode = LANGUAGES_DATA[langKey].code;
+            const phrases = Object.entries(UNIVERSAL_VOCAB).slice(0, 10);
+            let currentPhrase = 0;
+            
+            // Remove existing modal if any
+            const existing = document.getElementById('audioLessonModal');
+            if (existing) existing.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'audioLessonModal';
+            
+            function playCurrentAudio() {
+                const [english, translations] = phrases[currentPhrase];
+                const translation = translations[langCode];
+                
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(translation);
+                    
+                    // Map language codes to speech synthesis codes
+                    const speechLangMap = {
+                        'es': 'es-ES', 'fr': 'fr-FR', 'de': 'de-DE', 'it': 'it-IT',
+                        'pt': 'pt-PT', 'ru': 'ru-RU', 'zh': 'zh-CN', 'ja': 'ja-JP',
+                        'ko': 'ko-KR', 'ar': 'ar-SA', 'ur': 'ur-PK', 'hi': 'hi-IN',
+                        'te': 'te-IN', 'bn': 'bn-IN', 'fa': 'fa-IR', 'tr': 'tr-TR'
+                    };
+                    
+                    utterance.lang = speechLangMap[langCode] || 'en-US';
+                    utterance.rate = 0.7; // Slower for learning
+                    utterance.pitch = 1;
+                    
+                    // Stop any ongoing speech
+                    window.speechSynthesis.cancel();
+                    
+                    // Try to speak
+                    utterance.onerror = function(event) {
+                        if (event.error === 'not-allowed' || event.error === 'language-unavailable') {
+                            showToast(`⚠️ ${langName} voice not available. Text-to-speech may not support this language on your device.`);
+                        } else {
+                            showToast('⚠️ Audio playback failed. Try Chrome or Edge for better language support.');
+                        }
+                    };
+                    
+                    utterance.onstart = function() {
+                        showToast(`🔊 Playing ${langName}...`);
+                    };
+                    
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    showToast('⚠️ Audio not supported in your browser. Try Chrome or Edge.');
+                }
+            }
+            
+            function updatePhrase() {
+                const [english, translations] = phrases[currentPhrase];
+                const translation = translations[langCode];
+                const displayText = addRomanization(translation, langCode);
+                
+                modal.innerHTML = `
+                    <div class="modal-content" style="max-width: 650px; position: relative;">
+                        <button id="closeAudioModalBtn" style="position: absolute; top: 1rem; right: 1rem; background: #ef4444; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.3s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
+                            ×
+                        </button>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-right: 3rem;">
+                            <h3 class="modal-title">🎧 ${langName} Pronunciation</h3>
+                            <div style="background: var(--gradient-1); color: white; padding: 0.5rem 1rem; border-radius: 8px;">
+                                ${currentPhrase + 1} / ${phrases.length}
+                            </div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 20px; text-align: center; margin-bottom: 2rem;">
+                            <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">English:</div>
+                            <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 2rem;">${english}</div>
+                            
+                            <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">${langName}:</div>
+                            <div style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem; line-height: 1.4;">${displayText}</div>
+                            
+                            <button id="playAudioBtn" style="background: rgba(255,255,255,0.2); border: 2px solid white; color: white; padding: 1rem 2rem; border-radius: 12px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; font-weight: 600; margin-top: 1rem;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                                🔊 Play Audio
+                            </button>
+                        </div>
+                        
+                        <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem; color: #1e293b;">💡 Tips for Better Pronunciation:</h4>
+                            <ul style="margin-left: 1.5rem; color: #64748b; line-height: 1.8;">
+                                <li>Listen to the audio multiple times</li>
+                                <li>Repeat out loud after each play</li>
+                                <li>Focus on the stress and intonation</li>
+                                <li>Practice slowly, then speed up</li>
+                            </ul>
+                        </div>
+                        
+                        ${langCode === 'ar' || langCode === 'ur' ? `
+                        <div style="background: #fef3c7; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <p style="color: #92400e;"><strong>ℹ️ Note:</strong> Some browsers may have limited support for Arabic/Urdu text-to-speech. For best results, use Google Chrome on desktop or Android.</p>
+                        </div>
+                        ` : ''}
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <button id="prevBtn" class="modal-btn secondary" ${currentPhrase === 0 ? 'disabled' : ''}>
+                                ← Previous
+                            </button>
+                            <button id="nextBtn" class="modal-btn primary" ${currentPhrase === phrases.length - 1 ? 'disabled' : ''}>
+                                Next →
+                            </button>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="modal-btn secondary" id="closeBtn">Exit Lessons</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listeners after HTML is set
+                setTimeout(() => {
+                    const playBtn = document.getElementById('playAudioBtn');
+                    const prevBtn = document.getElementById('prevBtn');
+                    const nextBtn = document.getElementById('nextBtn');
+                    const closeBtn = document.getElementById('closeBtn');
+                    const closeAudioModalBtn = document.getElementById('closeAudioModalBtn');
+                    
+                    if (playBtn) playBtn.addEventListener('click', playCurrentAudio);
+                    if (prevBtn && currentPhrase > 0) {
+                        prevBtn.addEventListener('click', function() {
+                            currentPhrase--;
+                            updatePhrase();
+                        });
+                    }
+                    if (nextBtn && currentPhrase < phrases.length - 1) {
+                        nextBtn.addEventListener('click', function() {
+                            currentPhrase++;
+                            updatePhrase();
+                        });
+                    }
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', function() {
+                            window.speechSynthesis.cancel(); // Stop any playing audio
+                            modal.remove();
+                        });
+                    }
+                    if (closeAudioModalBtn) {
+                        closeAudioModalBtn.addEventListener('click', function() {
+                            window.speechSynthesis.cancel(); // Stop any playing audio
+                            modal.remove();
+                        });
+                    }
+                }, 0);
+            }
+            
+            document.body.appendChild(modal);
+            updatePhrase();
+        }
+
+        function startGame(game) {
+            const gameImplementations = {
+                'quiz': showQuizGame,
+                'flashcards': showFlashcardsGame,
+                'matching': showMatchingGame,
+                'fillblank': showFillBlankGame,
+                'scramble': showScrambleGame,
+                'memory': showMemoryGame,
+                'typeracer': showTypeRacerGame,
+                'audio': showAudioGame,
+                'builder': showSentenceBuilderGame,
+                'story': showStoryGame
+            };
+
+            const gameFunc = gameImplementations[game];
+            if (gameFunc) {
+                gameFunc();
+            } else {
+                showToast(`Game not found!`);
+            }
+        }
+
+        // 1. Flashcards Game - ALL 16 LANGUAGES
+        function showFlashcardsGame() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'flashcardModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <h3 class="modal-title">🎴 Flashcards - Choose Language</h3>
+                    <p style="color: #64748b; margin-bottom: 1.5rem;">15 vocabulary cards per language</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0;">
+                        ${Object.entries(LANGUAGES_DATA).map(([key, lang]) => `
+                            <button class="mode-btn" onclick="startFlashcardSet('${key}', '${lang.name} ${lang.flag}')" style="padding: 1.5rem;">
+                                ${lang.flag}<br><small>${lang.name}</small>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            window.startFlashcardSet = function(langKey, langName) {
+                const langCode = LANGUAGES_DATA[langKey].code;
+                const cards = Object.entries(UNIVERSAL_VOCAB).map(([eng, translations]) => ({
+                    front: eng,
+                    back: addRomanization(translations[langCode], langCode)
+                }));
+                
+                let currentCard = 0;
+                let flipped = false;
+
+                function showCard() {
+                    const card = cards[currentCard];
+                    const modal = document.getElementById('flashcardModal');
+                    modal.innerHTML = `
+                        <div class="modal-content" style="max-width: 600px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3 class="modal-title">🎴 ${langName} Flashcards</h3>
+                                <div style="background: var(--gradient-1); color: white; padding: 0.5rem 1rem; border-radius: 8px;">
+                                    ${currentCard + 1} / ${cards.length}
+                                </div>
+                            </div>
+                            
+                            <div onclick="flipCard()" style="background: var(--gradient-1); color: white; min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; cursor: pointer; font-size: ${flipped && (langCode === 'ar' || langCode === 'ur') ? '1.5rem' : '2rem'}; font-weight: 700; text-align: center; padding: 3rem; transition: all 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.2); line-height: 1.5;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                                <div id="cardContent">${flipped ? card.back : card.front}</div>
+                            </div>
+                            
+                            <p style="text-align: center; color: #64748b; margin-top: 1rem;">Click card to flip • Arrow keys to navigate</p>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
+                                <button class="modal-btn secondary" onclick="prevCard()" ${currentCard === 0 ? 'disabled' : ''}>
+                                    ← Previous
+                                </button>
+                                <button class="modal-btn primary" onclick="nextCard()" ${currentCard === cards.length - 1 ? 'disabled' : ''}>
+                                    Next →
+                                </button>
+                            </div>
+                            
+                            <div class="modal-actions" style="margin-top: 1rem;">
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove(); showFlashcardsGame();">← Change Language</button>
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove();">✕ Exit Game</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                window.flipCard = function() {
+                    flipped = !flipped;
+                    const card = cards[currentCard];
+                    document.getElementById('cardContent').textContent = flipped ? card.back : card.front;
+                };
+
+                window.nextCard = function() {
+                    if (currentCard < cards.length - 1) {
+                        currentCard++;
+                        flipped = false;
+                        showCard();
+                    }
+                };
+
+                window.prevCard = function() {
+                    if (currentCard > 0) {
+                        currentCard--;
+                        flipped = false;
+                        showCard();
+                    }
+                };
+
+                // Keyboard navigation
+                document.addEventListener('keydown', function(e) {
+                    if (document.getElementById('flashcardModal')) {
+                        if (e.key === 'ArrowRight') nextCard();
+                        if (e.key === 'ArrowLeft') prevCard();
+                        if (e.key === ' ') { e.preventDefault(); flipCard(); }
+                    }
+                });
+
+                showCard();
+            };
+        }
+
+        // 2. Matching Game - ALL 16 LANGUAGES
+        function showMatchingGame() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <h3 class="modal-title">🎯 Matching Game - Choose Language</h3>
+                    <p style="color: #64748b; margin-bottom: 1.5rem;">Match 6 word pairs</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0;">
+                        ${Object.entries(LANGUAGES_DATA).map(([key, lang]) => `
+                            <button class="mode-btn" onclick="startMatchingSet('${key}', '${lang.name} ${lang.flag}')" style="padding: 1.5rem;">
+                                ${lang.flag}<br><small>${lang.name}</small>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            window.startMatchingSet = function(langKey, langName) {
+                const langCode = LANGUAGES_DATA[langKey].code;
+                const vocabEntries = Object.entries(UNIVERSAL_VOCAB).slice(0, 6);
+                const pairs = vocabEntries.map(([eng, trans]) => ({ 
+                    english: eng, 
+                    translation: addRomanization(trans[langCode], langCode)
+                }));
+
+                let selected = [];
+                let matched = [];
+
+                function shuffle(array) {
+                    return array.sort(() => Math.random() - 0.5);
+                }
+
+                const englishWords = shuffle(pairs.map(p => ({ word: p.english, type: 'english' })));
+                const translationWords = shuffle(pairs.map(p => ({ word: p.translation, type: 'translation' })));
+
+                const matchModal = document.createElement('div');
+                matchModal.className = 'modal active';
+                matchModal.innerHTML = `
+                    <div class="modal-content" style="max-width: 700px;">
+                        <h3 class="modal-title">🎯 Matching Game - ${langName}</h3>
+                        <p style="color: #64748b; margin-bottom: 1.5rem;">Click one English word, then click its translation</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div style="display: grid; gap: 0.75rem;" id="englishCol">
+                                ${englishWords.map((item, idx) => `
+                                    <button class="match-btn" data-word="${item.word}" data-type="english" onclick="selectWord(this, '${item.word}', 'english')" style="padding: 1rem; background: var(--card-light); border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                                        ${item.word}
+                                    </button>
+                                `).join('')}
+                            </div>
+                            <div style="display: grid; gap: 0.75rem;" id="translationCol">
+                                ${translationWords.map((item, idx) => `
+                                    <button class="match-btn" data-word="${item.word}" data-type="translation" onclick="selectWord(this, '${item.word.replace(/'/g, "\\'")}', 'translation')" style="padding: 1rem; background: var(--card-light); border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.3s; font-size: ${(langCode === 'ar' || langCode === 'ur') && item.word.includes('(') ? '0.9rem' : '1rem'}; line-height: 1.4;">
+                                        ${item.word}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; text-align: center; font-size: 1.2rem; font-weight: 700;">
+                            Matched: <span id="matchCount">0</span> / ${pairs.length}
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="modal-btn secondary" onclick="this.closest('.modal').remove(); showMatchingGame();">← Change Language</button>
+                            <button class="modal-btn secondary" onclick="this.closest('.modal').remove();">✕ Exit Game</button>
+                        </div>
+                    </div>
+                `;
+                document.body.replaceChild(matchModal, document.querySelector('.modal'));
+
+                window.selectWord = function(btn, word, type) {
+                    if (matched.includes(word)) return;
+
+                    if (btn.style.borderColor === 'rgb(102, 126, 234)') {
+                        btn.style.borderColor = '';
+                        btn.style.background = 'var(--card-light)';
+                        selected = selected.filter(s => s.word !== word);
+                        return;
+                    }
+
+                    selected = selected.filter(s => s.type !== type);
+                    document.querySelectorAll('.match-btn').forEach(b => {
+                        if (b.dataset.type === type && !matched.includes(b.dataset.word)) {
+                            b.style.borderColor = '';
+                            b.style.background = 'var(--card-light)';
+                        }
+                    });
+
+                    btn.style.borderColor = '#667eea';
+                    btn.style.background = '#e0e7ff';
+                    selected.push({ word, type, btn });
+
+                    if (selected.length === 2) {
+                        const pair = pairs.find(p => 
+                            (selected[0].word === p.english && selected[1].word === p.translation) ||
+                            (selected[0].word === p.translation && selected[1].word === p.english)
+                        );
+
+                        if (pair) {
+                            selected.forEach(s => {
+                                s.btn.style.background = '#d1fae5';
+                                s.btn.style.borderColor = '#059669';
+                                s.btn.style.cursor = 'not-allowed';
+                                matched.push(s.word);
+                            });
+                            document.getElementById('matchCount').textContent = matched.length / 2;
+                            
+                            if (matched.length === pairs.length * 2) {
+                                setTimeout(() => showToast('🎉 Perfect! All pairs matched!'), 500);
+                            }
+                        } else {
+                            const wrongBtns = selected.map(s => s.btn);
+                            wrongBtns.forEach(b => {
+                                b.style.background = '#fee2e2';
+                                b.style.borderColor = '#991b1b';
+                            });
+                            setTimeout(() => {
+                                wrongBtns.forEach(b => {
+                                    if (!matched.includes(b.dataset.word)) {
+                                        b.style.background = 'var(--card-light)';
+                                        b.style.borderColor = 'var(--border)';
+                                    }
+                                });
+                            }, 1000);
+                        }
+                        selected = [];
+                    }
+                };
+            };
+        }
+
+        // 3. Fill in the Blanks - ALL 16 LANGUAGES
+        function showFillBlankGame() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'fillblankModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <h3 class="modal-title">📝 Fill in the Blanks - Choose Language</h3>
+                    <p style="color: #64748b; margin-bottom: 1.5rem;">Complete 5 sentences by choosing the correct word</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0;">
+                        ${Object.entries(LANGUAGES_DATA).map(([key, lang]) => `
+                            <button class="mode-btn" onclick="startFillBlankSet('${key}', '${lang.name} ${lang.flag}')" style="padding: 1.5rem;">
+                                ${lang.flag}<br><small>${lang.name}</small>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            window.startFillBlankSet = function(langKey, langName) {
+                const langCode = LANGUAGES_DATA[langKey].code;
+                
+                // Create fill-in-blank sentences using universal vocab
+                const sentences = [
+                    { 
+                        english: 'How do you say ___ in this language?',
+                        word: 'Hello',
+                        answer: addRomanization(UNIVERSAL_VOCAB['Hello'][langCode], langCode),
+                        options: [
+                            addRomanization(UNIVERSAL_VOCAB['Hello'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Thank you'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Goodbye'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Please'][langCode], langCode)
+                        ]
+                    },
+                    { 
+                        english: 'The word for ___ is...',
+                        word: 'Water',
+                        answer: addRomanization(UNIVERSAL_VOCAB['Water'][langCode], langCode),
+                        options: [
+                            addRomanization(UNIVERSAL_VOCAB['Water'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Food'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['House'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Book'][langCode], langCode)
+                        ]
+                    },
+                    { 
+                        english: 'When leaving, you say ___',
+                        word: 'Goodbye',
+                        answer: addRomanization(UNIVERSAL_VOCAB['Goodbye'][langCode], langCode),
+                        options: [
+                            addRomanization(UNIVERSAL_VOCAB['Goodbye'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Hello'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Thank you'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Yes'][langCode], langCode)
+                        ]
+                    },
+                    { 
+                        english: 'To be polite, say ___',
+                        word: 'Please',
+                        answer: addRomanization(UNIVERSAL_VOCAB['Please'][langCode], langCode),
+                        options: [
+                            addRomanization(UNIVERSAL_VOCAB['Please'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Thank you'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['No'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Yes'][langCode], langCode)
+                        ]
+                    },
+                    { 
+                        english: 'Your close companion is a ___',
+                        word: 'Friend',
+                        answer: addRomanization(UNIVERSAL_VOCAB['Friend'][langCode], langCode),
+                        options: [
+                            addRomanization(UNIVERSAL_VOCAB['Friend'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['Family'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['House'][langCode], langCode),
+                            addRomanization(UNIVERSAL_VOCAB['School'][langCode], langCode)
+                        ]
+                    }
+                ];
+
+                let currentQuestion = 0;
+                let score = 0;
+
+                function showQuestion() {
+                    const q = sentences[currentQuestion];
+                    const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                    const modal = document.getElementById('fillblankModal');
+                    
+                    modal.innerHTML = `
+                        <div class="modal-content" style="max-width: 600px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                                <h3 class="modal-title">📝 ${langName} - Fill in the Blanks</h3>
+                                <div style="background: var(--gradient-1); color: white; padding: 0.5rem 1rem; border-radius: 8px;">
+                                    ${currentQuestion + 1} / ${sentences.length}
+                                </div>
+                            </div>
+                            
+                            <div style="background: #f1f5f9; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                                <p style="font-size: 1.1rem; color: #64748b; margin-bottom: 0.5rem;">English: "${q.word}"</p>
+                                <p style="font-size: 1.3rem; text-align: center; font-weight: 600;">${q.english}</p>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                ${shuffledOptions.map(opt => `
+                                    <button class="mode-btn" onclick="checkFillBlank('${opt.replace(/'/g, "\\'")}', '${q.answer.replace(/'/g, "\\'")}', '${langName}')" style="padding: 1.5rem; font-size: 1.1rem;">
+                                        ${opt}
+                                    </button>
+                                `).join('')}
+                            </div>
+                            
+                            <div id="fillblankFeedback" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none;"></div>
+                            
+                            <div class="modal-actions" style="margin-top: 1rem;">
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove(); showFillBlankGame();">← Change Language</button>
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove();">✕ Exit Game</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                window.checkFillBlank = function(selected, correct, langName) {
+                    const feedback = document.getElementById('fillblankFeedback');
+                    const isCorrect = selected === correct;
+                    
+                    if (isCorrect) score++;
+                    
+                    feedback.style.display = 'block';
+                    feedback.style.background = isCorrect ? '#d1fae5' : '#fee2e2';
+                    feedback.style.color = isCorrect ? '#065f46' : '#991b1b';
+                    feedback.style.fontWeight = '600';
+                    feedback.style.fontSize = '1.1rem';
+                    feedback.innerHTML = isCorrect ? '✅ Correct!' : `❌ Wrong! Correct answer: ${correct}`;
+                    
+                    // Disable all buttons
+                    document.querySelectorAll('.mode-btn').forEach(btn => {
+                        btn.disabled = true;
+                        btn.style.opacity = '0.5';
+                        btn.style.cursor = 'not-allowed';
+                    });
+                    
+                    setTimeout(() => {
+                        currentQuestion++;
+                        if (currentQuestion < sentences.length) {
+                            showQuestion();
+                        } else {
+                            showResults(langName);
+                        }
+                    }, 2000);
+                };
+
+                function showResults(langName) {
+                    const modal = document.getElementById('fillblankModal');
+                    const percentage = Math.round((score / sentences.length) * 100);
+                    const emoji = percentage >= 80 ? '🏆' : percentage >= 60 ? '⭐' : percentage >= 40 ? '👍' : '💪';
+                    const message = percentage >= 80 ? 'Excellent!' : percentage >= 60 ? 'Great job!' : percentage >= 40 ? 'Good effort!' : 'Keep practicing!';
+                    
+                    modal.innerHTML = `
+                        <div class="modal-content" style="max-width: 500px; text-align: center;">
+                            <div style="font-size: 5rem; margin-bottom: 1rem;">${emoji}</div>
+                            <h3 class="modal-title">${message}</h3>
+                            <p style="color: #64748b; margin-top: 0.5rem;">${langName} - Fill in the Blanks</p>
+                            <div style="background: var(--gradient-1); color: white; padding: 2rem; border-radius: 12px; margin: 2rem 0;">
+                                <div style="font-size: 3rem; font-weight: 900;">${score} / ${sentences.length}</div>
+                                <div style="font-size: 1.5rem; margin-top: 0.5rem;">${percentage}%</div>
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                <button class="modal-btn primary" onclick="startFillBlankSet('${langKey}', '${langName}')">Play Again</button>
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove(); showFillBlankGame();">Change Language</button>
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove();">Exit</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                showQuestion();
+            };
+        }
+
+        // 4. Word Scramble - ALL 16 LANGUAGES
+        function showScrambleGame() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'scrambleModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <h3 class="modal-title">🔀 Word Scramble - Choose Language</h3>
+                    <p style="color: #64748b; margin-bottom: 1.5rem;">Unscramble 5 words in your chosen language</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0;">
+                        ${Object.entries(LANGUAGES_DATA).map(([key, lang]) => `
+                            <button class="mode-btn" onclick="startScrambleSet('${key}', '${lang.name} ${lang.flag}')" style="padding: 1.5rem;">
+                                ${lang.flag}<br><small>${lang.name}</small>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            window.startScrambleSet = function(langKey, langName) {
+                const langCode = LANGUAGES_DATA[langKey].code;
+                
+                // Create scrambled words from vocabulary
+                const vocabWords = ['Hello', 'Water', 'Friend', 'Family', 'School'];
+                const words = vocabWords.map(eng => {
+                    const translation = UNIVERSAL_VOCAB[eng][langCode];
+                    const scrambled = translation.split('').sort(() => Math.random() - 0.5).join('');
+                    return {
+                        word: translation,
+                        wordRoman: addRomanization(translation, langCode),
+                        scrambled: scrambled,
+                        hint: eng
+                    };
+                });
+
+                let currentWord = 0;
+                let score = 0;
+
+                function showWord() {
+                    const w = words[currentWord];
+                    const modal = document.getElementById('scrambleModal');
+
+                    modal.innerHTML = `
+                        <div class="modal-content" style="max-width: 600px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                                <h3 class="modal-title">🔀 ${langName} - Word Scramble</h3>
+                                <div style="background: var(--gradient-1); color: white; padding: 0.5rem 1rem; border-radius: 8px;">
+                                    ${currentWord + 1} / ${words.length}
+                                </div>
+                            </div>
+                            
+                            <div style="background: var(--gradient-1); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+                                <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">Unscramble this word:</div>
+                                <div style="font-size: 2rem; font-weight: 900; letter-spacing: 0.3rem; margin: 1rem 0;">${w.scrambled}</div>
+                                <div style="margin-top: 1rem; opacity: 0.9;">Hint (English): ${w.hint}</div>
+                            </div>
+                            
+                            <input type="text" id="scrambleInput" placeholder="Type your answer..." style="width: 100%; padding: 1rem; font-size: 1.2rem; border: 2px solid var(--border); border-radius: 8px; margin-bottom: 1rem;" onkeypress="if(event.key==='Enter') checkScramble('${w.word.replace(/'/g, "\\'")}', '${langName}', '${langKey}')">
+                            
+                            <button class="translate-btn" onclick="checkScramble('${w.word.replace(/'/g, "\\'")}', '${langName}', '${langKey}')" style="width: 100%;">
+                                Check Answer
+                            </button>
+                            
+                            <div id="scrambleFeedback" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none;"></div>
+                            
+                            <div class="modal-actions" style="margin-top: 1rem;">
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove(); showScrambleGame();">← Change Language</button>
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove();">✕ Exit Game</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    setTimeout(() => {
+                        const input = document.getElementById('scrambleInput');
+                        if (input) input.focus();
+                    }, 100);
+                }
+
+                window.checkScramble = function(correctWord, langName, langKey) {
+                    const input = document.getElementById('scrambleInput');
+                    if (!input) return;
+                    
+                    const userAnswer = input.value.trim();
+                    const feedback = document.getElementById('scrambleFeedback');
+                    const isCorrect = userAnswer === correctWord;
+                    
+                    if (!userAnswer) {
+                        showToast('Please enter an answer!');
+                        return;
+                    }
+                    
+                    if (isCorrect) score++;
+                    
+                    const langCode = LANGUAGES_DATA[langKey].code;
+                    const displayAnswer = addRomanization(correctWord, langCode);
+                    
+                    feedback.style.display = 'block';
+                    feedback.style.background = isCorrect ? '#d1fae5' : '#fee2e2';
+                    feedback.style.color = isCorrect ? '#065f46' : '#991b1b';
+                    feedback.style.fontWeight = '600';
+                    feedback.innerHTML = isCorrect ? `✅ Correct! The word is ${displayAnswer}` : `❌ Wrong! The correct word is ${displayAnswer}`;
+                    
+                    input.disabled = true;
+                    
+                    setTimeout(() => {
+                        currentWord++;
+                        if (currentWord < words.length) {
+                            showWord();
+                        } else {
+                            showResults(langName, langKey);
+                        }
+                    }, 2000);
+                };
+
+                function showResults(langName, langKey) {
+                    const modal = document.getElementById('scrambleModal');
+                    const percentage = Math.round((score / words.length) * 100);
+                    const emoji = percentage >= 80 ? '🏆' : percentage >= 60 ? '⭐' : percentage >= 40 ? '👍' : '💪';
+                    const message = percentage >= 80 ? 'Excellent!' : percentage >= 60 ? 'Great job!' : percentage >= 40 ? 'Good effort!' : 'Keep practicing!';
+                    
+                    modal.innerHTML = `
+                        <div class="modal-content" style="max-width: 500px; text-align: center;">
+                            <div style="font-size: 5rem; margin-bottom: 1rem;">${emoji}</div>
+                            <h3 class="modal-title">${message}</h3>
+                            <p style="color: #64748b; margin-top: 0.5rem;">${langName} - Word Scramble</p>
+                            <div style="background: var(--gradient-1); color: white; padding: 2rem; border-radius: 12px; margin: 2rem 0;">
+                                <div style="font-size: 3rem; font-weight: 900;">${score} / ${words.length}</div>
+                                <div style="font-size: 1.5rem; margin-top: 0.5rem;">${percentage}%</div>
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                <button class="modal-btn primary" onclick="startScrambleSet('${langKey}', '${langName}')">Play Again</button>
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove(); showScrambleGame();">Change Language</button>
+                                <button class="modal-btn secondary" onclick="this.closest('.modal').remove();">Exit</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                showWord();
+            };
+        }
+
+        // 5. Memory Game - ALL 16 LANGUAGES
+        function showMemoryGame() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <h3 class="modal-title">🧩 Memory Game - Choose Language</h3>
+                    <p style="color: #64748b; margin-bottom: 1.5rem;">Match 4 pairs of words</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0;">
+                        ${Object.entries(LANGUAGES_DATA).map(([key, lang]) => `
+                            <button class="mode-btn" onclick="startMemorySet('${key}', '${lang.name} ${lang.flag}')" style="padding: 1.5rem;">
+                                ${lang.flag}<br><small>${lang.name}</small>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            window.startMemorySet = function(langKey, langName) {
+                const langCode = LANGUAGES_DATA[langKey].code;
+                
+                const vocabPairs = ['Hello', 'Thank you', 'Water', 'Friend'];
+                const cards = vocabPairs.map((eng, id) => ({
+                    id: id + 1,
+                    word: eng,
+                    translation: addRomanization(UNIVERSAL_VOCAB[eng][langCode], langCode)
+                }));
+
+                const allCards = [
+                    ...cards.map(c => ({...c, face: c.word, pairId: c.id, type: 'english'})), 
+                    ...cards.map(c => ({...c, face: c.translation, pairId: c.id, type: 'translation'}))
+                ];
+                const shuffled = allCards.sort(() => Math.random() - 0.5);
+                
+                let flipped = [];
+                let matched = [];
+                let moves = 0;
+
+                const memModal = document.createElement('div');
+                memModal.className = 'modal active';
+                memModal.innerHTML = `
+                    <div class="modal-content" style="max-width: 650px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                            <h3 class="modal-title">🧩 ${langName} - Memory</h3>
+                            <div style="background: var(--gradient-1); color: white; padding: 0.5rem 1rem; border-radius: 8px;">
+                                Moves: <span id="moveCount">0</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                            ${shuffled.map((card, idx) => `
+                                <div class="memory-card" data-id="${idx}" data-pair="${card.pairId}" data-type="${card.type}" onclick="flipMemoryCard(${idx}, '${card.face.replace(/'/g, "\\'")}', ${card.pairId})" style="aspect-ratio: 1; background: var(--gradient-1); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; font-weight: 700; font-size: ${(langCode === 'ar' || langCode === 'ur') && card.type === 'translation' ? '0.7rem' : '0.9rem'}; text-align: center; padding: 0.5rem; transition: all 0.3s; line-height: 1.3;">
+                                    <span class="card-face">${card.face}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="modal-btn secondary" onclick="this.closest('.modal').remove(); showMemoryGame();">← Change Language</button>
+                            <button class="modal-btn secondary" onclick="this.closest('.modal').remove();">✕ Exit Game</button>
+                        </div>
+                    </div>
+                `;
+                document.body.replaceChild(memModal, document.querySelector('.modal'));
+
+                window.flipMemoryCard = function(idx, face, pairId) {
+                    if (flipped.length >= 2 || flipped.some(f => f.idx === idx) || matched.includes(pairId)) return;
+                    
+                    const cardEl = document.querySelector(`[data-id="${idx}"]`);
+                    cardEl.style.background = 'white';
+                    cardEl.style.color = '#1e293b';
+                    cardEl.style.border = '2px solid var(--primary)';
+                    
+                    flipped.push({ idx, pairId, cardEl });
+                    
+                    if (flipped.length === 2) {
+                        moves++;
+                        document.getElementById('moveCount').textContent = moves;
+                        
+                        if (flipped[0].pairId === flipped[1].pairId) {
+                            // Match!
+                            matched.push(pairId);
+                            flipped.forEach(f => {
+                                f.cardEl.style.background = '#d1fae5';
+                                f.cardEl.style.borderColor = '#059669';
+                                f.cardEl.style.cursor = 'not-allowed';
+                            });
+                            flipped = [];
+                            
+                            if (matched.length === cards.length) {
+                                setTimeout(() => {
+                                    showToast(`🎉 You won in ${moves} moves!`);
+                                }, 500);
+                            }
+                        } else {
+                            // No match
+                            setTimeout(() => {
+                                flipped.forEach(f => {
+                                    if (!matched.includes(f.pairId)) {
+                                        f.cardEl.style.background = 'var(--gradient-1)';
+                                        f.cardEl.style.color = 'transparent';
+                                        f.cardEl.style.border = 'none';
+                                    }
+                                });
+                                flipped = [];
+                            }, 1000);
+                        }
+                    }
+                };
+            };
+        }
+
+        // 7. Type Racer - ALL 16 LANGUAGES (Simplified)
+        function showTypeRacerGame() {
+            // Remove existing modal if any
+            const existing = document.getElementById('typeRacerModal');
+            if (existing) existing.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'typeRacerModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px; text-align: center;">
+                    <h3 class="modal-title">⚡ Type Racer</h3>
+                    <div style="font-size: 5rem; margin: 2rem 0;">⚡</div>
+                    <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 2rem;">Practice typing speed in 16 languages!</p>
+                    <div style="background: #f1f5f9; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <p style="font-weight: 600; margin-bottom: 1rem;">Coming in the next update:</p>
+                        <ul style="text-align: left; margin-left: 2rem; color: #64748b;">
+                            <li>Speed typing challenges</li>
+                            <li>Words per minute (WPM) tracking</li>
+                            <li>Accuracy measurement</li>
+                            <li>Leaderboards</li>
+                        </ul>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" onclick="this.closest('.modal').remove()">Got it!</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // 8. Audio Recognition - ALL 16 LANGUAGES (Simplified)
+        function showAudioGame() {
+            // Remove existing modal if any
+            const existing = document.getElementById('audioModal');
+            if (existing) existing.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'audioModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px; text-align: center;">
+                    <h3 class="modal-title">🎧 Audio Recognition</h3>
+                    <div style="font-size: 5rem; margin: 2rem 0;">🎧</div>
+                    <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 2rem;">Listen and identify words in 16 languages!</p>
+                    <div style="background: #f1f5f9; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <p style="font-weight: 600; margin-bottom: 1rem;">Coming in the next update:</p>
+                        <ul style="text-align: left; margin-left: 2rem; color: #64748b;">
+                            <li>Listen to native pronunciation</li>
+                            <li>Identify spoken words</li>
+                            <li>Improve listening skills</li>
+                            <li>Multiple choice audio quizzes</li>
+                        </ul>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" onclick="this.closest('.modal').remove()">Got it!</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // 9. Sentence Builder - ALL 16 LANGUAGES (Simplified)
+        function showSentenceBuilderGame() {
+            // Remove existing modal if any
+            const existing = document.getElementById('builderModal');
+            if (existing) existing.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'builderModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px; text-align: center;">
+                    <h3 class="modal-title">🔨 Sentence Builder</h3>
+                    <div style="font-size: 5rem; margin: 2rem 0;">🔨</div>
+                    <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 2rem;">Build sentences in 16 languages!</p>
+                    <div style="background: #f1f5f9; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <p style="font-weight: 600; margin-bottom: 1rem;">Coming in the next update:</p>
+                        <ul style="text-align: left; margin-left: 2rem; color: #64748b;">
+                            <li>Drag and drop word tiles</li>
+                            <li>Arrange words in correct order</li>
+                            <li>Learn grammar through practice</li>
+                            <li>Progressive difficulty levels</li>
+                        </ul>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" onclick="this.closest('.modal').remove()">Got it!</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // 10. Interactive Stories - ALL 16 LANGUAGES (Simplified)
+        function showStoryGame() {
+            // Remove existing modal if any
+            const existing = document.getElementById('storyModal');
+            if (existing) existing.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.id = 'storyModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px; text-align: center;">
+                    <h3 class="modal-title">📚 Interactive Stories</h3>
+                    <div style="font-size: 5rem; margin: 2rem 0;">📚</div>
+                    <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 2rem;">Learn through storytelling in 16 languages!</p>
+                    <div style="background: #f1f5f9; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <p style="font-weight: 600; margin-bottom: 1rem;">Coming in the next update:</p>
+                        <ul style="text-align: left; margin-left: 2rem; color: #64748b;">
+                            <li>Read engaging stories</li>
+                            <li>Click words for translations</li>
+                            <li>Comprehension questions</li>
+                            <li>Stories for all age groups</li>
+                        </ul>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" onclick="this.closest('.modal').remove()">Got it!</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
         function showQuizGame() {
             const languages = [
                 { code: 'es', name: 'Spanish', flag: '🇪🇸' },
@@ -2406,10 +4273,6 @@
         }
 
         // Flashcards Implementation
-        function showFlashcards() {
-            showToast('Flashcards feature coming soon! Quiz is ready now.');
-        }
-
         // Toast Notification
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -2419,6 +4282,374 @@
             setTimeout(() => {
                 toast.classList.remove('active');
             }, 3000);
+        }
+
+        // Language Card Click Handler
+        function openLanguage(language) {
+            const languageContent = {
+                'english': { name: 'English', flag: '🇬🇧', speakers: '1.5B', info: 'Global language of business, science, and technology. Essential for international communication.' },
+                'mandarin': { name: 'Mandarin Chinese', flag: '🇨🇳', speakers: '1.1B', info: 'Most spoken language in the world. Critical for business in Asia and growing global influence.' },
+                'spanish': { name: 'Spanish', flag: '🇪🇸', speakers: '559M', info: 'Widely spoken across Americas and Spain. Second most common language in the USA.' },
+                'hindi': { name: 'Hindi', flag: '🇮🇳', speakers: '602M', info: 'Official language of India. Growing importance in tech industry and Bollywood culture.' },
+                'telugu': { name: 'Telugu', flag: '🇮🇳', speakers: '85M', info: 'Spoken in South India. Important for Tollywood cinema and tech industry connections.' },
+                'arabic': { name: 'Modern Standard Arabic', flag: '🇸🇦', speakers: '274M', info: 'Language of 22 Arab countries. Essential for understanding Islamic texts and Middle Eastern business.' },
+                'french': { name: 'French', flag: '🇫🇷', speakers: '280M', info: 'Language of diplomacy and culture. Spoken in France, Africa, and Canada.' },
+                'bengali': { name: 'Bengali', flag: '🇧🇩', speakers: '265M', info: 'Official language of Bangladesh. Rich literary tradition and growing economic importance.' },
+                'portuguese': { name: 'Portuguese', flag: '🇵🇹', speakers: '264M', info: 'Spoken in Brazil, Portugal, and African countries. Gateway to South American markets.' },
+                'urdu': { name: 'Urdu', flag: '🇵🇰', speakers: '231M', info: 'National language of Pakistan. Beautiful poetry and shared heritage with Hindi.' },
+                'romanurdu': { name: 'Roman Urdu', flag: '🇵🇰', speakers: 'Popular', info: 'Urdu written in Latin script. Essential for texting and social media in Pakistan.' },
+                'farsi': { name: 'Farsi (Persian)', flag: '🇮🇷', speakers: '110M', info: 'Language of Iran and classical Islamic literature. Read Rumi in original language.' },
+                'japanese': { name: 'Japanese', flag: '🇯🇵', speakers: '125M', info: 'Important for anime, manga, and Japanese business culture.' },
+                'russian': { name: 'Russian', flag: '🇷🇺', speakers: '258M', info: 'Widely spoken in Eastern Europe and Central Asia. Important for business and science.' },
+                'german': { name: 'German', flag: '🇩🇪', speakers: '135M', info: 'Language of engineering and philosophy. Critical for European business.' },
+                'korean': { name: 'Korean', flag: '🇰🇷', speakers: '82M', info: 'Growing global influence through K-pop, K-dramas, and technology.' },
+                'italian': { name: 'Italian', flag: '🇮🇹', speakers: '85M', info: 'Language of art, music, and cuisine. Beautiful for culture and travel.' },
+                'turkish': { name: 'Turkish', flag: '🇹🇷', speakers: '88M', info: 'Bridge between Europe and Asia. Growing economic importance.' }
+            };
+
+            const lang = languageContent[language];
+            if (!lang) {
+                showToast('Language content coming soon!');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div style="font-size: 5rem; margin-bottom: 1rem;">${lang.flag}</div>
+                        <h3 class="modal-title">${lang.name}</h3>
+                        <p style="color: #64748b; font-size: 1.1rem;">${lang.speakers} speakers worldwide</p>
+                    </div>
+                    
+                    <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <p style="font-size: 1.05rem; line-height: 1.6;">${lang.info}</p>
+                    </div>
+                    
+                    <h4 style="margin-bottom: 1rem;">📚 Learning Resources:</h4>
+                    <div style="display: grid; gap: 1rem; margin-bottom: 2rem;">
+                        <button class="mode-btn" onclick="this.closest('.modal').remove(); showSection('translator'); document.getElementById('toLang').value = getLanguageCode('${language}');" style="padding: 1rem; text-align: left;">
+                            🌐 <strong>Use Translator</strong> - Practice with AI translation
+                        </button>
+                        <button class="mode-btn" onclick="this.closest('.modal').remove(); showSection('games'); setTimeout(() => startGame('quiz'), 100);" style="padding: 1rem; text-align: left;">
+                            🎯 <strong>Take Quiz</strong> - Test your vocabulary
+                        </button>
+                        <button class="mode-btn" onclick="this.closest('.modal').remove(); showSection('videos');" style="padding: 1rem; text-align: left;">
+                            🎬 <strong>Watch Videos</strong> - Learn through movies
+                        </button>
+                        <button class="mode-btn" onclick="this.closest('.modal').remove(); searchYouTubeVideos();" style="padding: 1rem; text-align: left;">
+                            🔍 <strong>Find More Videos</strong> - YouTube learning resources
+                        </button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                        <strong>💡 Quick Tip:</strong>
+                        <p style="margin-top: 0.5rem; opacity: 0.95;">Start with common phrases, practice daily with quizzes, and watch movies to immerse yourself in the language!</p>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" onclick="this.closest('.modal').remove(); showSection('translator'); document.getElementById('toLang').value = getLanguageCode('${language}');">Start Learning ${lang.name}</button>
+                        <button class="modal-btn secondary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function getLanguageCode(language) {
+            const codes = {
+                'english': 'en', 'mandarin': 'zh', 'spanish': 'es', 'hindi': 'hi',
+                'telugu': 'te', 'arabic': 'ar', 'french': 'fr', 'bengali': 'bn',
+                'portuguese': 'pt', 'urdu': 'ur', 'romanurdu': 'ur-roman', 'farsi': 'fa',
+                'japanese': 'ja', 'russian': 'ru', 'german': 'de', 'korean': 'ko',
+                'italian': 'it', 'turkish': 'tr'
+            };
+            return codes[language] || 'es';
+        }
+
+        // Quranic Arabic Module Functions
+        function showQuranicModule(module) {
+            const modules = {
+                'script': {
+                    title: '✍️ Script & Pronunciation',
+                    content: `
+                        <h4>Arabic Alphabet (28 letters)</h4>
+                        <p>ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي</p>
+                        <h4 style="margin-top: 1.5rem;">Tajweed Basics:</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li><strong>Makharij</strong> - Points of articulation</li>
+                            <li><strong>Sifat</strong> - Characteristics of letters</li>
+                            <li><strong>Noon Sakinah Rules</strong> - Izhar, Idgham, Iqlab, Ikhfa</li>
+                            <li><strong>Meem Sakinah Rules</strong> - Pronunciation rules</li>
+                            <li><strong>Qalqalah</strong> - Echoing sound</li>
+                        </ul>
+                        <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                            <strong>📺 Recommended Resources:</strong>
+                            <p style="margin-top: 0.5rem;">Search YouTube for: "Tajweed for beginners" | "Arabic alphabet pronunciation" | "Quranic Arabic reading"</p>
+                        </div>
+                    `
+                },
+                'grammar': {
+                    title: '📖 Grammar Essentials',
+                    content: `
+                        <h4>Key Grammar Concepts:</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li><strong>Ism (Noun)</strong> - فعل - Names of people, places, things</li>
+                            <li><strong>Fi'l (Verb)</strong> - اسم - Action words (Past, Present, Command)</li>
+                            <li><strong>Harf (Particle)</strong> - حرف - Connecting words</li>
+                            <li><strong>I'rab</strong> - Case endings (Raf', Nasb, Jarr)</li>
+                            <li><strong>Singular, Dual, Plural</strong> - Number forms</li>
+                            <li><strong>Masculine & Feminine</strong> - Gender in Arabic</li>
+                        </ul>
+                        <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                            <strong>💡 Study Tip:</strong>
+                            <p style="margin-top: 0.5rem;">Master one concept at a time. Start with basic sentence structure, then progress to verb forms.</p>
+                        </div>
+                    `
+                },
+                'vocabulary': {
+                    title: '🔤 Vocabulary Builder',
+                    content: `
+                        <h4>Most Common Quranic Words:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Allah (ٱللَّٰه)</strong><br>
+                                God
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Rabb (رَبّ)</strong><br>
+                                Lord
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Al-Rahman (ٱلرَّحْمَٰن)</strong><br>
+                                The Most Merciful
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Al-Rahim (ٱلرَّحِيم)</strong><br>
+                                The Most Compassionate
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Qul (قُل)</strong><br>
+                                Say
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Ya ayyuha (يَا أَيُّهَا)</strong><br>
+                                O you
+                            </div>
+                        </div>
+                        <p style="margin-top: 1rem; color: #64748b;">Learning the top 100-500 words covers 50-70% of the Quran!</p>
+                    `
+                },
+                'surahs': {
+                    title: '📚 Understanding Surahs',
+                    content: `
+                        <h4>Start with These Surahs:</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li><strong>Al-Fatiha (1)</strong> - The Opening - 7 verses</li>
+                            <li><strong>Al-Ikhlas (112)</strong> - Sincerity - 4 verses</li>
+                            <li><strong>Al-Falaq (113)</strong> - The Daybreak - 5 verses</li>
+                            <li><strong>An-Nas (114)</strong> - Mankind - 6 verses</li>
+                            <li><strong>Ayat al-Kursi (2:255)</strong> - The Throne Verse</li>
+                        </ul>
+                        <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+                            <h4 style="margin-bottom: 0.5rem;">🕌 Surah Al-Fatiha</h4>
+                            <p style="font-size: 1.3rem; margin: 1rem 0; font-family: 'Noto Naskh Arabic', serif;">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
+                            <p>In the name of Allah, the Most Gracious, the Most Merciful</p>
+                        </div>
+                    `
+                },
+                'practice': {
+                    title: '✏️ Practice Exercises',
+                    content: `
+                        <h4>Available Practice Methods:</h4>
+                        <div style="display: grid; gap: 1rem; margin-top: 1rem;">
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>🎯 Take the Arabic Quiz</strong>
+                                <p style="margin-top: 0.5rem; color: #64748b;">Test your knowledge with 20 multiple choice questions</p>
+                                <button class="mode-btn" onclick="this.closest('.modal').remove(); showSection('games'); setTimeout(() => startQuizForLanguage('ar', 'Arabic'), 200);" style="margin-top: 0.5rem; padding: 0.75rem;">Start Quiz →</button>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>🌐 Use the Translator</strong>
+                                <p style="margin-top: 0.5rem; color: #64748b;">Practice translating Quranic verses and phrases</p>
+                                <button class="mode-btn" onclick="this.closest('.modal').remove(); showSection('translator'); document.getElementById('toLang').value='qar';" style="margin-top: 0.5rem; padding: 0.75rem;">Open Translator →</button>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>📺 Watch Videos</strong>
+                                <p style="margin-top: 0.5rem; color: #64748b;">Learn from Quranic Arabic lessons on YouTube</p>
+                                <button class="mode-btn" onclick="this.closest('.modal').remove(); window.open('https://www.youtube.com/results?search_query=quranic+arabic+lessons', '_blank');" style="margin-top: 0.5rem; padding: 0.75rem;">Find Videos →</button>
+                            </div>
+                        </div>
+                    `
+                },
+                'resources': {
+                    title: '📱 Learning Resources',
+                    content: `
+                        <h4>Recommended Books:</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>"Quranic Arabic Made Easy" - Dr. V. Abdur Rahim</li>
+                            <li>"Arabic Grammar for the Quran" - Various authors</li>
+                            <li>"Easy Dictionary of the Quran" - Shaykh Abdul Karim Parekh</li>
+                        </ul>
+                        <h4 style="margin-top: 1.5rem;">Online Platforms:</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li><strong>Bayyinah TV</strong> - Comprehensive Quranic Arabic</li>
+                            <li><strong>Quranic.com</strong> - Word-by-word translations</li>
+                            <li><strong>Arabic.com</strong> - Free lessons and resources</li>
+                            <li><strong>Duolingo Arabic</strong> - Modern Standard Arabic basics</li>
+                        </ul>
+                        <h4 style="margin-top: 1.5rem;">YouTube Channels:</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Nouman Ali Khan - Bayyinah Institute</li>
+                            <li>Learn Quranic Arabic - Various educators</li>
+                            <li>Arabic 101 - Ahsan Hanif</li>
+                        </ul>
+                    `
+                }
+            };
+
+            const mod = modules[module];
+            if (!mod) {
+                showToast('Module content coming soon!');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <h3 class="modal-title">${mod.title}</h3>
+                    <div style="margin: 1.5rem 0; line-height: 1.8;">
+                        ${mod.content}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Islamic Content Functions
+        function showIslamicContent(type) {
+            const content = {
+                'names': {
+                    title: '🕌 99 Names of Allah (Asma ul Husna)',
+                    html: `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; max-height: 400px; overflow-y: auto;">
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">1. الرَّحْمَنُ - Ar-Rahman<br><small>The Most Merciful</small></div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">2. الرَّحِيمُ - Ar-Raheem<br><small>The Bestower of Mercy</small></div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">3. الْمَلِكُ - Al-Malik<br><small>The King</small></div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">4. الْقُدُّوسُ - Al-Quddus<br><small>The Most Sacred</small></div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">5. السَّلاَمُ - As-Salam<br><small>The Perfection & Peace</small></div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">6. الْمُؤْمِنُ - Al-Mu'min<br><small>The One Who Gives Emaan</small></div>
+                        </div>
+                        <p style="margin-top: 1rem; color: #64748b; text-align: center;">Showing first 6 of 99 names. Search "99 Names of Allah" for the complete list.</p>
+                    `
+                },
+                'hadith': {
+                    title: '📿 Hadith of the Day',
+                    html: `
+                        <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                            <p style="font-size: 1.2rem; font-style: italic; margin-bottom: 1rem;">"The best of people are those that bring most benefit to the rest of mankind."</p>
+                            <p style="opacity: 0.9;">— Prophet Muhammad ﷺ (Daraqutni, Hasan)</p>
+                        </div>
+                        <h4>Daily Hadith Practice:</h4>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Read one Hadith daily</li>
+                            <li>Reflect on its meaning</li>
+                            <li>Apply it in your life</li>
+                            <li>Share with family</li>
+                        </ul>
+                    `
+                },
+                'verse': {
+                    title: '📖 Verse of the Day',
+                    html: `
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+                            <p style="font-size: 1.5rem; font-family: 'Noto Naskh Arabic', serif; margin-bottom: 1rem;">وَمَا خَلَقْتُ الْجِنَّ وَالْإِنسَ إِلَّا لِيَعْبُدُونِ</p>
+                            <p style="font-size: 1.1rem;">"And I did not create the jinn and mankind except to worship Me."</p>
+                            <p style="opacity: 0.9; margin-top: 1rem;">— Surah Adh-Dhariyat (51:56)</p>
+                        </div>
+                        <h4>Understanding the Verse:</h4>
+                        <p style="margin-top: 0.5rem;">This verse reminds us of our purpose in life. Worship (Ibadah) encompasses all good deeds done with the intention of pleasing Allah.</p>
+                    `
+                },
+                'salah': {
+                    title: '🤲 Salah Guide',
+                    html: `
+                        <h4>5 Daily Prayers:</h4>
+                        <div style="display: grid; gap: 1rem; margin-top: 1rem;">
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Fajr</strong> - Dawn Prayer (2 Rakah)<br>
+                                <small>Before sunrise</small>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Dhuhr</strong> - Noon Prayer (4 Rakah)<br>
+                                <small>After sun passes its zenith</small>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Asr</strong> - Afternoon Prayer (4 Rakah)<br>
+                                <small>Mid-afternoon</small>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Maghrib</strong> - Sunset Prayer (3 Rakah)<br>
+                                <small>Just after sunset</small>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                                <strong>Isha</strong> - Night Prayer (4 Rakah)<br>
+                                <small>After twilight disappears</small>
+                            </div>
+                        </div>
+                    `
+                },
+                'hajj': {
+                    title: '🕋 Hajj & Umrah Phrasebook',
+                    html: `
+                        <h4>Essential Phrases:</h4>
+                        <div style="display: grid; gap: 0.75rem; margin-top: 1rem;">
+                            <div style="background: #f1f5f9; padding: 0.75rem; border-radius: 8px;">
+                                <strong>Labbayk Allahumma Labbayk</strong><br>
+                                <small>لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ - Here I am, O Allah, here I am</small>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 0.75rem; border-radius: 8px;">
+                                <strong>Ayna al-Haram?</strong><br>
+                                <small>أين الحرم؟ - Where is the Haram?</small>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 0.75rem; border-radius: 8px;">
+                                <strong>Kam sa'ah?</strong><br>
+                                <small>كم ساعة؟ - How many hours?</small>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 0.75rem; border-radius: 8px;">
+                                <strong>Ayna al-maa?</strong><br>
+                                <small>أين الماء؟ - Where is the water?</small>
+                            </div>
+                        </div>
+                        <p style="margin-top: 1rem; color: #64748b;">Use our translator to learn more Arabic phrases for your journey!</p>
+                    `
+                }
+            };
+
+            const item = content[type];
+            if (!item) {
+                showToast('Content coming soon!');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <h3 class="modal-title">${item.title}</h3>
+                    <div style="margin: 1.5rem 0;">
+                        ${item.html}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         // YouTube Video Search
@@ -2478,7 +4709,7 @@
             // Ctrl/Cmd + Enter to translate
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 if (currentSection === 'translator') {
-                    translate();
+                    doTranslate();
                 }
             }
             
