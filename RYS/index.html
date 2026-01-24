@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essential Duas Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2e7d32; /* Calming Green */
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --secondary-text: #666;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Header & Search */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        h1 { margin: 0 0 10px 0; }
+        p.subtitle { margin: 0; opacity: 0.9; }
+
+        .search-container {
+            margin-top: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            outline: none;
+            box-sizing: border-box; /* Fixes padding width issues */
+        }
+
+        /* Dua Cards Grid */
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .dua-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .dua-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .category-tag {
+            background-color: #e8f5e9;
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* Typography */
+        .arabic-text {
+            font-family: 'Amiri', serif;
+            font-size: 2.2rem;
+            color: #222;
+            text-align: center;
+            direction: rtl; /* Right to Left */
+            line-height: 2;
+            margin: 20px 0;
+        }
+
+        .transliteration {
+            font-style: italic;
+            color: var(--secondary-text);
+            margin-bottom: 8px;
+        }
+
+        .translation {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .reference {
+            font-size: 0.85rem;
+            color: #999;
+            text-align: right;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        /* Utility */
+        .copy-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .copy-btn:hover { background-color: #f0f0f0; }
+
+        /* Empty State */
+        #no-results {
+            text-align: center;
+            color: #888;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Essential Duas</h1>
+        <p class="subtitle">Daily supplications from the Quran & Sunnah</p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for anxiety, knowledge, morning...">
+        </div>
+    </header>
+
+    <div class="container" id="duaContainer">
+        </div>
+    
+    <div id="no-results">No duas found matching your search.</div>
+
+    <script>
+        // DATA: You can add more Duas to this list
+        const duas = [
+            {
+                id: 1,
+                category: "Knowledge",
+                arabic: "رَّبِّ زِدْنِي عِلْمًا",
+                transliteration: "Rabbi zidni 'ilma",
+                translation: "My Lord, increase me in knowledge.",
+                reference: "Surah Taha 20:114"
+            },
+            {
+                id: 2,
+                category: "Distress",
+                arabic: "لَا إِلَهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ",
+                transliteration: "La ilaha illa anta subhanaka inni kuntu mina az-zalimin",
+                translation: "There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.",
+                reference: "Surah Al-Anbiya 21:87"
+            },
+            {
+                id: 3,
+                category: "Morning",
+                arabic: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ",
+                transliteration: "Asbahna wa-asbahal-mulku lillah",
+                translation: "We have entered the morning and at this very time the whole kingdom belongs to Allah.",
+                reference: "Hisn al-Muslim"
+            },
+            {
+                id: 4,
+                category: "Parents",
+                arabic: "رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+                transliteration: "Rabbi irhamhuma kama rabbayani saghira",
+                translation: "My Lord, have mercy upon them as they brought me up [when I was] small.",
+                reference: "Surah Al-Isra 17:24"
+            },
+            {
+                id: 5,
+                category: "Forgiveness",
+                arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+                transliteration: "Rabbana atina fid-dunya hasanatan wa fil 'akhirati hasanatan waqina 'adhaban-nar",
+                translation: "Our Lord, give us in this world [that which is] good and in the Hereafter [that which is] good and protect us from the punishment of the Fire.",
+                reference: "Surah Al-Baqarah 2:201"
+            }
+        ];
+
+        const container = document.getElementById('duaContainer');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('no-results');
+
+        // Function to render cards
+        function renderDuas(data) {
+            container.innerHTML = ''; // Clear current list
+            
+            if (data.length === 0) {
+                noResults.style.display = 'block';
+                return;
+            } else {
+                noResults.style.display = 'none';
+            }
+
+            data.forEach(dua => {
+                const card = document.createElement('div');
+                card.className = 'dua-card';
+                card.innerHTML = `
+                    <button class="copy-btn" onclick="copyText('${dua.arabic}')">Copy</button>
+                    <span class="category-tag">${dua.category}</span>
+                    <div class="arabic-text">${dua.arabic}</div>
+                    <div class="transliteration">${dua.transliteration}</div>
+                    <div class="translation">"${dua.translation}"</div>
+                    <div class="reference">${dua.reference}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Search Function
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = duas.filter(dua => 
+                dua.category.toLowerCase().includes(term) || 
+                dua.translation.toLowerCase().includes(term) ||
+                dua.transliteration.toLowerCase().includes(term)
+            );
+            renderDuas(filtered);
+        });
+
+        // Copy to Clipboard
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Arabic text copied to clipboard!");
+            });
+        }
+
+        // Initial Render
+        renderDuas(duas);
+    </script>
+</body>
+</html>
