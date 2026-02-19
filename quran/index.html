@@ -17,48 +17,43 @@ body {
 .dark { background:#0f172a; color:#e5e7eb; }
 
 /* Layout */
-.wrapper {
-  display:flex;
-}
+.wrapper { display:flex; }
 
-/* Main Content */
 .main {
   flex:1;
   padding:20px;
-  transition:0.3s;
+  transition:margin-right 0.3s ease;
 }
 
 /* Tafseer Panel */
 .tafseer-panel {
-  width:0;
-  overflow:hidden;
-  background:#ffffff;
-  border-left:1px solid #ddd;
-  transition:0.3s ease;
-  padding:0;
-}
-
-.dark .tafseer-panel {
-  background:#1e293b;
-  border-left:1px solid #334155;
-}
-
-.tafseer-panel.open {
-  width:400px;
+  position:fixed;
+  right:-420px;
+  top:0;
+  width:420px;
+  height:100%;
+  background:white;
+  box-shadow:-4px 0 15px rgba(0,0,0,0.1);
+  transition:right 0.35s ease;
   padding:20px;
+  overflow-y:auto;
+  z-index:200;
 }
 
-.tafseer-content {
-  max-height:80vh;
-  overflow-y:auto;
-  font-size:14px;
-  line-height:1.6;
-}
+.dark .tafseer-panel { background:#1e293b; }
+
+.tafseer-panel.open { right:0; }
 
 .close-btn {
   cursor:pointer;
   font-size:18px;
   float:right;
+}
+
+.tafseer-content {
+  margin-top:15px;
+  font-size:14px;
+  line-height:1.7;
 }
 
 /* Header */
@@ -80,7 +75,7 @@ body {
   justify-content:center;
 }
 
-button {
+button, select {
   padding:6px 12px;
   border-radius:6px;
   border:none;
@@ -89,6 +84,8 @@ button {
 
 button.play { background:#2563eb; color:white; }
 button.taf { background:#16a34a; color:white; }
+button.copy { background:#f59e0b; color:white; }
+button.close { background:#ef4444; color:white; }
 
 .arabic {
   font-family:'Amiri', serif;
@@ -107,16 +104,8 @@ button.taf { background:#16a34a; color:white; }
 
 .dark .ayah { background:#1e293b; }
 
-/* Mobile */
-@media(max-width:900px){
-  .tafseer-panel.open {
-    width:100%;
-    position:fixed;
-    right:0;
-    top:0;
-    height:100%;
-    z-index:200;
-  }
+@media(max-width:768px){
+  .tafseer-panel { width:100%; }
 }
 </style>
 </head>
@@ -126,7 +115,14 @@ button.taf { background:#16a34a; color:white; }
 <div class="header">
   <h2 style="text-align:center;">Quran Study Platform</h2>
   <div class="controls">
+
     <select id="surahSelect"></select>
+
+    <select id="reciterSelect">
+      <option value="Alafasy_128kbps">Mishary Alafasy</option>
+      <option value="Sudais_128kbps">Sudais</option>
+      <option value="Minshawi_Murattal_128kbps">Minshawi</option>
+    </select>
 
     <select id="tafseer1">
       <option value="169">Ibn Kathir</option>
@@ -140,24 +136,21 @@ button.taf { background:#16a34a; color:white; }
     </select>
 
     <button onclick="toggleDark()">Night</button>
+
   </div>
 </div>
 
 <div class="wrapper">
-
   <div class="main" id="mainContent">
     <div id="ayahContainer"></div>
   </div>
+</div>
 
-  <div class="tafseer-panel" id="tafseerPanel">
-    <div>
-      <span class="close-btn" onclick="closeTafseer()">✖</span>
-      <h3>Tafseer</h3>
-      <hr>
-      <div class="tafseer-content" id="tafseerContent"></div>
-    </div>
-  </div>
-
+<div class="tafseer-panel" id="tafseerPanel">
+  <button class="close-btn close" onclick="closeTafseer()">✖ Close</button>
+  <h3 id="tafseerHeader"></h3>
+  <button class="copy" onclick="copyTafseer()">Copy Tafseer</button>
+  <div class="tafseer-content" id="tafseerContent"></div>
 </div>
 
 <script>
@@ -165,6 +158,7 @@ button.taf { background:#16a34a; color:white; }
 let surahMetaData = [];
 let surahVerses = [];
 let tafseerCache = {};
+let currentTafseerText = "";
 
 /* Load Surahs */
 async function loadSurahNames(){
@@ -183,7 +177,6 @@ async function loadSurahNames(){
   loadSurah(1);
 }
 
-/* Load Surah */
 async function loadSurah(surah){
   const container = document.getElementById("ayahContainer");
   container.innerHTML = "Loading...";
@@ -209,51 +202,39 @@ async function loadSurah(surah){
   });
 }
 
-/* Tafseer Panel Logic */
+/* Audio */
+function playAyah(verseKey){
+  const reciter = document.getElementById("reciterSelect").value;
+  const parts = verseKey.split(":");
+  const url =
+    `https://everyayah.com/data/${reciter}/` +
+    parts[0].padStart(3,'0') +
+    parts[1].padStart(3,'0') + ".mp3";
+
+  new Audio(url).play();
+}
+
+/* Tafseer */
 async function openTafseer(verseKey){
 
   const panel = document.getElementById("tafseerPanel");
   const content = document.getElementById("tafseerContent");
+  const header = document.getElementById("tafseerHeader");
 
   panel.classList.add("open");
   content.innerHTML = "Loading...";
 
+  header.textContent = "Tafseer for Ayah " + verseKey;
+
   const t1 = document.getElementById("tafseer1").value;
   const t2 = document.getElementById("tafseer2").value;
 
-  let html = "";
-
   const selected = [t1, t2].filter(Boolean);
 
-  if(selected.length === 2){
-    html = `<div style="display:flex; gap:10px;">`;
+  let html = "";
 
-    for(const t of selected){
-      const cacheKey = t + "-" + verseKey;
+  for(const t of selected){
 
-      if(!tafseerCache[cacheKey]){
-        const res = await fetch(
-          `https://api.quran.com/api/v4/tafsirs/${t}/by_ayah/${verseKey}`
-        );
-        const data = await res.json();
-        tafseerCache[cacheKey] = data.tafsir.text;
-      }
-
-      const label = (t==="169")?"Ibn Kathir":"Jalalayn";
-
-      html += `
-        <div style="flex:1; background:#f3f4f6; padding:10px;">
-          <b>${label}</b><br><br>
-          ${tafseerCache[cacheKey]}
-        </div>
-      `;
-    }
-
-    html += "</div>";
-
-  } else {
-
-    const t = selected[0];
     const cacheKey = t + "-" + verseKey;
 
     if(!tafseerCache[cacheKey]){
@@ -266,12 +247,10 @@ async function openTafseer(verseKey){
 
     const label = (t==="169")?"Ibn Kathir":"Jalalayn";
 
-    html = `
-      <b>${label}</b><br><br>
-      ${tafseerCache[cacheKey]}
-    `;
+    html += `<h4>${label}</h4>${tafseerCache[cacheKey]}<hr>`;
   }
 
+  currentTafseerText = html;
   content.innerHTML = html;
 }
 
@@ -279,18 +258,13 @@ function closeTafseer(){
   document.getElementById("tafseerPanel").classList.remove("open");
 }
 
-function toggleDark(){
-  document.body.classList.toggle("dark");
+function copyTafseer(){
+  navigator.clipboard.writeText(currentTafseerText);
+  alert("Tafseer copied to clipboard.");
 }
 
-function playAyah(verseKey){
-  const parts = verseKey.split(":");
-  const url =
-    "https://everyayah.com/data/Alafasy_128kbps/" +
-    parts[0].padStart(3,'0') +
-    parts[1].padStart(3,'0') + ".mp3";
-
-  new Audio(url).play();
+function toggleDark(){
+  document.body.classList.toggle("dark");
 }
 
 document.getElementById("surahSelect").addEventListener("change", e=>{
