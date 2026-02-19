@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Quran Study Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
 
 <style>
@@ -10,7 +12,7 @@ body {
   font-family: Arial, sans-serif;
   background: #ffffff;
   color: #222;
-  padding: 40px;
+  padding: 20px;
   transition: 0.3s;
 }
 
@@ -19,16 +21,21 @@ body {
   color: #f1f1f1;
 }
 
-h1 { margin-bottom: 20px; }
+h1 { margin-bottom: 15px; }
 
-.controls { margin-bottom: 25px; }
+.controls {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
 select, button {
-  padding: 8px 12px;
-  margin-right: 8px;
+  padding: 6px 10px;
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .primary {
@@ -38,18 +45,18 @@ select, button {
 }
 
 .ayah {
-  margin-bottom: 40px;
-  padding-bottom: 25px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #eee;
 }
 
 .arabic {
   font-family: 'Amiri', serif;
-  font-size: 30px;
+  font-size: 26px;
   direction: rtl;
   text-align: right;
-  line-height: 1.9;
-  margin-bottom: 12px;
+  line-height: 1.8;
+  margin-bottom: 10px;
 }
 
 .word {
@@ -61,21 +68,24 @@ select, button {
   background: #e0f2f1;
 }
 
-.translation { margin-bottom: 10px; }
-
-.tafseer-container { display: none; margin-top: 15px; }
-
-.tafseer-columns {
-  display: flex;
-  gap: 15px;
+.translation {
+  margin-bottom: 10px;
 }
 
 .tafseer-box {
-  flex: 1;
+  margin-top: 10px;
+  padding: 10px;
   background: #f3f6f9;
-  padding: 12px;
   border-left: 4px solid #2e7d32;
   font-size: 14px;
+  display: none;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
 .popup {
@@ -88,9 +98,9 @@ select, button {
   z-index: 999;
 }
 
-.dark .popup {
-  background: #2a2a2a;
-  color: white;
+@media (max-width: 768px) {
+  .arabic { font-size: 22px; }
+  body { padding: 10px; }
 }
 </style>
 </head>
@@ -103,35 +113,33 @@ select, button {
   <select id="surahSelect"></select>
 
   <select id="reciterSelect">
-    <option value="Alafasy_128kbps">Mishary Rashid Alafasy</option>
-    <option value="Abdul_Basit_Mujawwad_128kbps">Abdul Basit Mujawwad</option>
-    <option value="Hudhaify_128kbps">Hudhaify</option>
+    <option value="Alafasy_128kbps">Mishary Alafasy</option>
+    <option value="Sudais_128kbps">Sudais</option>
+    <option value="Minshawi_Murattal_128kbps">Minshawi</option>
   </select>
 
-  <select id="tafseer1">
-    <option value="169">Ibn Kathir</option>
-    <option value="168">Jalalayn</option>
-  </select>
-
-  <select id="tafseer2">
-    <option value="">None</option>
-    <option value="169">Ibn Kathir</option>
-    <option value="168">Jalalayn</option>
-  </select>
-
-  <button id="studyBtn" class="primary" onclick="toggleStudy()">📘 Study Mode OFF</button>
-  <button onclick="toggleDark()">🌙 Night</button>
+  <button id="studyBtn" class="primary" onclick="toggleStudy()">Study Mode OFF</button>
+  <button onclick="toggleDark()">Night</button>
 </div>
 
 <div id="ayahContainer"></div>
+
+<div class="pagination">
+  <button onclick="prevPage()">Previous</button>
+  <button onclick="nextPage()">Next</button>
+</div>
+
 <div id="popup" class="popup"></div>
 
 <script>
-
 const surahSelect = document.getElementById("surahSelect");
 const ayahContainer = document.getElementById("ayahContainer");
 const popup = document.getElementById("popup");
+
 let studyMode = false;
+let currentPage = 1;
+let versesPerPage = 20;
+let totalVerses = 0;
 
 function toggleDark() {
   document.body.classList.toggle("dark");
@@ -140,15 +148,7 @@ function toggleDark() {
 function toggleStudy() {
   studyMode = !studyMode;
   const btn = document.getElementById("studyBtn");
-
-  if (studyMode) {
-    btn.textContent = "📘 Study Mode ON";
-    btn.style.background = "#1565c0";
-  } else {
-    btn.textContent = "📘 Study Mode OFF";
-    btn.style.background = "#2e7d32";
-  }
-
+  btn.textContent = studyMode ? "Study Mode ON" : "Study Mode OFF";
   loadSurah(surahSelect.value);
 }
 
@@ -168,13 +168,14 @@ async function loadSurahs() {
 
 async function loadSurah(id) {
 
-  ayahContainer.innerHTML = "Loading...";
+  const offset = (currentPage - 1) * versesPerPage;
 
-  const res = await fetch(
-    `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&words=true&word_fields=text_uthmani,translation,root,grammar`
-  );
+  const url = `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani&words=true&word_fields=text_uthmani,translation,root,grammar&per_page=${versesPerPage}&page=${currentPage}`;
 
+  const res = await fetch(url);
   const data = await res.json();
+
+  totalVerses = data.pagination.total_records;
   ayahContainer.innerHTML = "";
 
   data.verses.forEach(verse => {
@@ -206,9 +207,9 @@ async function loadSurah(id) {
     div.innerHTML = `
       <div class="arabic">${arabicHTML}</div>
       <div class="translation">${verse.translations[0].text}</div>
-      <button onclick="playAudio('${paddedSurah}','${paddedAyah}')">▶ Play</button>
-      <button onclick="loadTafseer('${verse.verse_key}', this)">Show Tafseer</button>
-      <div class="tafseer-container"></div>
+      <button onclick="playAudio('${paddedSurah}','${paddedAyah}')">Play</button>
+      <button onclick="toggleTafseer(this)">Tafseer</button>
+      <div class="tafseer-box">Tafseer coming soon (optimized loading version)</div>
     `;
 
     ayahContainer.appendChild(div);
@@ -218,40 +219,15 @@ async function loadSurah(id) {
 function playAudio(surah, ayah) {
   const reciter = document.getElementById("reciterSelect").value;
   const url = `https://everyayah.com/data/${reciter}/${surah}${ayah}.mp3`;
+
   const audio = new Audio(url);
+  audio.preload = "auto";
   audio.play();
 }
 
-async function loadTafseer(verseKey, btn) {
-
-  const container = btn.nextElementSibling;
-  container.style.display = "block";
-  container.innerHTML = "Loading...";
-
-  const t1 = document.getElementById("tafseer1").value;
-  const t2 = document.getElementById("tafseer2").value;
-
-  let html = `<div class="tafseer-columns">`;
-
-  for (const tafseerId of [t1, t2].filter(t => t)) {
-    const res = await fetch(
-      `https://api.quran.com/api/v4/tafsirs/${tafseerId}/by_ayah/${verseKey}`
-    );
-    const data = await res.json();
-
-    const label =
-      tafseerId === "169" ? "Ibn Kathir" : "Jalalayn";
-
-    html += `
-      <div class="tafseer-box">
-        <strong>${label}</strong><br><br>
-        ${data.tafsir.text}
-      </div>
-    `;
-  }
-
-  html += `</div>`;
-  container.innerHTML = html;
+function toggleTafseer(btn) {
+  const box = btn.nextElementSibling;
+  box.style.display = box.style.display === "block" ? "none" : "block";
 }
 
 function showWord(event, meaning, root, pos) {
@@ -271,12 +247,26 @@ document.addEventListener("click", e => {
   }
 });
 
-surahSelect.addEventListener("change", e => {
-  loadSurah(e.target.value);
+function nextPage() {
+  if (currentPage * versesPerPage < totalVerses) {
+    currentPage++;
+    loadSurah(surahSelect.value);
+  }
+}
+
+function prevPage() {
+  if (currentPage > 1) {
+    currentPage--;
+    loadSurah(surahSelect.value);
+  }
+}
+
+surahSelect.addEventListener("change", () => {
+  currentPage = 1;
+  loadSurah(surahSelect.value);
 });
 
 loadSurahs();
-
 </script>
 
 </body>
