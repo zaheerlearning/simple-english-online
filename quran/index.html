@@ -24,17 +24,15 @@ body {
 h1 { margin-bottom: 15px; }
 
 .controls {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-select, button {
+select, button, input {
   padding: 6px 10px;
   border: 1px solid #ccc;
-  background: white;
-  cursor: pointer;
   font-size: 14px;
 }
 
@@ -45,7 +43,7 @@ select, button {
 }
 
 .ayah {
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   padding-bottom: 20px;
   border-bottom: 1px solid #eee;
 }
@@ -72,17 +70,8 @@ select, button {
   margin-bottom: 10px;
 }
 
-.tafseer-box {
-  margin-top: 10px;
-  padding: 10px;
-  background: #f3f6f9;
-  border-left: 4px solid #2e7d32;
-  font-size: 14px;
-  display: none;
-}
-
 .pagination {
-  margin-top: 20px;
+  margin-top: 15px;
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -100,7 +89,6 @@ select, button {
 
 @media (max-width: 768px) {
   .arabic { font-size: 22px; }
-  body { padding: 10px; }
 }
 </style>
 </head>
@@ -110,6 +98,10 @@ select, button {
 <h1>Quran Study Platform</h1>
 
 <div class="controls">
+
+  <input type="text" id="surahSearch" placeholder="Search Surah (e.g. Yaseen or 36)">
+  <button onclick="searchSurah()">Load</button>
+
   <select id="surahSelect"></select>
 
   <select id="reciterSelect">
@@ -118,8 +110,11 @@ select, button {
     <option value="Minshawi_Murattal_128kbps">Minshawi</option>
   </select>
 
-  <button id="studyBtn" class="primary" onclick="toggleStudy()">Study Mode OFF</button>
+  <button onclick="playFullSurah()" class="primary">Play Full Surah</button>
+
+  <button id="studyBtn" onclick="toggleStudy()">Study Mode OFF</button>
   <button onclick="toggleDark()">Night</button>
+
 </div>
 
 <div id="ayahContainer"></div>
@@ -132,6 +127,7 @@ select, button {
 <div id="popup" class="popup"></div>
 
 <script>
+
 const surahSelect = document.getElementById("surahSelect");
 const ayahContainer = document.getElementById("ayahContainer");
 const popup = document.getElementById("popup");
@@ -140,6 +136,7 @@ let studyMode = false;
 let currentPage = 1;
 let versesPerPage = 20;
 let totalVerses = 0;
+let currentAudio = null;
 
 function toggleDark() {
   document.body.classList.toggle("dark");
@@ -147,8 +144,8 @@ function toggleDark() {
 
 function toggleStudy() {
   studyMode = !studyMode;
-  const btn = document.getElementById("studyBtn");
-  btn.textContent = studyMode ? "Study Mode ON" : "Study Mode OFF";
+  document.getElementById("studyBtn").textContent =
+    studyMode ? "Study Mode ON" : "Study Mode OFF";
   loadSurah(surahSelect.value);
 }
 
@@ -168,8 +165,6 @@ async function loadSurahs() {
 
 async function loadSurah(id) {
 
-  const offset = (currentPage - 1) * versesPerPage;
-
   const url = `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani&words=true&word_fields=text_uthmani,translation,root,grammar&per_page=${versesPerPage}&page=${currentPage}`;
 
   const res = await fetch(url);
@@ -185,11 +180,7 @@ async function loadSurah(id) {
     if (studyMode) {
       verse.words.forEach(w => {
         arabicHTML += `<span class="word"
-          onclick="showWord(event,
-            '${w.translation?.text || ""}',
-            '${w.root || ""}',
-            '${w.grammar?.part_of_speech || ""}'
-          )">
+          onclick="showWord(event,'${w.translation?.text || ""}','${w.root || ""}','${w.grammar?.part_of_speech || ""}')">
           ${w.text_uthmani}
         </span> `;
       });
@@ -207,27 +198,32 @@ async function loadSurah(id) {
     div.innerHTML = `
       <div class="arabic">${arabicHTML}</div>
       <div class="translation">${verse.translations[0].text}</div>
-      <button onclick="playAudio('${paddedSurah}','${paddedAyah}')">Play</button>
-      <button onclick="toggleTafseer(this)">Tafseer</button>
-      <div class="tafseer-box">Tafseer coming soon (optimized loading version)</div>
+      <button onclick="playAyah('${paddedSurah}','${paddedAyah}')">Play</button>
     `;
 
     ayahContainer.appendChild(div);
   });
 }
 
-function playAudio(surah, ayah) {
+function playAyah(surah, ayah) {
   const reciter = document.getElementById("reciterSelect").value;
   const url = `https://everyayah.com/data/${reciter}/${surah}${ayah}.mp3`;
 
-  const audio = new Audio(url);
-  audio.preload = "auto";
-  audio.play();
+  if (currentAudio) currentAudio.pause();
+
+  currentAudio = new Audio(url);
+  currentAudio.play();
 }
 
-function toggleTafseer(btn) {
-  const box = btn.nextElementSibling;
-  box.style.display = box.style.display === "block" ? "none" : "block";
+function playFullSurah() {
+  const reciter = document.getElementById("reciterSelect").value;
+  const surah = surahSelect.value.toString().padStart(3,'0');
+  const url = `https://everyayah.com/data/${reciter}/${surah}001.mp3`;
+
+  if (currentAudio) currentAudio.pause();
+
+  currentAudio = new Audio(url);
+  currentAudio.play();
 }
 
 function showWord(event, meaning, root, pos) {
@@ -261,12 +257,27 @@ function prevPage() {
   }
 }
 
+function searchSurah() {
+  const input = document.getElementById("surahSearch").value.toLowerCase();
+  const options = surahSelect.options;
+
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].text.toLowerCase().includes(input) || options[i].value === input) {
+      surahSelect.selectedIndex = i;
+      currentPage = 1;
+      loadSurah(options[i].value);
+      break;
+    }
+  }
+}
+
 surahSelect.addEventListener("change", () => {
   currentPage = 1;
   loadSurah(surahSelect.value);
 });
 
 loadSurahs();
+
 </script>
 
 </body>
