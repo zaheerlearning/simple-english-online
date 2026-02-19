@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Quran Study Platform</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
 
 <style>
@@ -23,19 +21,17 @@ body {
 
 h1 { margin-bottom: 20px; }
 
-.controls {
-  margin-bottom: 25px;
-}
+.controls { margin-bottom: 25px; }
 
 select, button {
   padding: 8px 12px;
-  margin-right: 10px;
+  margin-right: 8px;
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
 }
 
-button.primary {
+.primary {
   background: #2e7d32;
   color: white;
   border: none;
@@ -52,31 +48,26 @@ button.primary {
   font-size: 30px;
   direction: rtl;
   text-align: right;
-  line-height: 1.8;
-  margin-bottom: 10px;
+  line-height: 1.9;
+  margin-bottom: 12px;
 }
 
 .word {
   cursor: pointer;
-  padding: 2px;
+  padding: 2px 4px;
 }
 
 .word:hover {
   background: #e0f2f1;
 }
 
-.translation {
-  margin-bottom: 10px;
-}
+.translation { margin-bottom: 10px; }
 
-.tafseer-container {
-  margin-top: 15px;
-  display: none;
-}
+.tafseer-container { display: none; margin-top: 15px; }
 
 .tafseer-columns {
   display: flex;
-  gap: 20px;
+  gap: 15px;
 }
 
 .tafseer-box {
@@ -111,18 +102,24 @@ button.primary {
 <div class="controls">
   <select id="surahSelect"></select>
 
-  <select id="tafseerSelect1">
+  <select id="reciterSelect">
+    <option value="Alafasy_128kbps">Mishary Rashid Alafasy</option>
+    <option value="Abdul_Basit_Mujawwad_128kbps">Abdul Basit Mujawwad</option>
+    <option value="Hudhaify_128kbps">Hudhaify</option>
+  </select>
+
+  <select id="tafseer1">
     <option value="169">Ibn Kathir</option>
     <option value="168">Jalalayn</option>
   </select>
 
-  <select id="tafseerSelect2">
+  <select id="tafseer2">
     <option value="">None</option>
     <option value="169">Ibn Kathir</option>
     <option value="168">Jalalayn</option>
   </select>
 
-  <button class="primary" onclick="toggleStudy()">📘 Study Mode</button>
+  <button id="studyBtn" class="primary" onclick="toggleStudy()">📘 Study Mode OFF</button>
   <button onclick="toggleDark()">🌙 Night</button>
 </div>
 
@@ -134,7 +131,6 @@ button.primary {
 const surahSelect = document.getElementById("surahSelect");
 const ayahContainer = document.getElementById("ayahContainer");
 const popup = document.getElementById("popup");
-
 let studyMode = false;
 
 function toggleDark() {
@@ -143,6 +139,16 @@ function toggleDark() {
 
 function toggleStudy() {
   studyMode = !studyMode;
+  const btn = document.getElementById("studyBtn");
+
+  if (studyMode) {
+    btn.textContent = "📘 Study Mode ON";
+    btn.style.background = "#1565c0";
+  } else {
+    btn.textContent = "📘 Study Mode OFF";
+    btn.style.background = "#2e7d32";
+  }
+
   loadSurah(surahSelect.value);
 }
 
@@ -165,23 +171,24 @@ async function loadSurah(id) {
   ayahContainer.innerHTML = "Loading...";
 
   const res = await fetch(
-    `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&words=true&fields=text_uthmani`
+    `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&words=true&word_fields=text_uthmani,translation,root,grammar`
   );
 
   const data = await res.json();
   ayahContainer.innerHTML = "";
 
-  for (const verse of data.verses) {
-
-    const div = document.createElement("div");
-    div.classList.add("ayah");
+  data.verses.forEach(verse => {
 
     let arabicHTML = "";
 
     if (studyMode) {
       verse.words.forEach(w => {
         arabicHTML += `<span class="word"
-          onclick="showWord(event,'${w.translation?.text || ''}','${w.root || ''}','${w.part_of_speech || ''}')">
+          onclick="showWord(event,
+            '${w.translation?.text || ""}',
+            '${w.root || ""}',
+            '${w.grammar?.part_of_speech || ""}'
+          )">
           ${w.text_uthmani}
         </span> `;
       });
@@ -189,42 +196,55 @@ async function loadSurah(id) {
       arabicHTML = verse.text_uthmani;
     }
 
+    const ayahNumber = verse.verse_key.split(":")[1];
+    const paddedAyah = ayahNumber.padStart(3, '0');
+    const paddedSurah = id.toString().padStart(3, '0');
+
+    const div = document.createElement("div");
+    div.classList.add("ayah");
+
     div.innerHTML = `
       <div class="arabic">${arabicHTML}</div>
       <div class="translation">${verse.translations[0].text}</div>
+      <button onclick="playAudio('${paddedSurah}','${paddedAyah}')">▶ Play</button>
       <button onclick="loadTafseer('${verse.verse_key}', this)">Show Tafseer</button>
       <div class="tafseer-container"></div>
     `;
 
     ayahContainer.appendChild(div);
-  }
+  });
+}
+
+function playAudio(surah, ayah) {
+  const reciter = document.getElementById("reciterSelect").value;
+  const url = `https://everyayah.com/data/${reciter}/${surah}${ayah}.mp3`;
+  const audio = new Audio(url);
+  audio.play();
 }
 
 async function loadTafseer(verseKey, btn) {
 
   const container = btn.nextElementSibling;
-  const t1 = document.getElementById("tafseerSelect1").value;
-  const t2 = document.getElementById("tafseerSelect2").value;
-
-  container.innerHTML = "Loading...";
   container.style.display = "block";
+  container.innerHTML = "Loading...";
+
+  const t1 = document.getElementById("tafseer1").value;
+  const t2 = document.getElementById("tafseer2").value;
 
   let html = `<div class="tafseer-columns">`;
 
-  const tafseers = [t1, t2].filter(t => t);
-
-  for (const tafseerId of tafseers) {
+  for (const tafseerId of [t1, t2].filter(t => t)) {
     const res = await fetch(
       `https://api.quran.com/api/v4/tafsirs/${tafseerId}/by_ayah/${verseKey}`
     );
     const data = await res.json();
 
+    const label =
+      tafseerId === "169" ? "Ibn Kathir" : "Jalalayn";
+
     html += `
       <div class="tafseer-box">
-        <strong>${document.querySelector(
-          "#tafseerSelect1 option[value='"+tafseerId+"'], #tafseerSelect2 option[value='"+tafseerId+"']"
-        ).textContent}</strong>
-        <br><br>
+        <strong>${label}</strong><br><br>
         ${data.tafsir.text}
       </div>
     `;
@@ -245,7 +265,7 @@ function showWord(event, meaning, root, pos) {
   `;
 }
 
-document.addEventListener("click", (e) => {
+document.addEventListener("click", e => {
   if (!e.target.classList.contains("word")) {
     popup.style.display = "none";
   }
