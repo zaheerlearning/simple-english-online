@@ -13,48 +13,7 @@ body {
   background:#f6fbf8;
   color:#1f2937;
 }
-
 .dark { background:#0f172a; color:#e5e7eb; }
-
-/* Layout */
-.wrapper { display:flex; }
-
-.main {
-  flex:1;
-  padding:20px;
-  transition:margin-right 0.3s ease;
-}
-
-/* Tafseer Panel */
-.tafseer-panel {
-  position:fixed;
-  right:-420px;
-  top:0;
-  width:420px;
-  height:100%;
-  background:white;
-  box-shadow:-4px 0 15px rgba(0,0,0,0.1);
-  transition:right 0.35s ease;
-  padding:20px;
-  overflow-y:auto;
-  z-index:200;
-}
-
-.dark .tafseer-panel { background:#1e293b; }
-
-.tafseer-panel.open { right:0; }
-
-.close-btn {
-  cursor:pointer;
-  font-size:18px;
-  float:right;
-}
-
-.tafseer-content {
-  margin-top:15px;
-  font-size:14px;
-  line-height:1.7;
-}
 
 /* Header */
 .header {
@@ -65,7 +24,6 @@ body {
   box-shadow:0 2px 10px rgba(0,0,0,0.05);
   z-index:100;
 }
-
 .dark .header { background:#1e293b; }
 
 .controls {
@@ -86,6 +44,7 @@ button.play { background:#2563eb; color:white; }
 button.taf { background:#16a34a; color:white; }
 button.copy { background:#f59e0b; color:white; }
 button.close { background:#ef4444; color:white; }
+button.roman { background:#9333ea; color:white; }
 
 .arabic {
   font-family:'Amiri', serif;
@@ -99,10 +58,59 @@ button.close { background:#ef4444; color:white; }
   background:white;
   padding:20px;
   border-radius:10px;
-  margin-bottom:15px;
+  margin:15px;
+  transition:0.3s;
+}
+.dark .ayah { background:#1e293b; }
+
+.ayah.highlight {
+  border-left:6px solid #16a34a;
+  background:#ecfdf5;
+}
+.dark .ayah.highlight {
+  background:#064e3b;
 }
 
-.dark .ayah { background:#1e293b; }
+/* Tafseer Panel */
+.tafseer-panel {
+  position:fixed;
+  right:-450px;
+  top:0;
+  width:450px;
+  height:100%;
+  background:white;
+  box-shadow:-4px 0 15px rgba(0,0,0,0.1);
+  transition:right 0.35s ease;
+  padding:20px;
+  overflow-y:auto;
+  z-index:200;
+}
+.dark .tafseer-panel { background:#1e293b; }
+
+.tafseer-panel.open { right:0; }
+
+.close-btn { cursor:pointer; }
+
+.tafseer-header-arabic {
+  font-family:'Amiri', serif;
+  font-size:22px;
+  direction:rtl;
+  text-align:right;
+  margin-top:10px;
+}
+
+.spinner {
+  border:4px solid #eee;
+  border-top:4px solid #16a34a;
+  border-radius:50%;
+  width:30px;
+  height:30px;
+  animation:spin 1s linear infinite;
+  margin:20px auto;
+}
+@keyframes spin {
+  100% { transform:rotate(360deg); }
+}
 
 @media(max-width:768px){
   .tafseer-panel { width:100%; }
@@ -135,144 +143,145 @@ button.close { background:#ef4444; color:white; }
       <option value="168">Jalalayn</option>
     </select>
 
+    <button class="roman" onclick="toggleRoman()">Roman Urdu</button>
     <button onclick="toggleDark()">Night</button>
 
   </div>
 </div>
 
-<div class="wrapper">
-  <div class="main" id="mainContent">
-    <div id="ayahContainer"></div>
-  </div>
-</div>
+<div id="ayahContainer"></div>
 
 <div class="tafseer-panel" id="tafseerPanel">
   <button class="close-btn close" onclick="closeTafseer()">✖ Close</button>
   <h3 id="tafseerHeader"></h3>
+  <div id="tafseerArabic" class="tafseer-header-arabic"></div>
   <button class="copy" onclick="copyTafseer()">Copy Tafseer</button>
-  <div class="tafseer-content" id="tafseerContent"></div>
+  <div id="tafseerContent"></div>
 </div>
 
 <script>
+let surahMetaData=[];
+let surahVerses=[];
+let tafseerCache={};
+let currentTafseerText="";
+let romanMode=false;
 
-let surahMetaData = [];
-let surahVerses = [];
-let tafseerCache = {};
-let currentTafseerText = "";
-
-/* Load Surahs */
 async function loadSurahNames(){
-  const res = await fetch("https://api.quran.com/api/v4/chapters");
-  const data = await res.json();
-  surahMetaData = data.chapters;
+  const res=await fetch("https://api.quran.com/api/v4/chapters");
+  const data=await res.json();
+  surahMetaData=data.chapters;
+  const select=document.getElementById("surahSelect");
 
-  const select = document.getElementById("surahSelect");
   data.chapters.forEach(ch=>{
-    let opt = document.createElement("option");
-    opt.value = ch.id;
-    opt.textContent = ch.id + ". " + ch.name_simple;
+    let opt=document.createElement("option");
+    opt.value=ch.id;
+    opt.textContent=ch.id+". "+ch.name_simple;
     select.appendChild(opt);
   });
-
   loadSurah(1);
 }
 
 async function loadSurah(surah){
-  const container = document.getElementById("ayahContainer");
-  container.innerHTML = "Loading...";
+  const container=document.getElementById("ayahContainer");
+  container.innerHTML="Loading...";
 
-  const res = await fetch(
+  const res=await fetch(
     `https://api.quran.com/api/v4/verses/by_chapter/${surah}?translations=20&fields=text_uthmani`
   );
+  const data=await res.json();
+  surahVerses=data.verses;
+  container.innerHTML="";
 
-  const data = await res.json();
-  surahVerses = data.verses;
-  container.innerHTML = "";
+  surahVerses.forEach((v,i)=>{
+    let div=document.createElement("div");
+    div.className="ayah";
+    div.id="ayah-"+v.verse_key;
 
-  surahVerses.forEach(v=>{
-    let div = document.createElement("div");
-    div.className = "ayah";
-    div.innerHTML = `
+    let translation=v.translations[0].text;
+
+    if(romanMode){
+      translation=translation.replace(/Allah/g,"Allah")
+      .replace(/the/g,"")
+      .replace(/Lord/g,"Rab");
+    }
+
+    div.innerHTML=`
       <div class="arabic">${v.text_uthmani}</div>
-      <div>${v.translations[0].text}</div>
+      <div>${translation}</div>
       <button class="play" onclick="playAyah('${v.verse_key}')">Play</button>
-      <button class="taf" onclick="openTafseer('${v.verse_key}')">📖 Tafseer</button>
+      <button class="taf" onclick="openTafseer('${v.verse_key}','${v.text_uthmani}')">📖 Tafseer</button>
     `;
     container.appendChild(div);
   });
 }
 
-/* Audio */
-function playAyah(verseKey){
-  const reciter = document.getElementById("reciterSelect").value;
-  const parts = verseKey.split(":");
-  const url =
-    `https://everyayah.com/data/${reciter}/` +
-    parts[0].padStart(3,'0') +
-    parts[1].padStart(3,'0') + ".mp3";
+function toggleRoman(){
+  romanMode=!romanMode;
+  loadSurah(document.getElementById("surahSelect").value);
+}
 
+function playAyah(key){
+  const reciter=document.getElementById("reciterSelect").value;
+  const p=key.split(":");
+  const url=`https://everyayah.com/data/${reciter}/${p[0].padStart(3,'0')}${p[1].padStart(3,'0')}.mp3`;
   new Audio(url).play();
 }
 
-/* Tafseer */
-async function openTafseer(verseKey){
+async function openTafseer(key, arabicText){
+  document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("highlight"));
+  document.getElementById("ayah-"+key).classList.add("highlight");
+  document.getElementById("ayah-"+key).scrollIntoView({behavior:"smooth", block:"center"});
 
-  const panel = document.getElementById("tafseerPanel");
-  const content = document.getElementById("tafseerContent");
-  const header = document.getElementById("tafseerHeader");
+  const panel=document.getElementById("tafseerPanel");
+  const content=document.getElementById("tafseerContent");
+  const header=document.getElementById("tafseerHeader");
+  const arabicHeader=document.getElementById("tafseerArabic");
 
   panel.classList.add("open");
-  content.innerHTML = "Loading...";
+  header.textContent="Tafseer for "+key;
+  arabicHeader.textContent=arabicText;
 
-  header.textContent = "Tafseer for Ayah " + verseKey;
+  content.innerHTML='<div class="spinner"></div>';
 
-  const t1 = document.getElementById("tafseer1").value;
-  const t2 = document.getElementById("tafseer2").value;
+  const t1=document.getElementById("tafseer1").value;
+  const t2=document.getElementById("tafseer2").value;
+  const selected=[t1,t2].filter(Boolean);
 
-  const selected = [t1, t2].filter(Boolean);
-
-  let html = "";
-
+  let html="";
   for(const t of selected){
-
-    const cacheKey = t + "-" + verseKey;
-
+    const cacheKey=t+"-"+key;
     if(!tafseerCache[cacheKey]){
-      const res = await fetch(
-        `https://api.quran.com/api/v4/tafsirs/${t}/by_ayah/${verseKey}`
-      );
-      const data = await res.json();
-      tafseerCache[cacheKey] = data.tafsir.text;
+      const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${t}/by_ayah/${key}`);
+      const data=await res.json();
+      tafseerCache[cacheKey]=data.tafsir.text;
     }
-
-    const label = (t==="169")?"Ibn Kathir":"Jalalayn";
-
-    html += `<h4>${label}</h4>${tafseerCache[cacheKey]}<hr>`;
+    const label=(t==="169")?"Ibn Kathir":"Jalalayn";
+    html+=`<h4>${label}</h4>${tafseerCache[cacheKey]}<hr>`;
   }
 
-  currentTafseerText = html;
-  content.innerHTML = html;
+  currentTafseerText=html;
+  content.innerHTML=html;
 }
 
 function closeTafseer(){
   document.getElementById("tafseerPanel").classList.remove("open");
+  document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("highlight"));
 }
 
 function copyTafseer(){
   navigator.clipboard.writeText(currentTafseerText);
-  alert("Tafseer copied to clipboard.");
+  alert("Copied!");
 }
 
 function toggleDark(){
   document.body.classList.toggle("dark");
 }
 
-document.getElementById("surahSelect").addEventListener("change", e=>{
+document.getElementById("surahSelect").addEventListener("change",e=>{
   loadSurah(e.target.value);
 });
 
 loadSurahNames();
-
 </script>
 
 </body>
