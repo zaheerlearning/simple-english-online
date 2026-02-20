@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <title>Quran Companion</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -15,281 +14,236 @@
   --bg:#f0fdf4;
   --card:#ffffff;
 }
+*{ box-sizing:border-box; }
+body{ margin:0; font-family:'Inter',sans-serif; background:var(--bg); }
 
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background:var(--bg);
-}
+/* ══ STICKY WRAPPER ══ */
+#stickyTop{ position:sticky; top:0; z-index:100; }
 
+/* ══ HEADER ══ */
 header{
   background:linear-gradient(135deg,#166534,#065f46);
-  color:white;
-  padding:15px;
-  position:sticky;
-  top:0;
-  z-index:100;
+  color:white; padding:14px 15px 10px;
 }
-
-h2{text-align:center;margin:0 0 10px;}
-
+h2{ text-align:center; margin:0 0 10px; font-size:clamp(16px,3vw,22px); }
 .controls{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  justify-content:center;
-  margin-bottom:8px;
+  display:flex; flex-wrap:wrap; gap:8px;
+  justify-content:center; margin-bottom:6px;
 }
-
 select,button,label{
-  padding:8px 12px;
-  border:none;
-  border-radius:10px;
-  font-weight:600;
-  cursor:pointer;
+  padding:7px 12px; border:none;
+  border-radius:10px; font-weight:600; cursor:pointer;
+}
+button{ background:var(--accent); color:white; }
+#studyBtn.active{ background:#15803d; outline:2px solid white; }
+
+/* ══ PRAYER BAR ══ */
+#prayerBar{
+  background:linear-gradient(135deg,#053d2a,#064e3b);
+  color:white; box-shadow:0 4px 14px rgba(0,0,0,.25);
 }
 
-button{
-  background:var(--accent);
-  color:white;
+/* Collapsed strip */
+.p-strip{
+  display:flex; align-items:center;
+  justify-content:space-between;
+  padding:9px 14px; gap:10px;
 }
-
-#studyBtn.active{
-  background:#15803d;
-  outline:2px solid white;
+.p-left{ display:flex; flex-direction:column; cursor:pointer; flex:1; }
+.p-label{ font-size:10px; text-transform:uppercase; letter-spacing:.8px; opacity:.6; }
+.p-name{ font-size:16px; font-weight:700; line-height:1.3; }
+.p-time{ font-size:12px; opacity:.75; }
+.p-middle{ display:flex; align-items:center; gap:8px; }
+.p-countdown{
+  background:rgba(255,255,255,.15);
+  padding:4px 13px; border-radius:20px;
+  font-size:14px; font-weight:700;
+  letter-spacing:.4px; min-width:72px; text-align:center;
 }
-
-main{
-  max-width:1000px;
-  margin:auto;
-  padding:15px;
+.p-icon-btn{
+  background:rgba(255,255,255,.12); border:none; color:white;
+  border-radius:8px; padding:6px 10px;
+  cursor:pointer; font-size:15px; line-height:1; flex-shrink:0;
 }
+.p-icon-btn:hover{ background:rgba(255,255,255,.25); }
 
+/* Expanded panel */
+.p-panel{
+  display:none;
+  padding:0 14px 14px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.p-panel.open{ display:block; }
+
+/* Hijri */
+.p-hijri{ text-align:center; font-size:12px; opacity:.6; padding:7px 0 4px; }
+
+/* 7-time grid */
+.p-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px; margin-top:8px;
+}
+.p-cell{
+  background:rgba(255,255,255,.1);
+  border-radius:10px; padding:9px 3px;
+  text-align:center; transition:.2s;
+}
+.p-cell.current{
+  background:rgba(255,255,255,.28);
+  outline:2px solid rgba(255,255,255,.55);
+}
+.p-cell.passed{ opacity:.4; }
+.p-cell-icon{ font-size:13px; margin-bottom:2px; }
+.p-cell-name{ font-size:9px; text-transform:uppercase; letter-spacing:.3px; opacity:.7; margin-bottom:3px; }
+.p-cell-time{ font-size:12px; font-weight:700; }
+
+/* City search row */
+.p-city-row{
+  display:flex; gap:6px; align-items:center;
+  margin-top:12px; width:100%;
+}
+.p-city-input{
+  flex:1; padding:7px 10px;
+  border-radius:8px; border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.12); color:white;
+  font-size:13px; font-family:inherit; outline:none;
+}
+.p-city-input::placeholder{ color:rgba(255,255,255,.4); }
+.p-city-input:focus{ border-color:rgba(255,255,255,.5); background:rgba(255,255,255,.18); }
+.p-search-btn{
+  padding:7px 14px; border-radius:8px;
+  background:var(--accent); color:white;
+  border:none; font-weight:700;
+  font-size:13px; cursor:pointer;
+}
+.p-gps-btn{
+  padding:7px 10px; border-radius:8px;
+  background:rgba(255,255,255,.15); color:white;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:13px; cursor:pointer;
+}
+.p-location{ font-size:11px; opacity:.55; width:100%; padding-top:4px; }
+
+/* Settings */
+.p-settings{
+  display:flex; flex-wrap:wrap; gap:8px;
+  margin-top:10px; align-items:center;
+}
+.p-settings select{
+  background:rgba(255,255,255,.12); color:white;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:12px; padding:6px 8px;
+  border-radius:8px; flex:1; min-width:140px;
+}
+.p-settings select option{ background:#053d2a; color:white; }
+
+/* Azan row */
+.p-azan-row{
+  display:flex; gap:8px; align-items:center;
+  margin-top:8px;
+}
+.p-azan-label{
+  font-size:12px; font-weight:600; opacity:.8;
+  white-space:nowrap; flex-shrink:0;
+}
+.p-azan-row select{
+  flex:1; background:rgba(255,255,255,.12); color:white;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:12px; padding:6px 8px; border-radius:8px;
+}
+.p-azan-row select option{ background:#053d2a; }
+
+/* ══ MAIN ══ */
+main{ max-width:1000px; margin:auto; padding:15px; }
 .ayah{
-  background:var(--card);
-  padding:20px;
-  border-radius:16px;
-  margin-bottom:18px;
+  background:var(--card); padding:20px;
+  border-radius:16px; margin-bottom:18px;
   box-shadow:0 6px 18px rgba(0,0,0,.08);
-  transition:.3s;
-  position:relative;
+  transition:.3s; position:relative;
 }
-
-.playing{
-  background:#ecfdf5;
-  border:2px solid var(--accent);
-}
-
-.bookmark{
-  position:absolute;
-  top:10px;
-  left:10px;
-  cursor:pointer;
-  font-size:18px;
-}
+.playing{ background:#ecfdf5; border:2px solid var(--accent); }
+.bookmark{ position:absolute; top:10px; left:10px; cursor:pointer; font-size:18px; }
 .bookmarked{ color:gold; }
-
 .arabic{
   font-family:'Amiri',serif;
   font-size:clamp(22px,4vw,34px);
-  direction:rtl;
-  text-align:right;
-  line-height:2;
+  direction:rtl; text-align:right; line-height:2;
 }
-
 .translation{ margin-top:8px; color:#374151; font-size:15px; }
-
-.word{
-  cursor:pointer;
-  padding:2px 4px;
-  border-radius:6px;
-  display:inline-block;
-}
+.word{ cursor:pointer; padding:2px 4px; border-radius:6px; display:inline-block; }
 .word:hover{ background:#bbf7d0; }
 
 /* Word popup */
 .word-popup{
-  position:fixed;
-  bottom:-100%;
-  left:0;
-  width:100%;
-  background:white;
-  padding:20px;
+  position:fixed; bottom:-100%; left:0; width:100%;
+  background:white; padding:20px;
   box-shadow:0 -5px 25px rgba(0,0,0,.25);
-  transition:.3s;
-  z-index:11000;
-  box-sizing:border-box;
-  line-height:1.8;
+  transition:.3s; z-index:11000; line-height:1.8;
 }
 .word-popup.show{ bottom:0; }
 
-/* Audio Floater */
+/* Audio floater */
 .audio-floater{
-  position:fixed;
-  bottom:-130px;
-  left:0;
-  width:100%;
-  background:white;
-  padding:12px 16px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
+  position:fixed; bottom:-130px; left:0; width:100%;
+  background:white; padding:12px 16px;
+  display:flex; flex-direction:column; gap:6px;
   box-shadow:0 -4px 20px rgba(0,0,0,.2);
-  transition:.3s;
-  z-index:9999;
-  box-sizing:border-box;
+  transition:.3s; z-index:9999;
 }
 .audio-floater.show{ bottom:0; }
+.progress-bar{ height:6px; background:#e5e7eb; border-radius:5px; overflow:hidden; }
+.progress{ height:100%; width:0%; background:var(--accent); }
+.floater-controls{ display:flex; justify-content:space-between; align-items:center; }
 
-.progress-bar{
-  height:6px;
-  background:#e5e7eb;
-  border-radius:5px;
-  overflow:hidden;
-}
-.progress{
-  height:100%;
-  width:0%;
-  background:var(--accent);
-}
-.floater-controls{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-/* ── TAFSIR PANEL ── */
+/* ══ TAFSIR PANEL ══ */
 .tafsir-panel{
-  position:fixed;
-  top:0;
-  right:-660px;
-  width:640px;
-  height:100%;
-  background:white;
-  transition:.3s;
-  z-index:10000;
-  display:flex;
-  flex-direction:column;
+  position:fixed; top:0; right:-660px;
+  width:640px; height:100%;
+  background:white; transition:.3s;
+  z-index:10000; display:flex; flex-direction:column;
   box-shadow:-4px 0 20px rgba(0,0,0,.15);
 }
 .tafsir-panel.open{ right:0; }
-
-/* Top bar with title + close */
 .tafsir-header{
-  background:var(--primary);
-  color:white;
-  padding:14px 16px;
-  flex-shrink:0;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+  background:var(--primary); color:white;
+  padding:14px 16px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
 }
 .tafsir-header span{ flex:1; font-weight:600; }
-.tafsir-header button{
-  flex-shrink:0;
-  background:rgba(255,255,255,.2);
-  color:white;
-  padding:6px 14px;
-}
-
-/* Compare toolbar inside panel */
+.tafsir-header button{ flex-shrink:0; background:rgba(255,255,255,.2); color:white; padding:6px 14px; }
 .tafsir-toolbar{
-  background:#f0fdf4;
-  border-bottom:1px solid #d1fae5;
-  padding:10px 16px;
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:10px;
-  flex-shrink:0;
+  background:#f0fdf4; border-bottom:1px solid #d1fae5;
+  padding:10px 16px; display:flex;
+  flex-wrap:wrap; align-items:center; gap:10px; flex-shrink:0;
 }
-.tafsir-toolbar label{
-  font-weight:600;
-  color:var(--primary);
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  padding:0;
-}
-.tafsir-toolbar select{
-  padding:6px 10px;
-  border:1px solid #d1fae5;
-  background:white;
-  font-size:13px;
-  border-radius:8px;
-}
-.tafsir-toolbar select:disabled{
-  opacity:.4;
-  cursor:not-allowed;
-}
-
-.tafsir-body{
-  padding:20px;
-  overflow-y:auto;
-  flex:1;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
-}
-
-/* Tab bar */
-.tafsir-tabs{
-  display:none; /* shown only in compare mode */
-  border-bottom:2px solid #d1fae5;
-  background:#f0fdf4;
-  flex-shrink:0;
-}
+.tafsir-toolbar label{ font-weight:600; color:var(--primary); cursor:pointer; display:flex; align-items:center; gap:6px; padding:0; }
+.tafsir-toolbar select{ padding:6px 10px; border:1px solid #d1fae5; background:white; font-size:13px; border-radius:8px; }
+.tafsir-toolbar select:disabled{ opacity:.4; cursor:not-allowed; }
+.tafsir-body{ padding:20px; overflow-y:auto; flex:1; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+.tafsir-tabs{ display:none; border-bottom:2px solid #d1fae5; background:#f0fdf4; flex-shrink:0; }
 .tafsir-tabs.show{ display:flex; }
 .tafsir-tab{
-  flex:1;
-  padding:10px;
-  text-align:center;
-  font-weight:600;
-  font-size:13px;
-  cursor:pointer;
-  border:none;
-  background:transparent;
-  color:#6b7280;
-  border-bottom:3px solid transparent;
-  margin-bottom:-2px;
-  transition:.2s;
+  flex:1; padding:10px; text-align:center; font-weight:600; font-size:13px;
+  cursor:pointer; border:none; background:transparent; color:#6b7280;
+  border-bottom:3px solid transparent; margin-bottom:-2px; transition:.2s;
 }
-.tafsir-tab.active{
-  color:var(--primary);
-  border-bottom-color:var(--primary);
-  background:white;
+.tafsir-tab.active{ color:var(--primary); border-bottom-color:var(--primary); background:white; }
+.tafsir-box{ background:#f9fafb; padding:15px; border-radius:10px; overflow-wrap:break-word; line-height:1.75; }
+.tafsir-box h3{ margin:0 0 10px; color:var(--primary); font-size:13px; text-transform:uppercase; letter-spacing:.5px; border-bottom:2px solid #d1fae5; padding-bottom:8px; }
+
+/* Azan alert banner */
+@keyframes fadeInDown{
+  from{ opacity:0; transform:translateX(-50%) translateY(-20px); }
+  to{   opacity:1; transform:translateX(-50%) translateY(0); }
 }
 
-/* Tab content panes */
-.tafsir-pane{ display:none; }
-.tafsir-pane.active{ display:block; }
-
-.tafsir-box{
-  background:#f9fafb;
-  padding:15px;
-  border-radius:10px;
-  overflow-wrap:break-word;
-  line-height:1.75;
-}
-.tafsir-box h3{
-  margin:0 0 10px;
-  color:var(--primary);
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  border-bottom:2px solid #d1fae5;
-  padding-bottom:8px;
-}
-
-/* Mobile: full-screen bottom sheet */
-@media (max-width:640px){
+/* ══ RESPONSIVE ══ */
+@media(max-width:680px){
+  .p-grid{ grid-template-columns:repeat(4,1fr); }
   .tafsir-panel{
-    top:auto;
-    bottom:-100%;
-    right:0;
-    width:100%;
-    height:92dvh;
+    top:auto; bottom:-100%; right:0;
+    width:100%; height:92dvh;
     border-radius:20px 20px 0 0;
     transition:bottom .3s ease;
     box-shadow:0 -4px 20px rgba(0,0,0,.2);
@@ -297,35 +251,105 @@ main{
   .tafsir-panel.open{ bottom:0; }
   .tafsir-body{ font-size:14px; padding:14px; }
 }
+@media(max-width:420px){
+  .p-grid{ grid-template-columns:repeat(3,1fr); }
+}
 </style>
 </head>
-
 <body>
 
+<!-- ══ STICKY WRAPPER ══ -->
+<div id="stickyTop">
+
 <header>
-<h2>Quran Companion</h2>
-
-<div class="controls">
-  <select id="surahSelect"></select>
-
-  <select id="reciterSelect">
-    <option value="Alafasy_128kbps">Mishary Rashid Alafasy</option>
-    <option value="Abdurrahmaan_As-Sudais_192kbps">Abdurrahman Al-Sudais</option>
-    <option value="Saood_ash-Shuraym_128kbps">Saud Al-Shuraim</option>
-    <option value="Husary_128kbps">Mahmoud Al-Husary</option>
-    <option value="Abdul_Basit_Murattal_192kbps">Abdul Basit</option>
-  </select>
-
-  <button id="studyBtn" onclick="toggleStudy()">📖 Study Mode</button>
-  <button onclick="playFull()">▶ Play Full</button>
-  <button onclick="pauseAudio()">⏸ Pause</button>
-  <button onclick="stopAudio()">⏹ Stop</button>
-</div>
+  <h2>Quran Companion</h2>
+  <div class="controls">
+    <select id="surahSelect"></select>
+    <select id="reciterSelect">
+      <option value="Alafasy_128kbps">Mishary Rashid Alafasy</option>
+      <option value="Abdurrahmaan_As-Sudais_192kbps">Abdurrahman Al-Sudais</option>
+      <option value="Saood_ash-Shuraym_128kbps">Saud Al-Shuraim</option>
+      <option value="Husary_128kbps">Mahmoud Al-Husary</option>
+      <option value="Abdul_Basit_Murattal_192kbps">Abdul Basit</option>
+    </select>
+    <button id="studyBtn" onclick="toggleStudy()">📖 Study Mode</button>
+    <button onclick="playFull()">▶ Play Full</button>
+    <button onclick="pauseAudio()">⏸ Pause</button>
+    <button onclick="stopAudio()">⏹ Stop</button>
+  </div>
 </header>
 
-<main>
-<div id="ayahContainer"></div>
-</main>
+<!-- ══ PRAYER BAR ══ -->
+<div id="prayerBar">
+
+  <!-- Collapsed strip -->
+  <div class="p-strip">
+    <div class="p-left" onclick="togglePanel()">
+      <span class="p-label">Next Prayer</span>
+      <span class="p-name" id="pNextName">📍 Locating…</span>
+      <span class="p-time" id="pNextTime"></span>
+    </div>
+    <div class="p-middle">
+      <div class="p-countdown" id="pCountdown">--:--</div>
+      <button class="p-icon-btn" id="azanBtn" onclick="toggleAzan()" title="Toggle azan">🔔</button>
+      <button class="p-icon-btn" id="pExpandBtn" onclick="togglePanel()">▼</button>
+    </div>
+  </div>
+
+  <!-- Expanded panel -->
+  <div class="p-panel" id="pPanel">
+
+    <div class="p-hijri" id="pHijri"></div>
+    <div class="p-grid"  id="pGrid"></div>
+
+    <!-- City search -->
+    <div class="p-city-row">
+      <input class="p-city-input" id="cityInput" type="text"
+        placeholder="Search city (e.g. London, Karachi)…"
+        onkeydown="if(event.key==='Enter')searchCity()">
+      <button class="p-search-btn" onclick="searchCity()">🔍</button>
+      <button class="p-gps-btn"    onclick="requestGPS()" title="Use GPS">📍</button>
+    </div>
+    <div class="p-location" id="pLocation">Detecting location…</div>
+
+    <!-- Calculation + Asr method -->
+    <div class="p-settings">
+      <select id="calcMethod" onchange="savePS();fetchPrayerTimes()">
+        <option value="3">Muslim World League</option>
+        <option value="2">ISNA – North America</option>
+        <option value="5">Egyptian General Authority</option>
+        <option value="1">University of Karachi</option>
+        <option value="4">Umm Al-Qura (Makkah)</option>
+        <option value="16">Dubai</option>
+        <option value="9">Kuwait</option>
+        <option value="10">Qatar</option>
+        <option value="11">Singapore / Malaysia</option>
+        <option value="13">Diyanet İşleri – Turkey</option>
+        <option value="7">Tehran (Shia)</option>
+      </select>
+      <select id="asrMethod" onchange="savePS();fetchPrayerTimes()">
+        <option value="0">Asr: Standard (Shafi'i · Maliki · Hanbali)</option>
+        <option value="1">Asr: Hanafi (later)</option>
+      </select>
+    </div>
+
+    <!-- Azan selection -->
+    <div class="p-azan-row">
+      <span class="p-azan-label">🕌 Azan:</span>
+      <select id="azanSelect" onchange="savePS()">
+        <option value="makkah">Makkah</option>
+        <option value="madinah">Madinah</option>
+        <option value="aqsa">Al-Aqsa</option>
+        <option value="turkey">Turkish style</option>
+      </select>
+    </div>
+
+  </div>
+</div>
+</div><!-- /stickyTop -->
+
+<!-- ══ MAIN CONTENT ══ -->
+<main><div id="ayahContainer"></div></main>
 
 <!-- Audio floater -->
 <div class="audio-floater" id="audioFloater">
@@ -341,18 +365,12 @@ main{
 
 <!-- Tafsir panel -->
 <div class="tafsir-panel" id="tafsirPanel">
-
   <div class="tafsir-header">
     <span id="tafsirTitle">Tafsir</span>
     <button onclick="closeTafsir()">✕ Close</button>
   </div>
-
-  <!-- Compare toolbar lives inside the panel -->
   <div class="tafsir-toolbar">
-    <label>
-      <input type="checkbox" id="compareToggle">
-      Compare
-    </label>
+    <label><input type="checkbox" id="compareToggle"> Compare</label>
     <select id="tafseer1">
       <option value="169">Ibn Kathir</option>
       <option value="168">Jalalayn</option>
@@ -363,41 +381,322 @@ main{
       <option value="169">Ibn Kathir</option>
     </select>
   </div>
-
-  <!-- Tab bar: visible only when Compare is on -->
   <div class="tafsir-tabs" id="tafsirTabs">
     <button class="tafsir-tab active" id="tab1" onclick="switchTab(1)"></button>
     <button class="tafsir-tab"        id="tab2" onclick="switchTab(2)"></button>
   </div>
-
   <div class="tafsir-body" id="tafsirBody">
     <p style="color:#aaa;text-align:center;margin-top:40px">Tap "Tafsir" on any verse to begin.</p>
   </div>
-
 </div>
 
-<!-- Word popup (study mode) -->
+<!-- Word popup -->
 <div class="word-popup" id="wordPopup"></div>
 
+<!-- Azan audio -->
+<audio id="azanAudio" preload="none"></audio>
+
 <script>
-let verses=[];
-let chaptersData=[];
-let audio=new Audio();
-let studyMode=false;
-let currentIndex=0;
-let currentTafsirKey=null;
+/* ══════════════════════════════════════
+   PRAYER TIMES  (using Aladhan REST API)
+   No external JS library — just fetch()
+══════════════════════════════════════ */
+
+/* Azan audio sources */
+const AZAN_SRCS = {
+  makkah:  "https://www.islamcan.com/audio/adhan/azan1.mp3",
+  madinah: "https://www.islamcan.com/audio/adhan/azan2.mp3",
+  aqsa:    "https://www.islamcan.com/audio/adhan/azan3.mp3",
+  turkey:  "https://www.islamcan.com/audio/adhan/azan4.mp3"
+};
+
+/* Prayer definitions:
+   key matches Aladhan API response field names (case-sensitive)
+   azan:true means azan plays at this time */
+const PRAYERS = [
+  { key:"Fajr",    icon:"🌙", name:"Fajr",    azan:true  },
+  { key:"Sunrise", icon:"🌅", name:"Sunrise",  azan:false },
+  { key:"Ishraq",  icon:"🌄", name:"Ishraq",   azan:false }, // computed
+  { key:"Dhuhr",   icon:"☀️", name:"Dhuhr",   azan:true  },
+  { key:"Asr",     icon:"🌤️", name:"Asr",     azan:true  },
+  { key:"Maghrib", icon:"🌇", name:"Maghrib",  azan:true  },
+  { key:"Isha",    icon:"🌃", name:"Isha",     azan:true  },
+];
+
+let pCoords       = null;
+let pTimings      = null;   // { Fajr:"05:12", Sunrise:"06:45", ... }
+let pTimeObjs     = null;   // converted to Date objects
+let pExpanded     = false;
+let azanOn        = true;
+let pTickTimer    = null;
+let lastAzanFired = {};     // { "Fajr_2024-01-01": true }
+
+/* Restore settings */
+const _calc = localStorage.getItem("pCalc") || "3";
+const _asr  = localStorage.getItem("pAsr")  || "0";
+const _azan = localStorage.getItem("pAzan") || "makkah";
+const _mute = localStorage.getItem("pMute") || "0";
+document.getElementById("calcMethod").value = _calc;
+document.getElementById("asrMethod").value  = _asr;
+document.getElementById("azanSelect").value = _azan;
+azanOn = _mute !== "1";
+refreshAzanBtn();
+
+function savePS(){
+  localStorage.setItem("pCalc", calcMethod.value);
+  localStorage.setItem("pAsr",  asrMethod.value);
+  localStorage.setItem("pAzan", azanSelect.value);
+}
+
+function togglePanel(){
+  pExpanded = !pExpanded;
+  pPanel.classList.toggle("open", pExpanded);
+  pExpandBtn.textContent = pExpanded ? "▲" : "▼";
+}
+
+function toggleAzan(){
+  azanOn = !azanOn;
+  localStorage.setItem("pMute", azanOn ? "0" : "1");
+  refreshAzanBtn();
+}
+function refreshAzanBtn(){
+  azanBtn.textContent = azanOn ? "🔔" : "🔕";
+  azanBtn.title = azanOn ? "Azan ON – tap to mute" : "Azan OFF – tap to unmute";
+}
+
+/* ── GPS ── */
+function requestGPS(){
+  pLocation.textContent = "📍 Detecting…";
+  pNextName.textContent = "📍 Locating…";
+  if(!navigator.geolocation){
+    pLocation.textContent = "Geolocation not supported."; return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      pCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      reverseGeocode(pCoords.lat, pCoords.lng);
+      fetchPrayerTimes();
+    },
+    () => { pLocation.textContent = "GPS denied. Search a city above."; pNextName.textContent="📍 Location needed"; },
+    { timeout:8000 }
+  );
+}
+
+/* ── City search via Nominatim ── */
+async function searchCity(){
+  const q = cityInput.value.trim();
+  if(!q) return;
+  cityInput.disabled = true;
+  pLocation.textContent = "🔍 Searching…";
+  try{
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`);
+    const d = await r.json();
+    if(!d.length){ pLocation.textContent = "City not found. Try another name."; cityInput.disabled=false; return; }
+    pCoords = { lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon) };
+    const parts = d[0].display_name.split(",").slice(0,3).join(", ");
+    pLocation.textContent = "📍 " + parts;
+    cityInput.value = "";
+    fetchPrayerTimes();
+  } catch(e){
+    pLocation.textContent = "Search failed. Check connection.";
+  }
+  cityInput.disabled = false;
+}
+
+/* ── Reverse geocode ── */
+async function reverseGeocode(lat, lng){
+  try{
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+    const d = await r.json();
+    const a = d.address;
+    const city    = a?.city||a?.town||a?.village||a?.county||"";
+    const country = a?.country||"";
+    pLocation.textContent = `📍 ${city}${country?", "+country:""}`;
+  } catch(e){ pLocation.textContent = `📍 ${lat.toFixed(3)}, ${lng.toFixed(3)}`; }
+}
+
+/* ── Fetch prayer times from Aladhan API ── */
+async function fetchPrayerTimes(){
+  if(!pCoords){ pNextName.textContent = "📍 Location needed"; return; }
+
+  pNextName.textContent = "⏳ Loading…";
+
+  try{
+    const now    = new Date();
+    const day    = now.getDate();
+    const month  = now.getMonth()+1;
+    const year   = now.getFullYear();
+    const method = calcMethod.value;
+    const school = asrMethod.value;
+
+    const url = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}`
+              + `?latitude=${pCoords.lat}&longitude=${pCoords.lng}`
+              + `&method=${method}&school=${school}`;
+
+    const r = await fetch(url);
+    const d = await r.json();
+
+    if(d.code !== 200) throw new Error(d.status||"API error");
+
+    pTimings = d.data.timings;  // { Fajr:"05:12", Sunrise:"06:43", ... }
+
+    /* Show Hijri date */
+    const h = d.data.date.hijri;
+    pHijri.textContent = `${h.day} ${h.month.en} ${h.year} AH`;
+
+    buildTimeObjects(now, pTimings);
+    renderGrid();
+    updateStrip();
+
+    clearInterval(pTickTimer);
+    pTickTimer = setInterval(() => { updateStrip(); checkAzanTrigger(); }, 1000);
+
+  } catch(err){
+    console.error("Prayer API error:", err);
+    pNextName.textContent = "⚠️ Could not load times";
+  }
+}
+
+/* ── Convert HH:MM strings → today's Date objects ── */
+function parseTime(str, refDate){
+  const [h, m] = str.split(":").map(Number);
+  const d = new Date(refDate);
+  d.setHours(h, m, 0, 0);
+  return d;
+}
+
+function buildTimeObjects(now, t){
+  const sunrise = parseTime(t.Sunrise, now);
+  const ishraq  = new Date(sunrise.getTime() + 15*60000); // 15 min after sunrise
+
+  pTimeObjs = {
+    Fajr:    parseTime(t.Fajr,    now),
+    Sunrise: sunrise,
+    Ishraq:  ishraq,
+    Dhuhr:   parseTime(t.Dhuhr,   now),
+    Asr:     parseTime(t.Asr,     now),
+    Maghrib: parseTime(t.Maghrib, now),
+    Isha:    parseTime(t.Isha,    now),
+  };
+}
+
+function fmt(d){ return d ? d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}) : "--:--"; }
+
+/* ── Render 7-cell grid ── */
+function renderGrid(){
+  if(!pTimeObjs) return;
+  const now = new Date();
+  // current = latest prayer whose time has passed
+  let currentKey = null;
+  for(const p of PRAYERS){ if(pTimeObjs[p.key] && pTimeObjs[p.key] <= now) currentKey = p.key; }
+
+  pGrid.innerHTML = PRAYERS.map(p => {
+    const t = pTimeObjs[p.key];
+    const passed  = t && t < now && p.key !== currentKey;
+    const current = p.key === currentKey;
+    return `<div class="p-cell ${current?"current":""} ${passed?"passed":""}">
+      <div class="p-cell-icon">${p.icon}</div>
+      <div class="p-cell-name">${p.name}</div>
+      <div class="p-cell-time">${fmt(t)}</div>
+    </div>`;
+  }).join("");
+}
+
+/* ── Update collapsed strip ── */
+function updateStrip(){
+  if(!pTimeObjs) return;
+  const now  = new Date();
+  let next   = PRAYERS.find(p => pTimeObjs[p.key] && pTimeObjs[p.key] > now);
+  if(!next) next = PRAYERS[0]; // wrap to Fajr
+
+  pNextName.textContent = next.icon + " " + next.name;
+  pNextTime.textContent = fmt(pTimeObjs[next.key]);
+
+  const diff = Math.max(0, pTimeObjs[next.key] - now);
+  const h = Math.floor(diff/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  pCountdown.textContent = h > 0
+    ? `${h}h ${String(m).padStart(2,"0")}m`
+    : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+  if(s === 0) renderGrid();
+}
+
+/* ── Check whether to fire azan ── */
+function checkAzanTrigger(){
+  if(!pTimeObjs || !azanOn) return;
+  const now      = new Date();
+  const todayStr = now.toDateString();
+
+  for(const p of PRAYERS){
+    if(!p.azan) continue;
+    const t = pTimeObjs[p.key];
+    if(!t) continue;
+    const diff = now - t; // ms since prayer time (positive = past)
+    if(diff >= 0 && diff < 60000){ // within first 60s
+      const uid = p.key + "_" + todayStr;
+      if(!lastAzanFired[uid]){
+        lastAzanFired[uid] = true;
+        playAzan(p.name);
+      }
+    }
+  }
+}
+
+/* ── Play azan ── */
+function playAzan(prayerName){
+  const src = AZAN_SRCS[azanSelect.value] || AZAN_SRCS.makkah;
+  azanAudio.src = src;
+  azanAudio.currentTime = 0;
+  azanAudio.play().catch(() => {}); // silently handle autoplay block
+  showAzanBanner(prayerName);
+}
+
+function showAzanBanner(name){
+  const b = document.createElement("div");
+  b.style.cssText = `
+    position:fixed; top:20px; left:50%; transform:translateX(-50%);
+    background:linear-gradient(135deg,#065f46,#166534);
+    color:white; padding:14px 28px; border-radius:16px;
+    font-size:16px; font-weight:700; z-index:99999;
+    box-shadow:0 8px 25px rgba(0,0,0,.4);
+    text-align:center; animation:fadeInDown .4s ease;
+    white-space:nowrap;
+  `;
+  b.innerHTML = `🕌 Time for <strong>${name}</strong>`;
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 9000);
+}
+
+/* ── Auto-init ── */
+requestGPS();
+
+// Refresh prayer times at midnight
+setInterval(() => {
+  const n = new Date();
+  if(n.getHours()===0 && n.getMinutes()===0 && n.getSeconds()<5){
+    lastAzanFired = {};
+    if(pCoords) fetchPrayerTimes();
+  }
+}, 5000);
+
+
+/* ══════════════════════════════════════
+   QURAN
+══════════════════════════════════════ */
+let verses=[],chaptersData=[],quranAudio=new Audio();
+let studyMode=false,currentIndex=0,currentTafsirKey=null;
 let bookmarks=JSON.parse(localStorage.getItem("bookmarks")||"{}");
 
-/* ── Compare toggle: enable/disable second select ── */
 compareToggle.addEventListener("change",function(){
   tafseer2.disabled=!this.checked;
   vsLabel.style.display=this.checked?"inline":"none";
   renderTafsir();
 });
-tafseer1.addEventListener("change", renderTafsir);
-tafseer2.addEventListener("change", renderTafsir);
+tafseer1.addEventListener("change",renderTafsir);
+tafseer2.addEventListener("change",renderTafsir);
 
-/* ── Load surah list ── */
 async function loadSurahNames(){
   const res=await fetch("https://api.quran.com/api/v4/chapters");
   const data=await res.json();
@@ -431,15 +730,14 @@ function render(){
   ayahContainer.innerHTML="";
   verses.forEach((v,i)=>{
     let arabicHTML=v.text_uthmani;
-    if(studyMode && v.words){
+    if(studyMode&&v.words){
       arabicHTML=v.words.map(w=>
         `<span class="word" onclick='showWord(${JSON.stringify(w)})'>${w.text_uthmani}</span>`
       ).join(" ");
     }
     let markClass=bookmarks[v.verse_key]?"bookmark bookmarked":"bookmark";
     let div=document.createElement("div");
-    div.className="ayah";
-    div.id="ayah-"+i;
+    div.className="ayah"; div.id="ayah-"+i;
     div.innerHTML=`
       <span class="${markClass}" onclick="toggleBookmark('${v.verse_key}')">🔖</span>
       <div class="arabic">${arabicHTML}</div>
@@ -447,8 +745,7 @@ function render(){
       <div style="margin-top:10px">
         <button onclick="playSingle(${i})">▶ Play</button>
         <button onclick="openTafsir('${v.verse_key}')">📚 Tafsir</button>
-      </div>
-    `;
+      </div>`;
     ayahContainer.appendChild(div);
   });
 }
@@ -457,18 +754,17 @@ function showWord(w){
   wordPopup.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
       <strong style="font-family:'Amiri',serif;font-size:28px">${w.text_uthmani}</strong>
-      <button onclick="wordPopup.classList.remove('show')" style="background:#e5e7eb;color:#374151;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600">✕</button>
+      <button onclick="wordPopup.classList.remove('show')"
+        style="background:#e5e7eb;color:#374151;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600">✕</button>
     </div>
     <b>Meaning:</b> ${w.translation?.text||"Not available"}<br>
     <b>Transliteration:</b> ${w.transliteration?.text||"—"}<br>
-    <b>Root:</b> ${w.root||w.lemma||"Not available"}
-  `;
+    <b>Root:</b> ${w.root||w.lemma||"Not available"}`;
   wordPopup.classList.add("show");
 }
 
 function toggleBookmark(key){
-  if(bookmarks[key]) delete bookmarks[key];
-  else bookmarks[key]=true;
+  if(bookmarks[key]) delete bookmarks[key]; else bookmarks[key]=true;
   localStorage.setItem("bookmarks",JSON.stringify(bookmarks));
   render();
 }
@@ -485,100 +781,77 @@ function playFull(){ currentIndex=0; playCurrent(); }
 function playCurrent(){
   if(currentIndex>=verses.length){ stopAudio(); return; }
   document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("playing"));
-  const current=document.getElementById("ayah-"+currentIndex);
-  current.classList.add("playing");
-  current.scrollIntoView({behavior:"smooth",block:"center"});
+  const el=document.getElementById("ayah-"+currentIndex);
+  el.classList.add("playing");
+  el.scrollIntoView({behavior:"smooth",block:"center"});
   const key=verses[currentIndex].verse_key;
   const [s,a]=key.split(":");
   const surahObj=chaptersData.find(c=>c.id==s);
-  audio.src=buildURL(key);
-  audio.play();
-  nowPlaying.textContent=surahObj
-    ? `${surahObj.name_simple} (${s}) – Ayah ${a}`
-    : `Surah ${s} – Ayah ${a}`;
+  quranAudio.src=buildURL(key);
+  quranAudio.play();
+  nowPlaying.textContent=surahObj?`${surahObj.name_simple} (${s}) – Ayah ${a}`:`Surah ${s} – Ayah ${a}`;
   audioFloater.classList.add("show");
   localStorage.setItem("lastSurah",surahSelect.value);
   localStorage.setItem("lastAyah",currentIndex);
-  audio.onended=()=>{ currentIndex++; playCurrent(); };
+  quranAudio.onended=()=>{ currentIndex++; playCurrent(); };
 }
-
-audio.ontimeupdate=function(){
-  if(audio.duration) progress.style.width=(audio.currentTime/audio.duration*100)+"%";
+quranAudio.ontimeupdate=function(){
+  if(quranAudio.duration) progress.style.width=(quranAudio.currentTime/quranAudio.duration*100)+"%";
 };
-
-function pauseAudio(){ audio.pause(); }
+function pauseAudio(){ quranAudio.pause(); }
 function stopAudio(){
-  audio.pause(); audio.currentTime=0;
+  quranAudio.pause(); quranAudio.currentTime=0;
   audioFloater.classList.remove("show");
   progress.style.width="0%";
 }
 
-/* ── Tafsir ── */
+/* Tafsir */
 async function openTafsir(key){
   currentTafsirKey=key;
   tafsirPanel.classList.add("open");
   renderTafsir();
 }
-
-/* Store both panes so switchTab() can show/hide without re-fetching */
-let tafsirPaneHTML=["",""];
-let activeTab=1;
-
+let tafsirPaneHTML=["",""]; let activeTab=1;
 function switchTab(n){
   activeTab=n;
-  document.getElementById("tab1").classList.toggle("active", n===1);
-  document.getElementById("tab2").classList.toggle("active", n===2);
+  tab1.classList.toggle("active",n===1);
+  tab2.classList.toggle("active",n===2);
   tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[n-1]}</div>`;
   tafsirBody.scrollTop=0;
 }
-
 async function renderTafsir(){
   if(!currentTafsirKey) return;
-
   const [s,a]=currentTafsirKey.split(":");
   const surahObj=chaptersData.find(c=>c.id==s);
-  tafsirTitle.textContent=surahObj
-    ? `${surahObj.name_simple} – Ayah ${a}`
-    : `Surah ${s} – Ayah ${a}`;
-
-  const id1=tafseer1.value;
-  const id2=tafseer2.value;
+  tafsirTitle.textContent=surahObj?`${surahObj.name_simple} – Ayah ${a}`:`Surah ${s} – Ayah ${a}`;
+  const id1=tafseer1.value,id2=tafseer2.value;
   const compare=compareToggle.checked;
   const label1=tafseer1.options[tafseer1.selectedIndex].text;
   const label2=tafseer2.options[tafseer2.selectedIndex].text;
-
-  /* Show/hide tabs */
-  tafsirTabs.classList.toggle("show", compare);
-  tab1.textContent=label1;
-  tab2.textContent=label2;
-  activeTab=1;
-  tab1.classList.add("active");
-  tab2.classList.remove("active");
-
-  tafsirBody.innerHTML=`<p style="color:#aaa;text-align:center;padding:30px 0">Loading...</p>`;
-
+  tafsirTabs.classList.toggle("show",compare);
+  tab1.textContent=label1; tab2.textContent=label2;
+  activeTab=1; tab1.classList.add("active"); tab2.classList.remove("active");
+  tafsirBody.innerHTML=`<p style="color:#aaa;text-align:center;padding:30px 0">Loading…</p>`;
   try{
     if(compare){
-      const [res1,res2]=await Promise.all([
+      const [r1,r2]=await Promise.all([
         fetch(`https://api.quran.com/api/v4/tafsirs/${id1}/by_ayah/${currentTafsirKey}`),
         fetch(`https://api.quran.com/api/v4/tafsirs/${id2}/by_ayah/${currentTafsirKey}`)
       ]);
-      const [data1,data2]=await Promise.all([res1.json(),res2.json()]);
-      tafsirPaneHTML[0]=`<h3>${label1}</h3>${data1.tafsir?.text||"<em>Not available</em>"}`;
-      tafsirPaneHTML[1]=`<h3>${label2}</h3>${data2.tafsir?.text||"<em>Not available</em>"}`;
-      tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[0]}</div>`;
+      const [d1,d2]=await Promise.all([r1.json(),r2.json()]);
+      tafsirPaneHTML[0]=`<h3>${label1}</h3>${d1.tafsir?.text||"<em>Not available</em>"}`;
+      tafsirPaneHTML[1]=`<h3>${label2}</h3>${d2.tafsir?.text||"<em>Not available</em>"}`;
     } else {
-      const res1=await fetch(`https://api.quran.com/api/v4/tafsirs/${id1}/by_ayah/${currentTafsirKey}`);
-      const data1=await res1.json();
-      tafsirPaneHTML[0]=`<h3>${label1}</h3>${data1.tafsir?.text||"<em>Not available</em>"}`;
+      const r1=await fetch(`https://api.quran.com/api/v4/tafsirs/${id1}/by_ayah/${currentTafsirKey}`);
+      const d1=await r1.json();
+      tafsirPaneHTML[0]=`<h3>${label1}</h3>${d1.tafsir?.text||"<em>Not available</em>"}`;
       tafsirPaneHTML[1]="";
-      tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[0]}</div>`;
     }
+    tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[0]}</div>`;
   } catch(e){
-    tafsirBody.innerHTML=`<p style="color:red;padding:20px">Error loading tafsir. Please try again.</p>`;
+    tafsirBody.innerHTML=`<p style="color:red;padding:20px">Error loading tafsir.</p>`;
   }
 }
-
 function closeTafsir(){ tafsirPanel.classList.remove("open"); }
 
 surahSelect.addEventListener("change",e=>{
@@ -588,6 +861,5 @@ surahSelect.addEventListener("change",e=>{
 
 loadSurahNames();
 </script>
-
 </body>
 </html>
