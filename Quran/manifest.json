@@ -7,7 +7,7 @@
   "background_color": "#0f3d2e",
   "theme_color": "#166534",
   "orientation": "portrait",
-  "description": "Read and explore the Holy Quran in a clean and simple interface.",
+  "description": "Read, study and explore the Holy Quran with translation, tafsir and audio.",
   "icons": [
     {
       "src": "/quran/icon-192.png",
