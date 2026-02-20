@@ -1,4 +1,4 @@
-const CACHE_NAME = "quran-app-v1";
+const CACHE_NAME = "quran-companion-v1";
 
 const urlsToCache = [
   "/quran/",
