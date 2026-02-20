@@ -105,12 +105,12 @@ main{
   flex-wrap:wrap;
 }
 
+/* FIXED TAFSEER PANEL */
 .tafseer-panel{
   position:fixed;
   top:0;
   right:0;
   width:100%;
-  max-width:450px;
   height:100%;
   background:var(--card-light);
   transform:translateX(100%);
@@ -120,30 +120,21 @@ main{
   z-index:200;
 }
 .dark .tafseer-panel{ background:var(--card-dark); }
-.tafseer-panel.open{ transform:translateX(0); }
 
-@media(max-width:900px){
+@media(min-width:900px){
   .tafseer-panel{
-    width:100%;
-    max-width:none;
+    width:450px;
   }
+}
+
+.tafseer-panel.open{
+  transform:translateX(0);
 }
 
 .close-btn{
   background:#dc2626;
   margin-bottom:12px;
 }
-
-.audio-bar{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:rgba(255,255,255,0.95);
-  padding:10px;
-  display:none;
-}
-.dark .audio-bar{ background:rgba(18,26,43,0.95); }
-.audio-bar.active{ display:block; }
 </style>
 </head>
 
@@ -161,6 +152,8 @@ main{
 <option value="Saood_ash-Shuraym_128kbps">Saud Al-Shuraim</option>
 <option value="Maher_Al_Muaiqly_128kbps">Maher Al-Muaiqly</option>
 <option value="Husary_128kbps">Mahmoud Khalil Al-Husary</option>
+<option value="Abdul_Basit_Mujawwad_128kbps">Abdul Basit (Mujawwad)</option>
+<option value="Abdul_Basit_Murattal_192kbps">Abdul Basit (Murattal)</option>
 </select>
 
 <button onclick="playFullSurah()">Play</button>
@@ -192,21 +185,11 @@ main{
 <div id="tafseerContent"></div>
 </div>
 
-<div class="audio-bar" id="audioBar">
-<div id="audioLabel"></div>
-</div>
-
 <script>
 let verses=[];
 let audio=new Audio();
 let currentIndex=0;
 let fullMode=false;
-
-const RESOURCES={
-  ENGLISH:20,
-  TAQI:131,
-  JALANDHARI:97
-};
 
 async function loadSurahNames(){
 const res=await fetch("https://api.quran.com/api/v4/chapters");
@@ -223,7 +206,9 @@ loadSurah(1);
 
 async function loadSurah(id){
 stopAudio();
-const res=await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,131,97&translation_fields=text,resource_id&fields=text_uthmani`);
+const res=await fetch(
+`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,131,97&translation_fields=text,resource_id&fields=text_uthmani`
+);
 const data=await res.json();
 verses=data.verses || [];
 render();
@@ -232,17 +217,20 @@ render();
 function render(){
 const container=document.getElementById("ayahContainer");
 container.innerHTML="";
+
 const showEnglish=document.getElementById("showEnglish").checked;
 const showTaqi=document.getElementById("showTaqi").checked;
 const showJalandhari=document.getElementById("showJalandhari").checked;
 
 verses.forEach((v,i)=>{
 let english="", taqi="", jalandhari="";
+
 if(v.translations){
 v.translations.forEach(t=>{
-if(t.resource_id===RESOURCES.ENGLISH) english=t.text;
-if(t.resource_id===RESOURCES.TAQI) taqi=t.text;
-if(t.resource_id===RESOURCES.JALANDHARI) jalandhari=t.text;
+// SAFE detection (resource_id OR fallback name match)
+if(t.resource_id==20 || t.resource_name?.toLowerCase().includes("sahih")) english=t.text;
+if(t.resource_id==131 || t.resource_name?.toLowerCase().includes("taqi")) taqi=t.text;
+if(t.resource_id==97 || t.resource_name?.toLowerCase().includes("jaland")) jalandhari=t.text;
 });
 }
 
@@ -279,8 +267,6 @@ if(!verses[i]) return;
 currentIndex=i;
 audio.src=buildURL(verses[i].verse_key);
 audio.play();
-document.getElementById("audioBar").classList.add("active");
-document.getElementById("audioLabel").innerText="Playing "+verses[i].verse_key;
 audio.onended=()=>{ if(fullMode && currentIndex<verses.length-1){ play(currentIndex+1); } };
 }
 
@@ -290,7 +276,10 @@ function stopAudio(){ audio.pause(); audio.currentTime=0; }
 async function openTafseer(key){
 const panel=document.getElementById("tafseerPanel");
 panel.classList.add("open");
+document.body.style.overflow="hidden";
+
 document.getElementById("tafseerHeader").innerText="Tafseer "+key;
+
 const id=document.getElementById("tafseerSelect").value;
 const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${id}/by_ayah/${key}`);
 const data=await res.json();
@@ -299,6 +288,7 @@ document.getElementById("tafseerContent").innerHTML=data.tafsir?.text || "Not av
 
 function closeTafseer(){
 document.getElementById("tafseerPanel").classList.remove("open");
+document.body.style.overflow="";
 }
 
 function toggleDark(){
