@@ -36,24 +36,24 @@ header{
   position:sticky;
   top:0;
   background:var(--card);
-  padding:15px;
-  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+  padding:16px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
   z-index:100;
 }
 .dark header{ background:var(--dark-card); }
 
-h2{text-align:center;margin:0 0 12px;}
+h2{ text-align:center; margin:0 0 10px; }
 
 .controls{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
+  gap:8px;
   justify-content:center;
   margin-bottom:8px;
 }
 
 select,button{
-  padding:10px 16px;
+  padding:10px 14px;
   border:none;
   border-radius:10px;
   font-weight:600;
@@ -100,6 +100,34 @@ main{
   margin-bottom:12px;
 }
 
+/* Study Mode Word Layout */
+.study-mode .arabic{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:4px;
+  line-height:2.2;
+}
+
+.study-mode .word{
+  padding:2px 6px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:.15s ease;
+}
+
+.study-mode .word:hover{
+  background:#d1fae5;
+}
+
+.dark .study-mode .word:hover{
+  background:#064e3b;
+}
+
+.active-word{
+  background:#a7f3d0 !important;
+}
+
 .translation{
   margin-top:6px;
   line-height:1.6;
@@ -112,7 +140,7 @@ main{
 .button-row{
   margin-top:12px;
   display:flex;
-  gap:12px;
+  gap:10px;
 }
 
 /* Tafseer Panel */
@@ -124,10 +152,10 @@ main{
   height:100dvh;
   background:var(--card);
   transform:translateX(100%);
-  transition:.3s;
+  transition:.35s ease;
   overflow-y:auto;
-  padding:24px;
-  z-index:1000;
+  padding:24px 24px 80px 24px;
+  z-index:2000;
 }
 .dark .tafseer-panel{ background:var(--dark-card); }
 
@@ -139,36 +167,27 @@ main{
 
 .close-btn{
   background:#dc2626;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
 
-/* Study Mode */
-.study-mode .word{
-  cursor:pointer;
-  padding:4px 6px;
-  margin:3px;
-  display:inline-block;
-}
-
-.active-word{
-  background:#d1fae5;
-  border-radius:6px;
-}
-
+/* Study Panel Slide Up */
 #studyPanel{
   position:fixed;
-  bottom:0;
+  bottom:-100%;
   left:0;
   width:100%;
-  background:white;
+  background:var(--card);
   border-top:3px solid var(--primary);
   padding:18px;
-  display:none;
-  z-index:1500;
-  box-shadow:0 -4px 14px rgba(0,0,0,0.15);
+  z-index:2500;
+  box-shadow:0 -6px 18px rgba(0,0,0,0.2);
+  transition:bottom .35s ease;
 }
 .dark #studyPanel{ background:var(--dark-card); }
 
+#studyPanel.open{
+  bottom:0;
+}
 </style>
 </head>
 
@@ -184,7 +203,7 @@ main{
 <option value="Alafasy_128kbps">Mishary Rashid Al-Afasy</option>
 <option value="Abdurrahmaan_As-Sudais_192kbps">Sudais</option>
 <option value="Saood_ash-Shuraym_128kbps">Shuraim</option>
-<option value="Maher_Al_Muaiqly_128kbps">Maher Al-Muaiqly</option>
+<option value="Maher_Al_Muaiqly_128kbps">Maher</option>
 <option value="Husary_128kbps">Husary</option>
 <option value="Abdul_Basit_Mujawwad_128kbps">Abdul Basit (Mujawwad)</option>
 <option value="Abdul_Basit_Murattal_192kbps">Abdul Basit (Murattal)</option>
@@ -201,13 +220,12 @@ main{
 <label><input type="checkbox" id="showUrdu"> Urdu</label>
 
 <select id="tafseerSelect">
-<option value="169">Ibn Kathir (English)</option>
-<option value="168">Jalalayn (English)</option>
+<option value="169">Ibn Kathir</option>
+<option value="168">Jalalayn</option>
 </select>
 
 <button class="secondary" onclick="toggleDark()">Night</button>
 </div>
-
 </header>
 
 <main>
@@ -247,21 +265,19 @@ loadSurah(1);
 
 async function loadSurah(id){
 stopAudio();
-
-let url = studyMode
+let url=studyMode
 ? `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,97&words=true&word_fields=text,translation,transliteration,root`
 : `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,97&fields=text_uthmani`;
 
 const res=await fetch(url);
 const data=await res.json();
-verses=data.verses || [];
+verses=data.verses||[];
 render();
 }
 
 function render(){
 const container=document.getElementById("ayahContainer");
 container.innerHTML="";
-
 const showEnglish=document.getElementById("showEnglish").checked;
 const showUrdu=document.getElementById("showUrdu").checked;
 
@@ -275,20 +291,19 @@ if(t.resource_id==97) urdu=t.text;
 }
 
 let arabicHTML="";
-
 if(studyMode && v.words){
 arabicHTML=v.words.map(w=>{
-const arabic=w.text || "";
-const meaning=w.translation ? w.translation.text : "";
-const translit=w.transliteration ? w.transliteration.text : "";
-const root=w.root || "";
+const arabic=w.text||"";
+const meaning=w.translation?w.translation.text:"";
+const translit=w.transliteration?w.transliteration.text:"";
+const root=w.root||"";
 return `<span class="word"
 onclick="openWord(this,'${arabic}','${meaning}','${translit}','${root}')">
 ${arabic}
 </span>`;
 }).join(" ");
 }else{
-arabicHTML=v.text_uthmani || "";
+arabicHTML=v.text_uthmani||"";
 }
 
 let div=document.createElement("div");
@@ -300,8 +315,7 @@ ${showUrdu?`<div class="translation urdu">${urdu}</div>`:""}
 <div class="button-row">
 <button onclick="playSingle(${i})">Play</button>
 <button onclick="openTafseer('${v.verse_key}')">Tafseer</button>
-</div>
-`;
+</div>`;
 container.appendChild(div);
 });
 }
@@ -323,9 +337,11 @@ document.getElementById("studyContent").innerHTML=
 Meaning: ${meaning}<br>
 Transliteration: ${translit}<br>
 Root: ${root}`;
-document.getElementById("studyPanel").style.display="block";
+document.getElementById("studyPanel").classList.add("open");
 }
-function closeStudyPanel(){ document.getElementById("studyPanel").style.display="none"; }
+function closeStudyPanel(){
+document.getElementById("studyPanel").classList.remove("open");
+}
 
 function buildURL(key){
 const reciter=document.getElementById("reciterSelect").value;
@@ -345,32 +361,31 @@ ayah.scrollIntoView({behavior:"smooth",block:"center"});
 currentIndex=i;
 audio.src=buildURL(verses[i].verse_key);
 audio.play();
-audio.onended=()=>{ if(fullMode && currentIndex<verses.length-1) play(currentIndex+1); };
+audio.onended=()=>{ if(fullMode&&currentIndex<verses.length-1) play(currentIndex+1); };
 }
 
 function pauseAudio(){ audio.pause(); }
 function stopAudio(){ audio.pause(); audio.currentTime=0; }
 
 async function openTafseer(key){
-const panel=document.getElementById("tafseerPanel");
-panel.classList.add("open");
+document.getElementById("tafseerPanel").classList.add("open");
 document.body.style.overflow="hidden";
 document.getElementById("tafseerHeader").innerText="Tafseer "+key;
-
 const id=document.getElementById("tafseerSelect").value;
 const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${id}/by_ayah/${key}`);
 const data=await res.json();
-document.getElementById("tafseerContent").innerHTML=data.tafsir?.text || "Not available";
+document.getElementById("tafseerContent").innerHTML=data.tafsir?.text||"Not available";
 }
 
 function closeTafseer(){
 document.getElementById("tafseerPanel").classList.remove("open");
-document.body.style.overflow="";
+document.body.style.overflow="auto";
 }
 
 function toggleDark(){ document.body.classList.toggle("dark"); }
 
-document.getElementById("surahSelect").addEventListener("change",e=>loadSurah(e.target.value));
+document.getElementById("surahSelect")
+.addEventListener("change",e=>loadSurah(e.target.value));
 
 loadSurahNames();
 </script>
