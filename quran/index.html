@@ -77,8 +77,6 @@ main{
 }
 .dark .ayah{ background:var(--dark-card); }
 
-.ayah.active{ border-left:5px solid var(--primary); }
-
 .arabic{
   font-family:'Amiri',serif;
   font-size:clamp(24px,4vw,34px);
@@ -88,13 +86,10 @@ main{
   margin-bottom:12px;
 }
 
-/* Study mode words */
 .word{
-  display:inline;
   cursor:pointer;
-  padding:2px 3px;
+  padding:2px 4px;
   border-radius:6px;
-  transition:.15s;
 }
 .word:hover{ background:#d1fae5; }
 
@@ -129,8 +124,8 @@ main{
   border-bottom:1px solid rgba(0,0,0,.08);
   display:flex;
   justify-content:space-between;
-  align-items:center;
 }
+
 .tafsir-content{
   flex:1;
   overflow-y:auto;
@@ -144,32 +139,20 @@ main{
   }
 }
 
-/* Word popup desktop */
-.word-tooltip{
-  position:absolute;
-  background:var(--card);
-  box-shadow:0 4px 18px rgba(0,0,0,.2);
-  padding:14px;
-  border-radius:10px;
-  width:260px;
-  z-index:5000;
-}
-.dark .word-tooltip{ background:var(--dark-card); }
-
-/* Word popup mobile */
-.word-sheet{
+/* Word Popup */
+.word-popup{
   position:fixed;
   bottom:-100%;
   left:0;
   width:100%;
   background:var(--card);
-  border-top:3px solid var(--primary);
   padding:18px;
+  border-top:3px solid var(--primary);
   transition:.3s;
   z-index:5000;
 }
-.dark .word-sheet{ background:var(--dark-card); }
-.word-sheet.open{ bottom:0; }
+.word-popup.open{ bottom:0; }
+.dark .word-popup{ background:var(--dark-card); }
 </style>
 </head>
 
@@ -222,16 +205,13 @@ main{
   <div class="tafsir-content" id="tafsirContent"></div>
 </div>
 
-<div class="word-sheet" id="wordSheet"></div>
+<div class="word-popup" id="wordPopup"></div>
 
 <script>
 let verses=[];
 let chaptersData=[];
 let audio=new Audio();
-let currentIndex=0;
-let fullMode=false;
 let studyMode=false;
-let tooltip=null;
 
 /* Load Surah Names */
 async function loadSurahNames(){
@@ -252,15 +232,19 @@ async function loadSurahNames(){
 
 /* Load Surah */
 async function loadSurah(id){
-  stopAudio();
   let url=studyMode
-  ? `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,97&words=true&word_fields=text,translation,transliteration,root,part_of_speech`
+  ? `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,97&words=true`
   : `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,97&fields=text_uthmani`;
 
   const res=await fetch(url);
   const data=await res.json();
   verses=data.verses||[];
   render();
+}
+
+function toggleStudy(){
+  studyMode=!studyMode;
+  loadSurah(document.getElementById("surahSelect").value);
 }
 
 /* Render */
@@ -279,13 +263,10 @@ function render(){
 
     let arabicHTML="";
     if(studyMode && v.words){
-      arabicHTML=v.words.map(w=>{
-        return `<span class="word" 
-        onclick='openWord(event,${JSON.stringify(w)})'>
-        ${w.text}
-        </span> `;
-      }).join("");
-    }else{
+      arabicHTML=v.words.map(w=>
+        `<span class="word" onclick='openWord(${JSON.stringify(w)})'>${w.text}</span> `
+      ).join("");
+    } else {
       arabicHTML=v.text_uthmani;
     }
 
@@ -296,7 +277,7 @@ function render(){
       ${showEnglish?`<div class="translation">${english}</div>`:""}
       ${showUrdu?`<div class="translation urdu">${urdu}</div>`:""}
       <div class="button-row">
-        <button onclick="playSingle(${i})">Play</button>
+        <button onclick="playSingle('${v.verse_key}')">Play</button>
         <button onclick="openTafsir('${v.verse_key}')">Tafsir</button>
       </div>
     `;
@@ -304,56 +285,21 @@ function render(){
   });
 }
 
-function toggleStudy(){
-  studyMode=!studyMode;
-  loadSurah(document.getElementById("surahSelect").value);
-}
-
-/* Word popup */
-function openWord(e,word){
-  const simpleContent=`
+/* Word Popup */
+function openWord(word){
+  const popup=document.getElementById("wordPopup");
+  popup.innerHTML=`
     <strong>${word.text||""}</strong><br><br>
     Meaning: ${word.translation?.text||"-"}<br>
     Transliteration: ${word.transliteration?.text||"-"}<br>
-    Root: ${word.root||"-"}<br>
-    <button onclick="showAdvanced(${JSON.stringify(word).replace(/"/g,'&quot;')})">Advanced</button>
-  `;
-
-  if(window.innerWidth>=900){
-    if(tooltip) tooltip.remove();
-    tooltip=document.createElement("div");
-    tooltip.className="word-tooltip";
-    tooltip.style.top=(e.pageY+5)+"px";
-    tooltip.style.left=(e.pageX+5)+"px";
-    tooltip.innerHTML=simpleContent;
-    document.body.appendChild(tooltip);
-  }else{
-    const sheet=document.getElementById("wordSheet");
-    sheet.innerHTML=simpleContent;
-    sheet.classList.add("open");
-  }
-}
-
-function showAdvanced(word){
-  const advancedContent=`
-    <strong>${word.text||""}</strong><br><br>
-    Meaning: ${word.translation?.text||"-"}<br>
-    Transliteration: ${word.transliteration?.text||"-"}<br>
-    Root: ${word.root||"-"}<br>
-    Part of Speech: ${word.part_of_speech||"-"}<br><br>
+    Root: ${word.root||"-"}<br><br>
     <button onclick="closeWord()">Close</button>
   `;
-  if(window.innerWidth>=900){
-    tooltip.innerHTML=advancedContent;
-  }else{
-    const sheet=document.getElementById("wordSheet");
-    sheet.innerHTML=advancedContent;
-  }
+  popup.classList.add("open");
 }
 
 function closeWord(){
-  if(tooltip) tooltip.remove();
-  document.getElementById("wordSheet").classList.remove("open");
+  document.getElementById("wordPopup").classList.remove("open");
 }
 
 /* Audio */
@@ -362,50 +308,41 @@ function buildURL(key){
   const [s,a]=key.split(":");
   return `https://everyayah.com/data/${reciter}/${s.padStart(3,"0")}${a.padStart(3,"0")}.mp3`;
 }
-
-function playSingle(i){ fullMode=false; play(i); }
-function playFullSurah(){ fullMode=true; currentIndex=0; play(0); }
-
-function play(i){
-  if(!verses[i]) return;
-  currentIndex=i;
-  audio.src=buildURL(verses[i].verse_key);
+function playSingle(key){
+  audio.src=buildURL(key);
   audio.play();
 }
+function playFullSurah(){
+  if(verses.length>0) playSingle(verses[0].verse_key);
+}
+function pauseAudio(){ audio.pause(); }
+function stopAudio(){ audio.pause(); audio.currentTime=0; }
 
 /* Tafsir */
-async function openTafsir(verseKey){
+async function openTafsir(key){
   const page=document.getElementById("tafsirPage");
   page.classList.add("open");
-  document.body.style.overflow="hidden";
 
-  const [surahNumber, ayahNumber]=verseKey.split(":");
-  const surah=chaptersData.find(c=>c.id==surahNumber);
-  const tafsirSelect=document.getElementById("tafseerSelect");
-  const tafsirName=tafsirSelect.options[tafsirSelect.selectedIndex].text;
+  const [s,a]=key.split(":");
+  const surah=chaptersData.find(c=>c.id==s);
+  const tafsirName=document.getElementById("tafseerSelect").selectedOptions[0].text;
 
-  document.getElementById("tafsirTitle").innerHTML=`
-    <div><strong>Surah ${surah.name_simple} (${surah.id})</strong></div>
-    <div style="direction:rtl;margin-top:4px;">${surah.name_arabic}</div>
-    <div style="font-size:14px;margin-top:6px;">
-      Ayah ${ayahNumber} — Tafsir ${tafsirName}
-    </div>
-  `;
+  document.getElementById("tafsirTitle").innerHTML=
+  `<strong>Surah ${surah.name_simple} (${surah.id})</strong>
+   <div style="direction:rtl;">${surah.name_arabic}</div>
+   <div style="font-size:14px;">Ayah ${a} — Tafsir ${tafsirName}</div>`;
 
-  const id=tafsirSelect.value;
-  const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${id}/by_ayah/${verseKey}`);
+  const id=document.getElementById("tafseerSelect").value;
+  const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${id}/by_ayah/${key}`);
   const data=await res.json();
-  document.getElementById("tafsirContent").innerHTML=data.tafsir?.text||"Not available.";
+  document.getElementById("tafsirContent").innerHTML=
+  data.tafsir?.text||"Not available.";
 }
-
 function closeTafsir(){
   document.getElementById("tafsirPage").classList.remove("open");
-  document.body.style.overflow="auto";
 }
 
-function toggleDark(){
-  document.body.classList.toggle("dark");
-}
+function toggleDark(){ document.body.classList.toggle("dark"); }
 
 document.getElementById("surahSelect")
 .addEventListener("change",e=>loadSurah(e.target.value));
