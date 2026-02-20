@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Quran Study Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -33,21 +34,30 @@ body.audio-active{padding-bottom:90px;}
   gap:8px;
   justify-content:center;
   align-items:center;
+  margin-bottom:10px;
 }
 
-select,button{
-  padding:9px 12px;
+select,button,label{
+  padding:8px 12px;
   border-radius:8px;
   border:none;
   font-weight:500;
   cursor:pointer;
-  min-height:42px;
 }
 
-button.primary{background:#2563eb;color:white;}
-button.warning{background:#f59e0b;color:white;}
-button.danger{background:#ef4444;color:white;}
-button.darkbtn{background:#334155;color:white;}
+button{
+  transition:.2s ease;
+}
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.primary{background:#2563eb;color:white;}
+.success{background:#16a34a;color:white;}
+.warning{background:#f59e0b;color:white;}
+.danger{background:#ef4444;color:white;}
+.darkbtn{background:#334155;color:white;}
 
 .main{
   max-width:900px;
@@ -68,30 +78,30 @@ button.darkbtn{background:#334155;color:white;}
   border-left:6px solid #16a34a;
   background:#ecfdf5;
 }
-.dark .ayah.active{background:#064e3b;}
 
 .arabic{
   font-family:'Amiri',serif;
   font-size:clamp(22px,4vw,34px);
   direction:rtl;
   text-align:right;
-  margin-bottom:14px;
+  margin-bottom:12px;
+}
+
+.translation{
+  margin-top:6px;
 }
 
 .urdu{
   direction:rtl;
-  font-size:16px;
-  margin-top:8px;
 }
 
 .button-row{
-  margin-top:10px;
+  margin-top:12px;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
 }
 
-/* Tafseer Panel */
 .tafseer-panel{
   position:fixed;
   top:0;
@@ -109,7 +119,6 @@ button.darkbtn{background:#334155;color:white;}
 .dark .tafseer-panel{background:#1e293b;border-color:#334155;}
 .tafseer-panel.open{transform:translateX(0);}
 
-/* Mobile Floating Bar */
 .audio-bar{
   position:fixed;
   bottom:0;
@@ -156,9 +165,10 @@ button.darkbtn{background:#334155;color:white;}
 <body>
 
 <div class="header">
-<h2 style="text-align:center;margin-bottom:10px;">Quran Study Platform</h2>
+<h2 style="text-align:center;">Quran Study Platform</h2>
 
 <div class="controls">
+
 <select id="surahSelect"></select>
 
 <select id="reciterSelect">
@@ -166,17 +176,8 @@ button.darkbtn{background:#334155;color:white;}
 <option value="Abdurrahmaan_As-Sudais_192kbps">Sudais</option>
 <option value="Saood_ash-Shuraym_128kbps">Shuraim</option>
 <option value="Maher_Al_Muaiqly_128kbps">Maher</option>
-<option value="Yasser_Ad-Dussary_128kbps">Yasser</option>
-<option value="Saad_Al-Ghamdi_128kbps">Saad Ghamdi</option>
 <option value="Minshawy_Murattal_128kbps">Minshawi</option>
 <option value="Husary_128kbps">Husary</option>
-<option value="Abdul_Basit_Murattal_128kbps">Abdul Basit</option>
-</select>
-
-<select id="languageMode">
-<option value="both">English + Urdu</option>
-<option value="english">English Only</option>
-<option value="urdu">Urdu Only</option>
 </select>
 
 <button class="primary" onclick="playFullSurah()">Play</button>
@@ -184,18 +185,26 @@ button.darkbtn{background:#334155;color:white;}
 <button class="danger" onclick="stopAudio()">Stop</button>
 
 <select id="tafseer1">
-<option value="169">Ibn Kathir (English)</option>
-<option value="168">Jalalayn (English)</option>
+<option value="169">Ibn Kathir</option>
+<option value="168">Jalalayn</option>
 </select>
 
 <select id="tafseer2">
 <option value="">Compare None</option>
-<option value="169">Ibn Kathir (English)</option>
-<option value="168">Jalalayn (English)</option>
+<option value="169">Ibn Kathir</option>
+<option value="168">Jalalayn</option>
 </select>
 
 <button class="darkbtn" onclick="toggleDark()">Night</button>
+
 </div>
+
+<div class="controls">
+<label><input type="checkbox" id="showEnglish" checked> English</label>
+<label><input type="checkbox" id="showUrduTaqi"> Urdu (Taqi)</label>
+<label><input type="checkbox" id="showUrduJalandhari"> Urdu (Jalandhari)</label>
+</div>
+
 </div>
 
 <div class="main">
@@ -242,7 +251,7 @@ loadSurah(1);
 
 async function loadSurah(surah){
 stopAudio();
-const res=await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${surah}?translations=20,131&fields=text_uthmani`);
+const res=await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${surah}?translations=20,131,97&fields=text_uthmani`);
 const data=await res.json();
 verses=data.verses;
 renderAyahs();
@@ -251,30 +260,41 @@ renderAyahs();
 function renderAyahs(){
 const container=document.getElementById("ayahContainer");
 container.innerHTML="";
-const mode=document.getElementById("languageMode").value;
+
+const showEnglish=document.getElementById("showEnglish").checked;
+const showTaqi=document.getElementById("showUrduTaqi").checked;
+const showJalandhari=document.getElementById("showUrduJalandhari").checked;
 
 verses.forEach((v,i)=>{
+let english="", taqi="", jalandhari="";
+
+v.translations.forEach(t=>{
+const name=t.resource_name.toLowerCase();
+if(name.includes("sahih")) english=t.text;
+if(name.includes("taqi")) taqi=t.text;
+if(name.includes("jalandhari")) jalandhari=t.text;
+});
+
 let div=document.createElement("div");
 div.className="ayah";
 div.id="ayah-"+i;
 
-let english=v.translations.find(t=>t.resource_id===20)?.text||"";
-let urdu=v.translations.find(t=>t.resource_id===131)?.text||"";
-
 div.innerHTML=`
 <div class="arabic">${v.text_uthmani}</div>
-${mode!=="urdu"?`<div>${english}</div>`:""}
-${mode!=="english"?`<div class="urdu">${urdu}</div>`:""}
+${showEnglish?`<div class="translation">${english}</div>`:""}
+${showTaqi?`<div class="translation urdu">${taqi}</div>`:""}
+${showJalandhari?`<div class="translation urdu">${jalandhari}</div>`:""}
 <div class="button-row">
-<button onclick="playSingle(${i})">Play</button>
-<button onclick="openTafseer('${v.verse_key}','${v.text_uthmani}')">Tafseer</button>
+<button class="primary" onclick="playSingle(${i})">Play</button>
+<button class="success" onclick="openTafseer('${v.verse_key}','${v.text_uthmani}')">Tafseer</button>
 </div>
 `;
 container.appendChild(div);
 });
 }
 
-document.getElementById("languageMode").addEventListener("change",renderAyahs);
+document.querySelectorAll("#showEnglish,#showUrduTaqi,#showUrduJalandhari")
+.forEach(el=>el.addEventListener("change",renderAyahs));
 
 function buildURL(key){
 const reciter=document.getElementById("reciterSelect").value;
@@ -286,21 +306,15 @@ function playSingle(i){fullMode=false;playAyah(i);}
 function playFullSurah(){fullMode=true;currentIndex=0;playAyah(0);}
 
 function playAyah(i){
-if(!verses[i])return;
 document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("active"));
 document.getElementById("ayah-"+i).classList.add("active");
 currentIndex=i;
 currentAudio.src=buildURL(verses[i].verse_key);
-currentAudio.play().catch(err=>console.log("Audio error:",err));
+currentAudio.play().catch(err=>console.log(err));
 document.body.classList.add("audio-active");
 document.getElementById("mobileBar").classList.add("active");
 document.getElementById("mobileAyah").innerText="Ayah "+verses[i].verse_key;
-
-currentAudio.onended=()=>{
-if(fullMode && currentIndex<verses.length-1){
-playAyah(currentIndex+1);
-}
-};
+currentAudio.onended=()=>{if(fullMode&&currentIndex<verses.length-1){playAyah(currentIndex+1);}};
 }
 
 function resumeAudio(){currentAudio.play();}
@@ -328,9 +342,11 @@ const panel=document.getElementById("tafseerPanel");
 panel.classList.add("open");
 document.getElementById("tafseerHeader").innerText="Tafseer "+key;
 document.getElementById("tafseerArabic").innerText=arabic;
+
 let html="";
 const ids=[document.getElementById("tafseer1").value,
 document.getElementById("tafseer2").value].filter(Boolean);
+
 for(const id of ids){
 const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${id}/by_ayah/${key}`);
 const data=await res.json();
