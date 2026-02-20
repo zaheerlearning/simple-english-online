@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Quran Study Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -28,8 +27,8 @@ body{
 
 .controls{
   display:flex;
-  gap:12px;
   flex-wrap:wrap;
+  gap:10px;
   justify-content:center;
   align-items:center;
 }
@@ -38,15 +37,22 @@ select,button{
   padding:8px 14px;
   border-radius:8px;
   border:none;
-  font-weight:500;
   cursor:pointer;
+  font-weight:500;
 }
 
-button.play{background:#2563eb;color:white;}
-button.taf{background:#16a34a;color:white;}
-button.copy{background:#f59e0b;color:white;}
-button.close{background:#ef4444;color:white;}
-button.dark{background:#334155;color:white;}
+button.primary{background:#2563eb;color:white;}
+button.success{background:#16a34a;color:white;}
+button.warning{background:#f59e0b;color:white;}
+button.danger{background:#ef4444;color:white;}
+button.darkbtn{background:#334155;color:white;}
+
+.audio-section{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid #ddd;
+}
+.dark .audio-section{border-color:#334155;}
 
 .main{
   max-width:900px;
@@ -64,13 +70,11 @@ button.dark{background:#334155;color:white;}
 }
 .dark .ayah{background:#1e293b;}
 
-.ayah.highlight{
+.ayah.active{
   border-left:6px solid #16a34a;
   background:#ecfdf5;
 }
-.dark .ayah.highlight{
-  background:#064e3b;
-}
+.dark .ayah.active{background:#064e3b;}
 
 .arabic{
   font-family:'Amiri',serif;
@@ -91,19 +95,19 @@ button.dark{background:#334155;color:white;}
   position:fixed;
   top:0;
   right:0;
-  width:min(420px,95vw);
+  width:min(450px,95vw);
   height:100vh;
   background:white;
-  border-left:1px solid #e5e7eb;
   transform:translateX(100%);
   transition:transform 0.35s ease;
   padding:24px;
   overflow-y:auto;
   z-index:200;
+  border-left:1px solid #ddd;
 }
 .dark .tafseer-panel{
   background:#1e293b;
-  border-left:1px solid #334155;
+  border-color:#334155;
 }
 
 .tafseer-panel.open{
@@ -114,16 +118,12 @@ button.dark{background:#334155;color:white;}
   border:4px solid #eee;
   border-top:4px solid #16a34a;
   border-radius:50%;
-  width:30px;
-  height:30px;
+  width:28px;
+  height:28px;
   animation:spin 1s linear infinite;
-  margin:25px auto;
+  margin:20px auto;
 }
 @keyframes spin{100%{transform:rotate(360deg);}}
-
-@media(max-width:768px){
-  .main{padding:18px;}
-}
 </style>
 </head>
 
@@ -131,27 +131,36 @@ button.dark{background:#334155;color:white;}
 
 <div class="header">
   <h2 style="text-align:center;margin-bottom:10px;">Quran Study Platform</h2>
-  <div class="controls">
 
+  <div class="controls">
     <select id="surahSelect"></select>
 
-    <label><strong>Reciter:</strong></label>
+    <label>🎧 Reciter:</label>
     <select id="reciterSelect">
       <option value="Alafasy_128kbps">Mishary Alafasy</option>
-      <option value="Sudais_128kbps">Abdur Rahman Sudais</option>
-      <option value="Shatri_128kbps">Abu Bakr Al-Shatri</option>
+      <option value="Sudais_128kbps">Sudais</option>
+      <option value="Shatri_128kbps">Al-Shatri</option>
       <option value="Minshawi_Murattal_128kbps">Minshawi</option>
       <option value="MaherAlMuaiqly128kbps">Maher Al-Muaiqly</option>
     </select>
 
-    <label><strong>Tafseer:</strong></label>
-    <select id="tafseerSelect">
+    <button class="primary" onclick="playFullSurah()">▶ Play Surah</button>
+    <button class="warning" onclick="pauseAudio()">⏸ Pause</button>
+    <button class="danger" onclick="stopAudio()">⏹ Stop</button>
+
+    <label>Tafseer:</label>
+    <select id="tafseer1">
       <option value="169">Ibn Kathir</option>
       <option value="168">Jalalayn</option>
     </select>
 
-    <button class="dark" onclick="toggleDark()">Night</button>
+    <select id="tafseer2">
+      <option value="">No Compare</option>
+      <option value="169">Ibn Kathir</option>
+      <option value="168">Jalalayn</option>
+    </select>
 
+    <button class="darkbtn" onclick="toggleDark()">Night</button>
   </div>
 </div>
 
@@ -160,18 +169,22 @@ button.dark{background:#334155;color:white;}
 </div>
 
 <div class="tafseer-panel" id="tafseerPanel">
-  <button class="close" onclick="closeTafseer()">✖ Close</button>
+  <button class="danger" onclick="closeTafseer()">✖ Close</button>
   <h3 id="tafseerHeader"></h3>
   <div id="tafseerArabic" style="font-family:Amiri;direction:rtl;text-align:right;margin:12px 0;"></div>
-  <button class="copy" onclick="copyTafseer()">Copy Tafseer</button>
+  <button class="warning" onclick="copyTafseer()">Copy Tafseer</button>
   <div id="tafseerContent"></div>
 </div>
 
 <script>
+let verses=[];
 let tafseerCache={};
+let currentAudio=new Audio();
+let currentIndex=0;
+let fullMode=false;
 let currentTafseerText="";
 
-/* Load Surah List */
+/* Load Surahs */
 async function loadSurahNames(){
   const res=await fetch("https://api.quran.com/api/v4/chapters");
   const data=await res.json();
@@ -187,8 +200,8 @@ async function loadSurahNames(){
   loadSurah(1);
 }
 
-/* Load Surah */
 async function loadSurah(surah){
+  stopAudio();
   const container=document.getElementById("ayahContainer");
   container.innerHTML="Loading...";
 
@@ -196,93 +209,120 @@ async function loadSurah(surah){
     `https://api.quran.com/api/v4/verses/by_chapter/${surah}?translations=20&fields=text_uthmani`
   );
   const data=await res.json();
-
+  verses=data.verses;
   container.innerHTML="";
 
-  data.verses.forEach(v=>{
+  verses.forEach((v,i)=>{
     let div=document.createElement("div");
     div.className="ayah";
-    div.id="ayah-"+v.verse_key;
+    div.id="ayah-"+i;
 
     div.innerHTML=`
       <div class="arabic">${v.text_uthmani}</div>
       <div>${v.translations[0].text}</div>
       <div class="button-row">
-        <button class="play" onclick="playAyah('${v.verse_key}')">Play</button>
-        <button class="taf" onclick="openTafseer('${v.verse_key}','${v.text_uthmani}')">📖 Tafseer</button>
+        <button class="primary" onclick="playSingle(${i})">Play</button>
+        <button class="success" onclick="openTafseer('${v.verse_key}','${v.text_uthmani}')">📖 Tafseer</button>
       </div>
     `;
+
     container.appendChild(div);
   });
 }
 
-/* Audio */
-function playAyah(key){
+/* AUDIO */
+function buildURL(verseKey){
   const reciter=document.getElementById("reciterSelect").value;
-  const parts=key.split(":");
-  const surah=parts[0].padStart(3,'0');
-  const ayah=parts[1].padStart(3,'0');
-  const url=`https://everyayah.com/data/${reciter}/${surah}${ayah}.mp3`;
-  new Audio(url).play();
+  const p=verseKey.split(":");
+  return `https://everyayah.com/data/${reciter}/${p[0].padStart(3,'0')}${p[1].padStart(3,'0')}.mp3`;
 }
 
-/* Tafseer */
-async function openTafseer(key,arabicText){
-  document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("highlight"));
-  document.getElementById("ayah-"+key).classList.add("highlight");
+function playSingle(i){
+  fullMode=false;
+  playAyah(i);
+}
 
+function playFullSurah(){
+  fullMode=true;
+  currentIndex=0;
+  playAyah(currentIndex);
+}
+
+function playAyah(i){
+  document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("active"));
+  document.getElementById("ayah-"+i).classList.add("active");
+
+  currentIndex=i;
+  currentAudio.src=buildURL(verses[i].verse_key);
+  currentAudio.play().catch(err=>console.log(err));
+
+  currentAudio.onended=()=>{
+    if(fullMode && currentIndex<verses.length-1){
+      playAyah(currentIndex+1);
+    }
+  };
+}
+
+function pauseAudio(){currentAudio.pause();}
+function stopAudio(){
+  currentAudio.pause();
+  currentAudio.currentTime=0;
+  fullMode=false;
+  document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("active"));
+}
+
+/* TAFSEER */
+async function openTafseer(key,arabicText){
   const panel=document.getElementById("tafseerPanel");
   const content=document.getElementById("tafseerContent");
-  const header=document.getElementById("tafseerHeader");
-  const arabicHeader=document.getElementById("tafseerArabic");
-
   panel.classList.add("open");
-  header.textContent="Tafseer for "+key;
-  arabicHeader.textContent=arabicText;
+
+  document.getElementById("tafseerHeader").textContent="Tafseer for "+key;
+  document.getElementById("tafseerArabic").textContent=arabicText;
+
   content.innerHTML='<div class="spinner"></div>';
 
-  const tafseerID=document.getElementById("tafseerSelect").value;
-  const cacheKey=tafseerID+"-"+key;
+  const ids=[document.getElementById("tafseer1").value,
+             document.getElementById("tafseer2").value].filter(Boolean);
 
-  if(!tafseerCache[cacheKey]){
-    const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${tafseerID}/by_ayah/${key}`);
-    const data=await res.json();
-    tafseerCache[cacheKey]=data.tafsir.text;
+  let html="";
+
+  for(const id of ids){
+    const cacheKey=id+"-"+key;
+    if(!tafseerCache[cacheKey]){
+      const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${id}/by_ayah/${key}`);
+      const data=await res.json();
+      tafseerCache[cacheKey]=data.tafsir.text;
+    }
+    html+=`<h4>${id==="169"?"Ibn Kathir":"Jalalayn"}</h4>${tafseerCache[cacheKey]}<hr>`;
   }
 
-  currentTafseerText=tafseerCache[cacheKey];
-  content.innerHTML=currentTafseerText;
+  currentTafseerText=html;
+  content.innerHTML=html;
 }
 
-/* Close */
 function closeTafseer(){
   document.getElementById("tafseerPanel").classList.remove("open");
-  document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("highlight"));
 }
 
-/* Copy */
 function copyTafseer(){
   navigator.clipboard.writeText(currentTafseerText);
-  alert("Copied!");
 }
 
-/* Dark Mode */
 function toggleDark(){
   document.body.classList.toggle("dark");
 }
 
-/* Outside click close */
-document.addEventListener("click",function(e){
+document.addEventListener("click",e=>{
   const panel=document.getElementById("tafseerPanel");
   if(panel.classList.contains("open")){
-    if(!panel.contains(e.target)&&!e.target.closest(".taf")){
+    if(!panel.contains(e.target) && !e.target.closest(".success")){
       closeTafseer();
     }
   }
 });
 
-/* ESC close */
-document.addEventListener("keydown",function(e){
+document.addEventListener("keydown",e=>{
   if(e.key==="Escape") closeTafseer();
 });
 
