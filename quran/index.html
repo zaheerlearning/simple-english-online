@@ -47,13 +47,6 @@ button.warning{background:#f59e0b;color:white;}
 button.danger{background:#ef4444;color:white;}
 button.darkbtn{background:#334155;color:white;}
 
-.audio-section{
-  margin-top:10px;
-  padding-top:10px;
-  border-top:1px solid #ddd;
-}
-.dark .audio-section{border-color:#334155;}
-
 .main{
   max-width:900px;
   margin:auto;
@@ -137,11 +130,14 @@ button.darkbtn{background:#334155;color:white;}
 
     <label>🎧 Reciter:</label>
     <select id="reciterSelect">
-      <option value="Alafasy_128kbps">Mishary Alafasy</option>
-      <option value="Sudais_128kbps">Sudais</option>
-      <option value="Shatri_128kbps">Al-Shatri</option>
-      <option value="Minshawi_Murattal_128kbps">Minshawi</option>
-      <option value="MaherAlMuaiqly128kbps">Maher Al-Muaiqly</option>
+      <option value="Alafasy_128kbps">Mishary Al-Afasy</option>
+      <option value="Abdurrahmaan_As-Sudais_192kbps">Sudais (192kbps)</option>
+      <option value="Abdurrahmaan_As-Sudais_64kbps">Sudais (64kbps)</option>
+      <option value="Abu_Bakr_Ash-Shaatree_128kbps">Abu Bakr Ash-Shaatree</option>
+      <option value="Minshawy_Murattal_128kbps">Minshawi Murattal</option>
+      <option value="Maher_Al_Muaiqly_128kbps">Maher Al-Muaiqly</option>
+      <option value="Abdul_Basit_Mujawwad_128kbps">Abdul Basit</option>
+      <option value="Hani_Rifai_192kbps">Hani Rifai</option>
     </select>
 
     <button class="primary" onclick="playFullSurah()">▶ Play Surah</button>
@@ -230,7 +226,7 @@ async function loadSurah(surah){
   });
 }
 
-/* AUDIO */
+/* Audio */
 function buildURL(verseKey){
   const reciter=document.getElementById("reciterSelect").value;
   const p=verseKey.split(":");
@@ -254,7 +250,7 @@ function playAyah(i){
 
   currentIndex=i;
   currentAudio.src=buildURL(verses[i].verse_key);
-  currentAudio.play().catch(err=>console.log(err));
+  currentAudio.play();
 
   currentAudio.onended=()=>{
     if(fullMode && currentIndex<verses.length-1){
@@ -271,22 +267,19 @@ function stopAudio(){
   document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("active"));
 }
 
-/* TAFSEER */
+/* Tafseer */
 async function openTafseer(key,arabicText){
   const panel=document.getElementById("tafseerPanel");
-  const content=document.getElementById("tafseerContent");
   panel.classList.add("open");
 
   document.getElementById("tafseerHeader").textContent="Tafseer for "+key;
   document.getElementById("tafseerArabic").textContent=arabicText;
-
-  content.innerHTML='<div class="spinner"></div>';
+  document.getElementById("tafseerContent").innerHTML='<div class="spinner"></div>';
 
   const ids=[document.getElementById("tafseer1").value,
              document.getElementById("tafseer2").value].filter(Boolean);
 
   let html="";
-
   for(const id of ids){
     const cacheKey=id+"-"+key;
     if(!tafseerCache[cacheKey]){
@@ -298,7 +291,7 @@ async function openTafseer(key,arabicText){
   }
 
   currentTafseerText=html;
-  content.innerHTML=html;
+  document.getElementById("tafseerContent").innerHTML=html;
 }
 
 function closeTafseer(){
