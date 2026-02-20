@@ -3,17 +3,15 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Quran Study Platform</title>
+<title>Quran Companion</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --green-dark:#0f3d2e;
-  --green:#166534;
-  --green-light:#22c55e;
-  --mint:#d1fae5;
+  --primary:#166534;
+  --accent:#22c55e;
   --bg:#f0fdf4;
   --card:#ffffff;
 }
@@ -21,201 +19,283 @@
 body{
   margin:0;
   font-family:'Inter',sans-serif;
-  background:linear-gradient(to bottom,#f0fdf4,#ecfdf5);
+  background:var(--bg);
 }
 
-/* HEADER */
 header{
-  background:linear-gradient(135deg,#14532d,#064e3b);
+  background:linear-gradient(135deg,#166534,#065f46);
   color:white;
-  padding:20px 15px;
+  padding:15px;
   position:sticky;
   top:0;
   z-index:100;
-  box-shadow:0 4px 15px rgba(0,0,0,.15);
 }
 
-h2{
-  text-align:center;
-  margin:0 0 12px;
-  font-weight:700;
-}
+h2{text-align:center;margin:0 0 10px;}
 
 .controls{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
+  gap:8px;
   justify-content:center;
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
 
-select,button{
-  padding:8px 14px;
+select,button,label{
+  padding:8px 12px;
   border:none;
-  border-radius:30px;
+  border-radius:10px;
   font-weight:600;
   cursor:pointer;
-  transition:.2s;
-}
-
-select{
-  background:white;
 }
 
 button{
-  background:linear-gradient(135deg,#22c55e,#16a34a);
+  background:var(--accent);
   color:white;
 }
 
-button:hover{
-  transform:translateY(-2px);
-  box-shadow:0 4px 10px rgba(0,0,0,.15);
+#studyBtn.active{
+  background:#15803d;
+  outline:2px solid white;
 }
 
-/* MAIN */
 main{
-  max-width:950px;
+  max-width:1000px;
   margin:auto;
-  padding:20px;
+  padding:15px;
 }
 
 .ayah{
   background:var(--card);
-  padding:25px;
-  border-radius:20px;
-  margin-bottom:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
-  position:relative;
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
   transition:.3s;
-}
-
-.ayah:nth-child(even){
-  background:var(--mint);
+  position:relative;
 }
 
 .playing{
-  border:2px solid var(--green-light);
-  background:#ecfdf5 !important;
+  background:#ecfdf5;
+  border:2px solid var(--accent);
 }
 
 .bookmark{
   position:absolute;
-  top:15px;
-  left:15px;
+  top:10px;
+  left:10px;
   cursor:pointer;
-  font-size:20px;
+  font-size:18px;
 }
-
-.bookmarked{
-  color:#fbbf24;
-}
+.bookmarked{ color:gold; }
 
 .arabic{
   font-family:'Amiri',serif;
-  font-size:clamp(24px,4vw,36px);
+  font-size:clamp(22px,4vw,34px);
   direction:rtl;
   text-align:right;
-  line-height:2.1;
+  line-height:2;
 }
 
-.translation{
-  margin-top:12px;
-  font-size:15px;
-  color:#374151;
-}
+.translation{ margin-top:8px; color:#374151; font-size:15px; }
 
 .word{
   cursor:pointer;
-  padding:3px 5px;
+  padding:2px 4px;
   border-radius:6px;
+  display:inline-block;
 }
-.word:hover{
-  background:#bbf7d0;
-}
+.word:hover{ background:#bbf7d0; }
 
-/* WORD POPUP */
+/* Word popup */
 .word-popup{
   position:fixed;
   bottom:-100%;
   left:0;
   width:100%;
   background:white;
-  padding:25px;
-  box-shadow:0 -5px 30px rgba(0,0,0,.3);
+  padding:20px;
+  box-shadow:0 -5px 25px rgba(0,0,0,.25);
   transition:.3s;
-  z-index:9999;
+  z-index:11000;
+  box-sizing:border-box;
+  line-height:1.8;
 }
-.word-popup.show{
-  bottom:0;
-}
+.word-popup.show{ bottom:0; }
 
-/* AUDIO FLOATER */
+/* Audio Floater */
 .audio-floater{
   position:fixed;
   bottom:-130px;
   left:0;
   width:100%;
   background:white;
-  padding:14px 18px;
+  padding:12px 16px;
   display:flex;
   flex-direction:column;
-  gap:8px;
-  box-shadow:0 -5px 30px rgba(0,0,0,.2);
+  gap:6px;
+  box-shadow:0 -4px 20px rgba(0,0,0,.2);
   transition:.3s;
-  z-index:9998;
+  z-index:9999;
+  box-sizing:border-box;
 }
 .audio-floater.show{ bottom:0; }
 
 .progress-bar{
-  height:8px;
+  height:6px;
   background:#e5e7eb;
-  border-radius:20px;
+  border-radius:5px;
   overflow:hidden;
 }
-
 .progress{
   height:100%;
   width:0%;
-  background:linear-gradient(to right,#22c55e,#16a34a);
+  background:var(--accent);
 }
-
 .floater-controls{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  font-weight:600;
 }
 
-/* TAFSIR PANEL */
+/* ── TAFSIR PANEL ── */
 .tafsir-panel{
   position:fixed;
   top:0;
-  right:-600px;
-  width:600px;
+  right:-660px;
+  width:640px;
   height:100%;
   background:white;
   transition:.3s;
   z-index:10000;
   display:flex;
   flex-direction:column;
-  box-shadow:-5px 0 25px rgba(0,0,0,.15);
+  box-shadow:-4px 0 20px rgba(0,0,0,.15);
 }
-
 .tafsir-panel.open{ right:0; }
 
+/* Top bar with title + close */
 .tafsir-header{
-  background:linear-gradient(135deg,#14532d,#064e3b);
+  background:var(--primary);
   color:white;
-  padding:18px;
+  padding:14px 16px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.tafsir-header span{ flex:1; font-weight:600; }
+.tafsir-header button{
+  flex-shrink:0;
+  background:rgba(255,255,255,.2);
+  color:white;
+  padding:6px 14px;
+}
+
+/* Compare toolbar inside panel */
+.tafsir-toolbar{
+  background:#f0fdf4;
+  border-bottom:1px solid #d1fae5;
+  padding:10px 16px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+.tafsir-toolbar label{
   font-weight:600;
+  color:var(--primary);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:0;
+}
+.tafsir-toolbar select{
+  padding:6px 10px;
+  border:1px solid #d1fae5;
+  background:white;
+  font-size:13px;
+  border-radius:8px;
+}
+.tafsir-toolbar select:disabled{
+  opacity:.4;
+  cursor:not-allowed;
 }
 
 .tafsir-body{
   padding:20px;
-  overflow:auto;
+  overflow-y:auto;
   flex:1;
-  line-height:1.7;
-  font-size:15px;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+
+/* Tab bar */
+.tafsir-tabs{
+  display:none; /* shown only in compare mode */
+  border-bottom:2px solid #d1fae5;
+  background:#f0fdf4;
+  flex-shrink:0;
+}
+.tafsir-tabs.show{ display:flex; }
+.tafsir-tab{
+  flex:1;
+  padding:10px;
+  text-align:center;
+  font-weight:600;
+  font-size:13px;
+  cursor:pointer;
+  border:none;
+  background:transparent;
+  color:#6b7280;
+  border-bottom:3px solid transparent;
+  margin-bottom:-2px;
+  transition:.2s;
+}
+.tafsir-tab.active{
+  color:var(--primary);
+  border-bottom-color:var(--primary);
+  background:white;
+}
+
+/* Tab content panes */
+.tafsir-pane{ display:none; }
+.tafsir-pane.active{ display:block; }
+
+.tafsir-box{
+  background:#f9fafb;
+  padding:15px;
+  border-radius:10px;
+  overflow-wrap:break-word;
+  line-height:1.75;
+}
+.tafsir-box h3{
+  margin:0 0 10px;
+  color:var(--primary);
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  border-bottom:2px solid #d1fae5;
+  padding-bottom:8px;
+}
+
+/* Mobile: full-screen bottom sheet */
+@media (max-width:640px){
+  .tafsir-panel{
+    top:auto;
+    bottom:-100%;
+    right:0;
+    width:100%;
+    height:92dvh;
+    border-radius:20px 20px 0 0;
+    transition:bottom .3s ease;
+    box-shadow:0 -4px 20px rgba(0,0,0,.2);
+  }
+  .tafsir-panel.open{ bottom:0; }
+  .tafsir-body{ font-size:14px; padding:14px; }
 }
 </style>
 </head>
@@ -223,26 +303,23 @@ main{
 <body>
 
 <header>
-<h2>Quran Study Platform</h2>
+<h2>Quran Companion</h2>
 
 <div class="controls">
-<select id="surahSelect"></select>
+  <select id="surahSelect"></select>
 
-<select id="reciterSelect">
-<option value="Alafasy_128kbps">Mishary Rashid Alafasy</option>
-<option value="Husary_128kbps">Mahmoud Al-Husary</option>
-<option value="Abdul_Basit_Murattal_192kbps">Abdul Basit</option>
-</select>
+  <select id="reciterSelect">
+    <option value="Alafasy_128kbps">Mishary Rashid Alafasy</option>
+    <option value="Abdurrahmaan_As-Sudais_192kbps">Abdurrahman Al-Sudais</option>
+    <option value="Saood_ash-Shuraym_128kbps">Saud Al-Shuraim</option>
+    <option value="Husary_128kbps">Mahmoud Al-Husary</option>
+    <option value="Abdul_Basit_Murattal_192kbps">Abdul Basit</option>
+  </select>
 
-<select id="tafseerSelect">
-<option value="169">Ibn Kathir</option>
-<option value="168">Jalalayn</option>
-</select>
-
-<button onclick="toggleStudy()">Study Mode</button>
-<button onclick="playFull()">Play Full</button>
-<button onclick="pauseAudio()">Pause</button>
-<button onclick="stopAudio()">Stop</button>
+  <button id="studyBtn" onclick="toggleStudy()">📖 Study Mode</button>
+  <button onclick="playFull()">▶ Play Full</button>
+  <button onclick="pauseAudio()">⏸ Pause</button>
+  <button onclick="stopAudio()">⏹ Stop</button>
 </div>
 </header>
 
@@ -250,10 +327,9 @@ main{
 <div id="ayahContainer"></div>
 </main>
 
+<!-- Audio floater -->
 <div class="audio-floater" id="audioFloater">
-  <div class="progress-bar">
-    <div class="progress" id="progress"></div>
-  </div>
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
   <div class="floater-controls">
     <div id="nowPlaying"></div>
     <div>
@@ -263,14 +339,44 @@ main{
   </div>
 </div>
 
+<!-- Tafsir panel -->
 <div class="tafsir-panel" id="tafsirPanel">
+
   <div class="tafsir-header">
-    <span id="tafsirTitle"></span>
-    <button onclick="closeTafsir()" style="float:right">Close</button>
+    <span id="tafsirTitle">Tafsir</span>
+    <button onclick="closeTafsir()">✕ Close</button>
   </div>
-  <div class="tafsir-body" id="tafsirBody"></div>
+
+  <!-- Compare toolbar lives inside the panel -->
+  <div class="tafsir-toolbar">
+    <label>
+      <input type="checkbox" id="compareToggle">
+      Compare
+    </label>
+    <select id="tafseer1">
+      <option value="169">Ibn Kathir</option>
+      <option value="168">Jalalayn</option>
+    </select>
+    <span id="vsLabel" style="color:#666;font-size:13px;display:none">vs</span>
+    <select id="tafseer2" disabled>
+      <option value="168">Jalalayn</option>
+      <option value="169">Ibn Kathir</option>
+    </select>
+  </div>
+
+  <!-- Tab bar: visible only when Compare is on -->
+  <div class="tafsir-tabs" id="tafsirTabs">
+    <button class="tafsir-tab active" id="tab1" onclick="switchTab(1)"></button>
+    <button class="tafsir-tab"        id="tab2" onclick="switchTab(2)"></button>
+  </div>
+
+  <div class="tafsir-body" id="tafsirBody">
+    <p style="color:#aaa;text-align:center;margin-top:40px">Tap "Tafsir" on any verse to begin.</p>
+  </div>
+
 </div>
 
+<!-- Word popup (study mode) -->
 <div class="word-popup" id="wordPopup"></div>
 
 <script>
@@ -279,28 +385,36 @@ let chaptersData=[];
 let audio=new Audio();
 let studyMode=false;
 let currentIndex=0;
+let currentTafsirKey=null;
 let bookmarks=JSON.parse(localStorage.getItem("bookmarks")||"{}");
 
+/* ── Compare toggle: enable/disable second select ── */
+compareToggle.addEventListener("change",function(){
+  tafseer2.disabled=!this.checked;
+  vsLabel.style.display=this.checked?"inline":"none";
+  renderTafsir();
+});
+tafseer1.addEventListener("change", renderTafsir);
+tafseer2.addEventListener("change", renderTafsir);
+
+/* ── Load surah list ── */
 async function loadSurahNames(){
   const res=await fetch("https://api.quran.com/api/v4/chapters");
   const data=await res.json();
   chaptersData=data.chapters;
-
   data.chapters.forEach(ch=>{
     let opt=document.createElement("option");
     opt.value=ch.id;
     opt.textContent=ch.id+". "+ch.name_simple;
     surahSelect.appendChild(opt);
   });
-
   loadSurah(localStorage.getItem("lastSurah")||1);
 }
 
 async function loadSurah(id){
-  let url = studyMode
-    ? `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&words=true&word_fields=text_uthmani,translation,transliteration,root,lemma`
+  let url=studyMode
+    ? `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani&words=true&word_fields=text_uthmani,translation,transliteration,root,lemma`
     : `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani`;
-
   const res=await fetch(url);
   const data=await res.json();
   verses=data.verses;
@@ -309,50 +423,45 @@ async function loadSurah(id){
 
 function toggleStudy(){
   studyMode=!studyMode;
+  document.getElementById("studyBtn").classList.toggle("active",studyMode);
   loadSurah(surahSelect.value);
 }
 
 function render(){
   ayahContainer.innerHTML="";
   verses.forEach((v,i)=>{
-
     let arabicHTML=v.text_uthmani;
-
     if(studyMode && v.words){
       arabicHTML=v.words.map(w=>
-        `<span class="word" onclick='showWord(${JSON.stringify(w)})'>
-        ${w.text_uthmani}
-        </span>`
+        `<span class="word" onclick='showWord(${JSON.stringify(w)})'>${w.text_uthmani}</span>`
       ).join(" ");
     }
-
     let markClass=bookmarks[v.verse_key]?"bookmark bookmarked":"bookmark";
-
     let div=document.createElement("div");
     div.className="ayah";
     div.id="ayah-"+i;
-
     div.innerHTML=`
       <span class="${markClass}" onclick="toggleBookmark('${v.verse_key}')">🔖</span>
       <div class="arabic">${arabicHTML}</div>
       <div class="translation">${v.translations[0].text}</div>
-      <div style="margin-top:12px">
-        <button onclick="playSingle(${i})">Play</button>
-        <button onclick="openTafsir('${v.verse_key}')">Tafsir</button>
+      <div style="margin-top:10px">
+        <button onclick="playSingle(${i})">▶ Play</button>
+        <button onclick="openTafsir('${v.verse_key}')">📚 Tafsir</button>
       </div>
     `;
-
     ayahContainer.appendChild(div);
   });
 }
 
 function showWord(w){
   wordPopup.innerHTML=`
-    <strong style="font-size:26px">${w.text_uthmani}</strong><br><br>
-    <b>Meaning:</b> ${w.translation?.text||"Not available"}<br><br>
-    <b>Transliteration:</b> ${w.transliteration?.text||"-"}<br><br>
-    <b>Root:</b> ${w.root||w.lemma||"Not available"}<br><br>
-    <button onclick="wordPopup.classList.remove('show')">Close</button>
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+      <strong style="font-family:'Amiri',serif;font-size:28px">${w.text_uthmani}</strong>
+      <button onclick="wordPopup.classList.remove('show')" style="background:#e5e7eb;color:#374151;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600">✕</button>
+    </div>
+    <b>Meaning:</b> ${w.translation?.text||"Not available"}<br>
+    <b>Transliteration:</b> ${w.transliteration?.text||"—"}<br>
+    <b>Root:</b> ${w.root||w.lemma||"Not available"}
   `;
   wordPopup.classList.add("show");
 }
@@ -370,85 +479,107 @@ function buildURL(key){
   return `https://everyayah.com/data/${reciter}/${s.padStart(3,"0")}${a.padStart(3,"0")}.mp3`;
 }
 
-function playSingle(i){
-  currentIndex=i;
-  playCurrent();
-}
-
-function playFull(){
-  currentIndex=0;
-  playCurrent();
-}
+function playSingle(i){ currentIndex=i; playCurrent(); }
+function playFull(){ currentIndex=0; playCurrent(); }
 
 function playCurrent(){
-  if(currentIndex>=verses.length){
-    stopAudio();
-    return;
-  }
-
+  if(currentIndex>=verses.length){ stopAudio(); return; }
   document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("playing"));
   const current=document.getElementById("ayah-"+currentIndex);
   current.classList.add("playing");
   current.scrollIntoView({behavior:"smooth",block:"center"});
-
   const key=verses[currentIndex].verse_key;
   const [s,a]=key.split(":");
   const surahObj=chaptersData.find(c=>c.id==s);
-
   audio.src=buildURL(key);
   audio.play();
-
-  nowPlaying.textContent = surahObj
+  nowPlaying.textContent=surahObj
     ? `${surahObj.name_simple} (${s}) – Ayah ${a}`
     : `Surah ${s} – Ayah ${a}`;
-
   audioFloater.classList.add("show");
-
   localStorage.setItem("lastSurah",surahSelect.value);
   localStorage.setItem("lastAyah",currentIndex);
-
-  audio.onended=()=>{
-    currentIndex++;
-    playCurrent();
-  };
+  audio.onended=()=>{ currentIndex++; playCurrent(); };
 }
 
 audio.ontimeupdate=function(){
-  if(audio.duration){
-    progress.style.width=(audio.currentTime/audio.duration*100)+"%";
-  }
+  if(audio.duration) progress.style.width=(audio.currentTime/audio.duration*100)+"%";
 };
 
 function pauseAudio(){ audio.pause(); }
-
 function stopAudio(){
-  audio.pause();
-  audio.currentTime=0;
+  audio.pause(); audio.currentTime=0;
   audioFloater.classList.remove("show");
   progress.style.width="0%";
 }
 
+/* ── Tafsir ── */
 async function openTafsir(key){
+  currentTafsirKey=key;
   tafsirPanel.classList.add("open");
+  renderTafsir();
+}
 
-  const [s,a]=key.split(":");
+/* Store both panes so switchTab() can show/hide without re-fetching */
+let tafsirPaneHTML=["",""];
+let activeTab=1;
+
+function switchTab(n){
+  activeTab=n;
+  document.getElementById("tab1").classList.toggle("active", n===1);
+  document.getElementById("tab2").classList.toggle("active", n===2);
+  tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[n-1]}</div>`;
+  tafsirBody.scrollTop=0;
+}
+
+async function renderTafsir(){
+  if(!currentTafsirKey) return;
+
+  const [s,a]=currentTafsirKey.split(":");
   const surahObj=chaptersData.find(c=>c.id==s);
+  tafsirTitle.textContent=surahObj
+    ? `${surahObj.name_simple} – Ayah ${a}`
+    : `Surah ${s} – Ayah ${a}`;
 
-  tafsirTitle.textContent = surahObj
-    ? `${surahObj.name_simple} (${s}) - Ayah ${a}`
-    : `Surah ${s} - Ayah ${a}`;
+  const id1=tafseer1.value;
+  const id2=tafseer2.value;
+  const compare=compareToggle.checked;
+  const label1=tafseer1.options[tafseer1.selectedIndex].text;
+  const label2=tafseer2.options[tafseer2.selectedIndex].text;
 
-  tafsirBody.innerHTML="Loading...";
+  /* Show/hide tabs */
+  tafsirTabs.classList.toggle("show", compare);
+  tab1.textContent=label1;
+  tab2.textContent=label2;
+  activeTab=1;
+  tab1.classList.add("active");
+  tab2.classList.remove("active");
 
-  const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${tafseerSelect.value}/by_ayah/${key}`);
-  const data=await res.json();
+  tafsirBody.innerHTML=`<p style="color:#aaa;text-align:center;padding:30px 0">Loading...</p>`;
 
-  tafsirBody.innerHTML=data.tafsir?.text || "Not available";
+  try{
+    if(compare){
+      const [res1,res2]=await Promise.all([
+        fetch(`https://api.quran.com/api/v4/tafsirs/${id1}/by_ayah/${currentTafsirKey}`),
+        fetch(`https://api.quran.com/api/v4/tafsirs/${id2}/by_ayah/${currentTafsirKey}`)
+      ]);
+      const [data1,data2]=await Promise.all([res1.json(),res2.json()]);
+      tafsirPaneHTML[0]=`<h3>${label1}</h3>${data1.tafsir?.text||"<em>Not available</em>"}`;
+      tafsirPaneHTML[1]=`<h3>${label2}</h3>${data2.tafsir?.text||"<em>Not available</em>"}`;
+      tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[0]}</div>`;
+    } else {
+      const res1=await fetch(`https://api.quran.com/api/v4/tafsirs/${id1}/by_ayah/${currentTafsirKey}`);
+      const data1=await res1.json();
+      tafsirPaneHTML[0]=`<h3>${label1}</h3>${data1.tafsir?.text||"<em>Not available</em>"}`;
+      tafsirPaneHTML[1]="";
+      tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[0]}</div>`;
+    }
+  } catch(e){
+    tafsirBody.innerHTML=`<p style="color:red;padding:20px">Error loading tafsir. Please try again.</p>`;
+  }
 }
 
-function closeTafsir(){
-  tafsirPanel.classList.remove("open");
-}
+function closeTafsir(){ tafsirPanel.classList.remove("open"); }
 
 surahSelect.addEventListener("change",e=>{
   localStorage.removeItem("lastAyah");
