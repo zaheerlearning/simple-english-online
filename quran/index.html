@@ -168,7 +168,6 @@ button:hover{
 <h2 style="text-align:center;">Quran Study Platform</h2>
 
 <div class="controls">
-
 <select id="surahSelect"></select>
 
 <select id="reciterSelect">
@@ -196,7 +195,6 @@ button:hover{
 </select>
 
 <button class="darkbtn" onclick="toggleDark()">Night</button>
-
 </div>
 
 <div class="controls">
@@ -204,7 +202,6 @@ button:hover{
 <label><input type="checkbox" id="showUrduTaqi"> Urdu (Taqi)</label>
 <label><input type="checkbox" id="showUrduJalandhari"> Urdu (Jalandhari)</label>
 </div>
-
 </div>
 
 <div class="main">
@@ -251,10 +248,14 @@ loadSurah(1);
 
 async function loadSurah(surah){
 stopAudio();
-const res=await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${surah}?translations=20,131,97&fields=text_uthmani`);
+try{
+const res=await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${surah}?translations=20,131,97&translation_fields=text&fields=text_uthmani`);
 const data=await res.json();
-verses=data.verses;
+verses=data.verses || [];
 renderAyahs();
+}catch(err){
+console.error("Load error:",err);
+}
 }
 
 function renderAyahs(){
@@ -268,12 +269,14 @@ const showJalandhari=document.getElementById("showUrduJalandhari").checked;
 verses.forEach((v,i)=>{
 let english="", taqi="", jalandhari="";
 
+if(v.translations && Array.isArray(v.translations)){
 v.translations.forEach(t=>{
-const name=t.resource_name.toLowerCase();
-if(name.includes("sahih")) english=t.text;
-if(name.includes("taqi")) taqi=t.text;
-if(name.includes("jalandhari")) jalandhari=t.text;
+const name=(t.resource_name||"").toLowerCase();
+if(name.includes("sahih")) english=t.text||"";
+if(name.includes("taqi")) taqi=t.text||"";
+if(name.includes("jalandhari")) jalandhari=t.text||"";
 });
+}
 
 let div=document.createElement("div");
 div.className="ayah";
@@ -306,11 +309,12 @@ function playSingle(i){fullMode=false;playAyah(i);}
 function playFullSurah(){fullMode=true;currentIndex=0;playAyah(0);}
 
 function playAyah(i){
+if(!verses[i]) return;
 document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("active"));
 document.getElementById("ayah-"+i).classList.add("active");
 currentIndex=i;
 currentAudio.src=buildURL(verses[i].verse_key);
-currentAudio.play().catch(err=>console.log(err));
+currentAudio.play().catch(err=>console.log("Audio error:",err));
 document.body.classList.add("audio-active");
 document.getElementById("mobileBar").classList.add("active");
 document.getElementById("mobileAyah").innerText="Ayah "+verses[i].verse_key;
@@ -348,9 +352,13 @@ const ids=[document.getElementById("tafseer1").value,
 document.getElementById("tafseer2").value].filter(Boolean);
 
 for(const id of ids){
+try{
 const res=await fetch(`https://api.quran.com/api/v4/tafsirs/${id}/by_ayah/${key}`);
 const data=await res.json();
 html+=`<h4>${id==="169"?"Ibn Kathir":"Jalalayn"}</h4>${data.tafsir.text}<hr>`;
+}catch(err){
+console.error("Tafseer error:",err);
+}
 }
 document.getElementById("tafseerContent").innerHTML=html;
 }
