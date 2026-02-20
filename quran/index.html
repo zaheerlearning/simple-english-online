@@ -104,16 +104,18 @@ main{
   line-height:2.1;
 }
 
-/* Study Mode */
+/* Study Mode FIXED */
 .study-mode .arabic{
   direction:rtl;
   text-align:right;
+  white-space:normal;
+  word-spacing:0;
+  letter-spacing:0;
 }
 
 .study-mode .word{
-  display:inline-block;
-  margin-left:4px;
-  padding:3px 6px;
+  display:inline;
+  padding:2px 4px;
   border-radius:6px;
   cursor:pointer;
   transition:.15s;
@@ -250,7 +252,6 @@ let currentIndex=0;
 let fullMode=false;
 let studyMode=false;
 
-/* Load Surah Names */
 async function loadSurahNames(){
 const res=await fetch("https://api.quran.com/api/v4/chapters");
 const data=await res.json();
@@ -264,7 +265,6 @@ select.appendChild(opt);
 loadSurah(1);
 }
 
-/* Load Surah */
 async function loadSurah(id){
 stopAudio();
 let url=studyMode
@@ -277,7 +277,6 @@ verses=data.verses||[];
 render();
 }
 
-/* Render */
 function render(){
 const container=document.getElementById("ayahContainer");
 container.innerHTML="";
@@ -297,15 +296,11 @@ if(t.resource_id==97) urdu=t.text;
 let arabicHTML="";
 if(studyMode && v.words){
 arabicHTML=v.words.map(w=>{
-const arabic=w.text||"";
-const meaning=w.translation?w.translation.text:"";
-const translit=w.transliteration?w.transliteration.text:"";
-const root=w.root||"";
 return `<span class="word"
-onclick="openWord(this,'${arabic}','${meaning}','${translit}','${root}')">
-${arabic}
+onclick="openWord(this,'${w.text||""}','${w.translation?.text||""}','${w.transliteration?.text||""}','${w.root||""}')">
+${w.text||""}
 </span>`;
-}).join(" ");
+}).join("");
 }else{
 arabicHTML=v.text_uthmani||"";
 }
@@ -333,15 +328,14 @@ document.body.classList.toggle("study-mode");
 loadSurah(document.getElementById("surahSelect").value);
 });
 
-/* Word Panel */
-function openWord(el,arabic,meaning,translit,root){
+function openWord(el,a,m,t,r){
 document.querySelectorAll(".word").forEach(w=>w.classList.remove("active-word"));
 el.classList.add("active-word");
 document.getElementById("studyContent").innerHTML=
-`<strong style="font-size:22px;">${arabic}</strong><br><br>
-Meaning: ${meaning}<br>
-Transliteration: ${translit}<br>
-Root: ${root}`;
+`<strong style="font-size:22px;">${a}</strong><br><br>
+Meaning: ${m}<br>
+Transliteration: ${t}<br>
+Root: ${r}`;
 document.getElementById("studyPanel").classList.add("open");
 }
 
@@ -349,7 +343,6 @@ function closeStudyPanel(){
 document.getElementById("studyPanel").classList.remove("open");
 }
 
-/* Audio */
 function buildURL(key){
 const reciter=document.getElementById("reciterSelect").value;
 const [s,a]=key.split(":");
@@ -374,7 +367,6 @@ audio.onended=()=>{ if(fullMode&&currentIndex<verses.length-1) play(currentIndex
 function pauseAudio(){ audio.pause(); }
 function stopAudio(){ audio.pause(); audio.currentTime=0; }
 
-/* Tafseer */
 async function openTafseer(key){
 document.getElementById("tafseerPanel").classList.add("open");
 document.body.style.overflow="hidden";
