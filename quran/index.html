@@ -72,7 +72,7 @@ button:hover{ background:var(--emerald-soft); }
 .secondary{ background:#334155; }
 
 main{
-  max-width:850px;
+  max-width:900px;
   margin:auto;
   padding:20px;
 }
@@ -83,8 +83,17 @@ main{
   border-radius:16px;
   margin-bottom:20px;
   box-shadow:0 4px 18px rgba(0,0,0,0.05);
+  transition:.2s;
 }
 .dark .ayah{ background:var(--card-dark); }
+
+.ayah.active{
+  border-left:6px solid var(--emerald);
+  background:#e6fffa;
+}
+.dark .ayah.active{
+  background:#063c37;
+}
 
 .arabic{
   font-family:'Amiri',serif;
@@ -93,10 +102,17 @@ main{
   text-align:right;
   margin-bottom:14px;
 }
+
 .dark .arabic{ color:var(--arabic-dark); }
 
-.translation{ margin-top:6px; line-height:1.6; }
-.urdu{ direction:rtl; }
+.translation{
+  margin-top:6px;
+  line-height:1.6;
+}
+
+.urdu{
+  direction:rtl;
+}
 
 .button-row{
   margin-top:14px;
@@ -105,26 +121,24 @@ main{
   flex-wrap:wrap;
 }
 
-/* FIXED TAFSEER PANEL */
+/* Tafseer Panel */
 .tafseer-panel{
   position:fixed;
   top:0;
   right:0;
   width:100%;
-  height:100%;
+  height:100dvh;
   background:var(--card-light);
   transform:translateX(100%);
   transition:.3s ease;
   overflow-y:auto;
-  padding:20px;
-  z-index:200;
+  padding:24px;
+  z-index:1000;
 }
 .dark .tafseer-panel{ background:var(--card-dark); }
 
 @media(min-width:900px){
-  .tafseer-panel{
-    width:450px;
-  }
+  .tafseer-panel{ width:480px; }
 }
 
 .tafseer-panel.open{
@@ -134,6 +148,36 @@ main{
 .close-btn{
   background:#dc2626;
   margin-bottom:12px;
+}
+
+/* Study Mode */
+.study-mode .word{
+  cursor:pointer;
+  padding:4px 6px;
+  margin:3px;
+  display:inline-block;
+}
+
+.active-word{
+  background:#e6fffa;
+  border-radius:6px;
+}
+
+#studyPanel{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  border-top:3px solid var(--emerald);
+  padding:18px;
+  display:none;
+  z-index:1500;
+  box-shadow:0 -4px 12px rgba(0,0,0,0.15);
+}
+
+.dark #studyPanel{
+  background:var(--card-dark);
 }
 </style>
 </head>
@@ -159,12 +203,12 @@ main{
 <button onclick="playFullSurah()">Play</button>
 <button class="warning" onclick="pauseAudio()">Pause</button>
 <button class="danger" onclick="stopAudio()">Stop</button>
+<button id="studyToggle">Study Mode</button>
 </div>
 
 <div class="controls-row">
 <label><input type="checkbox" id="showEnglish" checked> English</label>
-<label><input type="checkbox" id="showTaqi"> Urdu (Taqi)</label>
-<label><input type="checkbox" id="showJalandhari"> Urdu (Jalandhari)</label>
+<label><input type="checkbox" id="showUrdu"> Urdu</label>
 
 <select id="tafseerSelect">
 <option value="169">Ibn Kathir (English)</option>
@@ -185,12 +229,19 @@ main{
 <div id="tafseerContent"></div>
 </div>
 
+<div id="studyPanel">
+<div id="studyContent"></div>
+<button onclick="closeStudyPanel()">Close</button>
+</div>
+
 <script>
 let verses=[];
 let audio=new Audio();
 let currentIndex=0;
 let fullMode=false;
+let studyMode=false;
 
+/* Load Surah Names */
 async function loadSurahNames(){
 const res=await fetch("https://api.quran.com/api/v4/chapters");
 const data=await res.json();
@@ -204,43 +255,55 @@ select.appendChild(opt);
 loadSurah(1);
 }
 
+/* Load Surah */
 async function loadSurah(id){
 stopAudio();
-const res=await fetch(
-`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,131,97&translation_fields=text,resource_id&fields=text_uthmani`
-);
+let url = studyMode
+? `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,97&words=true`
+: `https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20,97&fields=text_uthmani`;
+
+const res=await fetch(url);
 const data=await res.json();
 verses=data.verses || [];
 render();
 }
 
+/* Render */
 function render(){
 const container=document.getElementById("ayahContainer");
 container.innerHTML="";
 
 const showEnglish=document.getElementById("showEnglish").checked;
-const showTaqi=document.getElementById("showTaqi").checked;
-const showJalandhari=document.getElementById("showJalandhari").checked;
+const showUrdu=document.getElementById("showUrdu").checked;
 
 verses.forEach((v,i)=>{
-let english="", taqi="", jalandhari="";
-
+let english="", urdu="";
 if(v.translations){
 v.translations.forEach(t=>{
-// SAFE detection (resource_id OR fallback name match)
-if(t.resource_id==20 || t.resource_name?.toLowerCase().includes("sahih")) english=t.text;
-if(t.resource_id==131 || t.resource_name?.toLowerCase().includes("taqi")) taqi=t.text;
-if(t.resource_id==97 || t.resource_name?.toLowerCase().includes("jaland")) jalandhari=t.text;
+if(t.resource_id==20) english=t.text;
+if(t.resource_id==97) urdu=t.text;
 });
+}
+
+let arabicHTML="";
+
+if(studyMode && v.words){
+arabicHTML=v.words.map(w=>`
+<span class="word"
+onclick="openWord(this,'${w.text_uthmani}','${w.translation?.text || ""}','${w.transliteration?.text || ""}','${w.root || ""}')">
+${w.text_uthmani}
+</span>
+`).join(" ");
+}else{
+arabicHTML=v.text_uthmani;
 }
 
 let div=document.createElement("div");
 div.className="ayah";
 div.innerHTML=`
-<div class="arabic">${v.text_uthmani}</div>
+<div class="arabic">${arabicHTML}</div>
 ${showEnglish?`<div class="translation">${english}</div>`:""}
-${showTaqi?`<div class="translation urdu">${taqi}</div>`:""}
-${showJalandhari?`<div class="translation urdu">${jalandhari}</div>`:""}
+${showUrdu?`<div class="translation urdu">${urdu}</div>`:""}
 <div class="button-row">
 <button onclick="playSingle(${i})">Play</button>
 <button onclick="openTafseer('${v.verse_key}')">Tafseer</button>
@@ -250,9 +313,33 @@ container.appendChild(div);
 });
 }
 
-document.querySelectorAll("#showEnglish,#showTaqi,#showJalandhari")
+document.querySelectorAll("#showEnglish,#showUrdu")
 .forEach(el=>el.addEventListener("change",render));
 
+/* Study Mode Toggle */
+document.getElementById("studyToggle").addEventListener("click",()=>{
+studyMode=!studyMode;
+document.body.classList.toggle("study-mode");
+loadSurah(document.getElementById("surahSelect").value);
+});
+
+/* Word Panel */
+function openWord(el,arabic,meaning,translit,root){
+document.querySelectorAll(".word").forEach(w=>w.classList.remove("active-word"));
+el.classList.add("active-word");
+document.getElementById("studyContent").innerHTML=`
+<strong style="font-size:22px;">${arabic}</strong><br><br>
+Meaning: ${meaning}<br>
+Transliteration: ${translit}<br>
+Root: ${root}
+`;
+document.getElementById("studyPanel").style.display="block";
+}
+function closeStudyPanel(){
+document.getElementById("studyPanel").style.display="none";
+}
+
+/* Audio */
 function buildURL(key){
 const reciter=document.getElementById("reciterSelect").value;
 const [s,a]=key.split(":");
@@ -264,15 +351,26 @@ function playFullSurah(){ fullMode=true; currentIndex=0; play(0); }
 
 function play(i){
 if(!verses[i]) return;
+document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("active"));
+const ayah=document.querySelectorAll(".ayah")[i];
+ayah.classList.add("active");
+ayah.scrollIntoView({behavior:"smooth",block:"center"});
+
 currentIndex=i;
 audio.src=buildURL(verses[i].verse_key);
 audio.play();
-audio.onended=()=>{ if(fullMode && currentIndex<verses.length-1){ play(currentIndex+1); } };
+
+audio.onended=()=>{
+if(fullMode && currentIndex<verses.length-1){
+play(currentIndex+1);
+}
+};
 }
 
 function pauseAudio(){ audio.pause(); }
 function stopAudio(){ audio.pause(); audio.currentTime=0; }
 
+/* Tafseer */
 async function openTafseer(key){
 const panel=document.getElementById("tafseerPanel");
 panel.classList.add("open");
@@ -291,6 +389,7 @@ document.getElementById("tafseerPanel").classList.remove("open");
 document.body.style.overflow="";
 }
 
+/* Dark Mode */
 function toggleDark(){
 document.body.classList.toggle("dark");
 }
