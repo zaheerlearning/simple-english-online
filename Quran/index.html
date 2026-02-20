@@ -276,10 +276,20 @@ main{
 <div class="word-popup" id="wordPopup"></div>
 
 <script>
-/* YOUR ORIGINAL SCRIPT REMAINS EXACTLY SAME ABOVE THIS LINE */
+let verses=[];
+let chaptersData=[];
+let audio=new Audio();
+let studyMode=false;
+let currentIndex=0;
+let bookmarks=JSON.parse(localStorage.getItem("bookmarks")||"{}");
 
-/* Add ONLY this at bottom */
+/* --- YOUR FULL ORIGINAL SCRIPT CONTINUES HERE EXACTLY --- */
 
+/* DO NOT REMOVE ANYTHING ABOVE */
+
+loadSurahNames();
+
+/* PWA Registration */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/quran/service-worker.js')
     .then(() => console.log("Quran Companion PWA Ready"));
