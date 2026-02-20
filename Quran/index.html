@@ -2,10 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Quran Study Platform</title>
+<title>Quran Companion</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- PWA -->
 <link rel="manifest" href="/quran/manifest.json">
 <meta name="theme-color" content="#166534">
 
@@ -52,34 +51,13 @@ main{
   margin-top:10px;
   color:#374151;
 }
-
-.update-bar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  background:#065f46;
-  color:white;
-  padding:12px;
-  text-align:center;
-  display:none;
-  z-index:10001;
-}
-
-.update-bar button{
-  margin-left:10px;
-  background:#22c55e;
-  border:none;
-  padding:6px 12px;
-  border-radius:20px;
-}
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>Quran Study Platform</h2>
+<h2>Quran Companion</h2>
 <select id="surahSelect"></select>
 <button onclick="loadSurah(surahSelect.value)">Load</button>
 </header>
@@ -88,19 +66,12 @@ main{
 <div id="ayahContainer"></div>
 </main>
 
-<div class="update-bar" id="updateBar">
-  New version available.
-  <button onclick="updateApp()">Update</button>
-</div>
-
 <script>
-let chaptersData=[];
 let verses=[];
 
 async function loadSurahNames(){
   const res=await fetch("https://api.quran.com/api/v4/chapters");
   const data=await res.json();
-  chaptersData=data.chapters;
 
   data.chapters.forEach(ch=>{
     let opt=document.createElement("option");
@@ -135,23 +106,8 @@ function render(){
 
 loadSurahNames();
 
-/* Register Service Worker */
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/quran/service-worker.js')
-  .then(reg => {
-    reg.onupdatefound = () => {
-      const newWorker = reg.installing;
-      newWorker.onstatechange = () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          document.getElementById("updateBar").style.display="block";
-        }
-      };
-    };
-  });
-}
-
-function updateApp(){
-  window.location.reload();
+  navigator.serviceWorker.register('/quran/service-worker.js');
 }
 </script>
 
