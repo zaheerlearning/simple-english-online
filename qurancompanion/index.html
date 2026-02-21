@@ -1,0 +1,1541 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Quran Companion</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#166534;
+  --accent:#22c55e;
+  --bg:#f0fdf4;
+  --card:#ffffff;
+  --dark:#053d2a;
+}
+*{ box-sizing:border-box; }
+body{ margin:0; font-family:'Inter',sans-serif; background:var(--bg); }
+
+/* ══ STICKY TOP ══ */
+#stickyTop{ position:sticky; top:0; z-index:100; }
+
+/* ══ HEADER ══ */
+header{
+  background:linear-gradient(135deg,#166534,#065f46);
+  color:white; padding:12px 15px 8px;
+}
+h2{ text-align:center; margin:0 0 8px; font-size:clamp(15px,3vw,21px); }
+.controls{
+  display:flex; flex-wrap:wrap; gap:7px;
+  justify-content:center; margin-bottom:4px;
+}
+select,button,label{
+  padding:6px 11px; border:none;
+  border-radius:10px; font-weight:600; cursor:pointer;
+  font-family:inherit;
+}
+button{ background:var(--accent); color:white; }
+#studyBtn.active{ background:#15803d; outline:2px solid white; }
+
+/* ══ PRAYER BAR ══ */
+#prayerBar{
+  background:linear-gradient(135deg,var(--dark),#064e3b);
+  color:white; box-shadow:0 4px 14px rgba(0,0,0,.25);
+}
+
+/* Date/time row - always visible */
+.p-datetime-row{
+  display:flex; align-items:center; justify-content:center;
+  gap:0; padding:5px 14px 0;
+  flex-wrap:wrap;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.p-dt-item{
+  display:flex; align-items:center; gap:5px;
+  padding:3px 10px;
+  font-size:12px;
+}
+.p-dt-item:not(:last-child){
+  border-right:1px solid rgba(255,255,255,.2);
+}
+.p-dt-label{ opacity:.6; font-size:10px; text-transform:uppercase; letter-spacing:.5px; }
+.p-dt-value{ font-weight:700; font-size:12px; }
+#pClock{ font-size:14px; font-weight:700; letter-spacing:.5px; }
+
+/* Collapsed strip */
+.p-strip{
+  display:flex; align-items:center;
+  justify-content:space-between;
+  padding:7px 14px; gap:10px;
+}
+.p-left{ display:flex; flex-direction:column; cursor:pointer; flex:1; }
+.p-label{ font-size:10px; text-transform:uppercase; letter-spacing:.8px; opacity:.6; }
+.p-name{ font-size:15px; font-weight:700; line-height:1.3; }
+.p-time{ font-size:11px; opacity:.75; }
+.p-middle{ display:flex; align-items:center; gap:7px; }
+.p-countdown{
+  background:rgba(255,255,255,.15);
+  padding:4px 12px; border-radius:20px;
+  font-size:13px; font-weight:700;
+  letter-spacing:.4px; min-width:68px; text-align:center;
+}
+.p-icon-btn{
+  background:rgba(255,255,255,.12); border:none; color:white;
+  border-radius:8px; padding:5px 9px;
+  cursor:pointer; font-size:14px; line-height:1; flex-shrink:0;
+}
+.p-icon-btn:hover{ background:rgba(255,255,255,.25); }
+
+/* Expanded panel */
+.p-panel{ display:none; padding:0 14px 14px; border-top:1px solid rgba(255,255,255,.08); }
+.p-panel.open{ display:block; }
+
+/* 7-grid */
+.p-grid{
+  display:grid; grid-template-columns:repeat(7,1fr);
+  gap:5px; margin-top:10px;
+}
+.p-cell{
+  background:rgba(255,255,255,.1); border-radius:10px;
+  padding:8px 3px; text-align:center; transition:.2s;
+}
+.p-cell.current{ background:rgba(255,255,255,.28); outline:2px solid rgba(255,255,255,.55); }
+.p-cell.passed{ opacity:.4; }
+.p-cell-icon{ font-size:12px; margin-bottom:2px; }
+.p-cell-name{ font-size:9px; text-transform:uppercase; letter-spacing:.3px; opacity:.7; margin-bottom:2px; }
+.p-cell-time{ font-size:11px; font-weight:700; }
+
+/* City row */
+.p-city-row{ display:flex; gap:6px; align-items:center; margin-top:12px; }
+.p-city-input{
+  flex:1; padding:6px 10px; border-radius:8px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.12); color:white;
+  font-size:12px; font-family:inherit; outline:none;
+}
+.p-city-input::placeholder{ color:rgba(255,255,255,.4); }
+.p-city-input:focus{ border-color:rgba(255,255,255,.5); background:rgba(255,255,255,.18); }
+.p-search-btn{ padding:6px 12px; border-radius:8px; background:var(--accent); color:white; border:none; font-weight:700; font-size:12px; cursor:pointer; }
+.p-gps-btn{ padding:6px 9px; border-radius:8px; background:rgba(255,255,255,.15); color:white; border:1px solid rgba(255,255,255,.2); font-size:12px; cursor:pointer; }
+.p-location{ font-size:11px; opacity:.55; width:100%; padding-top:3px; }
+
+/* Settings */
+.p-settings{ display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+.p-settings select{
+  background:rgba(255,255,255,.12); color:white;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:11px; padding:5px 7px; border-radius:8px; flex:1; min-width:130px;
+}
+.p-settings select option{ background:var(--dark); color:white; }
+
+/* Azan row */
+.p-azan-row{ display:flex; gap:8px; align-items:center; margin-top:7px; }
+.p-azan-label{ font-size:11px; font-weight:600; opacity:.8; white-space:nowrap; flex-shrink:0; }
+.p-azan-row select{
+  flex:1; background:rgba(255,255,255,.12); color:white;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:11px; padding:5px 7px; border-radius:8px;
+}
+.p-azan-row select option{ background:var(--dark); }
+
+/* Masjid + Qibla buttons */
+.p-tools-row{ display:flex; gap:8px; margin-top:10px; }
+.p-tool-btn{
+  flex:1; padding:8px; border-radius:10px;
+  background:rgba(255,255,255,.12); color:white;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:12px; font-weight:600; cursor:pointer;
+  text-align:center; transition:.2s;
+}
+.p-tool-btn:hover{ background:rgba(255,255,255,.22); }
+
+/* Masjid list */
+.masjid-list{ margin-top:10px; display:none; }
+.masjid-list.open{ display:block; }
+.masjid-item{
+  background:rgba(255,255,255,.1); border-radius:8px;
+  padding:8px 10px; margin-bottom:5px; font-size:12px;
+}
+.masjid-name{ font-weight:700; margin-bottom:2px; }
+.masjid-dist{ opacity:.7; font-size:11px; }
+
+/* ══ HADITH CARD ══ */
+#hadithCard{
+  max-width:1000px; margin:12px auto 0;
+  padding:0 15px;
+}
+.hadith-card-inner{
+  background:linear-gradient(135deg,#064e3b,#065f46);
+  border-radius:14px; color:white;
+  overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+}
+.hadith-header{
+  display:flex; align-items:center;
+  justify-content:space-between;
+  padding:10px 14px; cursor:pointer;
+  gap:10px;
+}
+.hadith-header-left{ display:flex; align-items:center; gap:8px; flex:1; min-width:0; }
+.hadith-title{ font-weight:700; font-size:13px; white-space:nowrap; }
+.hadith-preview{
+  font-size:12px; opacity:.75;
+  white-space:nowrap; overflow:hidden;
+  text-overflow:ellipsis; flex:1;
+}
+.hadith-tabs-bar{
+  display:none; border-top:1px solid rgba(255,255,255,.1);
+  padding:0 14px;
+}
+.hadith-tabs-bar.open{ display:flex; gap:0; }
+.h-tab{
+  padding:8px 14px; font-size:12px; font-weight:600;
+  cursor:pointer; opacity:.6; border-bottom:2px solid transparent;
+  background:none; border-left:none; border-right:none; border-top:none;
+  color:white; transition:.2s;
+}
+.h-tab.active{ opacity:1; border-bottom-color:var(--accent); }
+.hadith-body{ display:none; padding:14px; border-top:1px solid rgba(255,255,255,.1); }
+.hadith-body.open{ display:block; }
+.hadith-text{ font-size:13px; line-height:1.8; margin-bottom:10px; }
+.hadith-meta{
+  font-size:11px; opacity:.7;
+  background:rgba(255,255,255,.1); padding:6px 10px;
+  border-radius:8px; display:inline-block;
+}
+.hadith-search-row{ display:flex; gap:6px; margin-bottom:10px; }
+.hadith-search-input{
+  flex:1; padding:7px 10px; border-radius:8px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.12); color:white;
+  font-size:12px; font-family:inherit; outline:none;
+}
+.hadith-search-input::placeholder{ color:rgba(255,255,255,.4); }
+.hadith-search-btn{ padding:7px 12px; border-radius:8px; background:var(--accent); color:white; border:none; font-weight:700; font-size:12px; cursor:pointer; }
+.hadith-result{
+  background:rgba(255,255,255,.1); border-radius:8px;
+  padding:10px; margin-bottom:8px; font-size:12px; line-height:1.7;
+}
+.hadith-result-meta{ font-size:10px; opacity:.65; margin-top:5px; }
+
+/* ══ MAIN ══ */
+main{ max-width:1000px; margin:auto; padding:15px; }
+.ayah{
+  background:var(--card); padding:20px;
+  border-radius:16px; margin-bottom:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  transition:.3s; position:relative;
+}
+.playing{ background:#ecfdf5; border:2px solid var(--accent); }
+.bookmark{ position:absolute; top:10px; left:10px; cursor:pointer; font-size:18px; }
+.bookmarked{ color:gold; }
+.arabic{
+  font-family:'Amiri',serif;
+  font-size:clamp(22px,4vw,34px);
+  direction:rtl; text-align:right; line-height:2;
+}
+.translation{ margin-top:8px; color:#374151; font-size:15px; }
+.word{ cursor:pointer; padding:2px 4px; border-radius:6px; display:inline-block; }
+.word:hover{ background:#bbf7d0; }
+
+/* Word popup */
+.word-popup{
+  position:fixed; bottom:-100%; left:0; width:100%;
+  background:white; padding:20px;
+  box-shadow:0 -5px 25px rgba(0,0,0,.25);
+  transition:.3s; z-index:11000; line-height:1.8;
+}
+.word-popup.show{ bottom:0; }
+
+/* Audio floater */
+.audio-floater{
+  position:fixed; bottom:-130px; left:0; width:100%;
+  background:white; padding:12px 16px;
+  display:flex; flex-direction:column; gap:6px;
+  box-shadow:0 -4px 20px rgba(0,0,0,.2);
+  transition:.3s; z-index:9999;
+}
+.audio-floater.show{ bottom:0; }
+.progress-bar{ height:6px; background:#e5e7eb; border-radius:5px; overflow:hidden; }
+.progress{ height:100%; width:0%; background:var(--accent); }
+.floater-controls{ display:flex; justify-content:space-between; align-items:center; }
+
+/* ══ TAFSIR PANEL ══ */
+.tafsir-panel{
+  position:fixed; top:0; right:-660px;
+  width:640px; height:100%;
+  background:white; transition:.3s;
+  z-index:10000; display:flex; flex-direction:column;
+  box-shadow:-4px 0 20px rgba(0,0,0,.15);
+}
+.tafsir-panel.open{ right:0; }
+.tafsir-header{
+  background:var(--primary); color:white;
+  padding:14px 16px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.tafsir-header span{ flex:1; font-weight:600; }
+.tafsir-header button{ flex-shrink:0; background:rgba(255,255,255,.2); color:white; padding:6px 14px; }
+.tafsir-toolbar{
+  background:#f0fdf4; border-bottom:1px solid #d1fae5;
+  padding:10px 16px; display:flex;
+  flex-wrap:wrap; align-items:center; gap:10px; flex-shrink:0;
+}
+.tafsir-toolbar label{ font-weight:600; color:var(--primary); cursor:pointer; display:flex; align-items:center; gap:6px; padding:0; }
+.tafsir-toolbar select{ padding:6px 10px; border:1px solid #d1fae5; background:white; font-size:13px; border-radius:8px; }
+.tafsir-toolbar select:disabled{ opacity:.4; cursor:not-allowed; }
+.tafsir-body{ padding:20px; overflow-y:auto; flex:1; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+.tafsir-tabs{ display:none; border-bottom:2px solid #d1fae5; background:#f0fdf4; flex-shrink:0; }
+.tafsir-tabs.show{ display:flex; }
+.tafsir-tab{
+  flex:1; padding:10px; text-align:center; font-weight:600; font-size:13px;
+  cursor:pointer; border:none; background:transparent; color:#6b7280;
+  border-bottom:3px solid transparent; margin-bottom:-2px; transition:.2s;
+}
+.tafsir-tab.active{ color:var(--primary); border-bottom-color:var(--primary); background:white; }
+.tafsir-box{ background:#f9fafb; padding:15px; border-radius:10px; overflow-wrap:break-word; line-height:1.75; }
+.tafsir-box h3{ margin:0 0 10px; color:var(--primary); font-size:13px; text-transform:uppercase; letter-spacing:.5px; border-bottom:2px solid #d1fae5; padding-bottom:8px; }
+
+/* ══ BOT PANEL ══ */
+#botBtn{
+  position:fixed; bottom:24px; right:24px;
+  width:54px; height:54px; border-radius:50%;
+  background:linear-gradient(135deg,#166534,#22c55e);
+  color:white; border:none; font-size:22px;
+  cursor:pointer; z-index:9998;
+  box-shadow:0 4px 16px rgba(22,101,52,.4);
+  display:flex; align-items:center; justify-content:center;
+  transition:.2s;
+}
+#botBtn:hover{ transform:scale(1.08); }
+
+.bot-panel{
+  position:fixed; top:0; right:-420px;
+  width:400px; height:100%;
+  background:white; transition:.3s;
+  z-index:10001; display:flex; flex-direction:column;
+  box-shadow:-4px 0 20px rgba(0,0,0,.15);
+}
+.bot-panel.open{ right:0; }
+.bot-header{
+  background:var(--primary); color:white;
+  padding:14px 16px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.bot-header-left{ display:flex; flex-direction:column; }
+.bot-header h3{ margin:0; font-size:16px; }
+.bot-header small{ opacity:.75; font-size:11px; margin-top:2px; }
+.bot-header button{ background:rgba(255,255,255,.2); color:white; padding:6px 12px; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
+.bot-messages{
+  flex:1; overflow-y:auto; padding:16px;
+  display:flex; flex-direction:column; gap:10px;
+  background:#f8fafc;
+}
+.bot-msg{
+  max-width:85%; padding:10px 13px;
+  border-radius:14px; font-size:13px; line-height:1.6;
+}
+.bot-msg.user{
+  align-self:flex-end;
+  background:var(--primary); color:white;
+  border-bottom-right-radius:4px;
+}
+.bot-msg.assistant{
+  align-self:flex-start;
+  background:white; color:#1f2937;
+  border-bottom-left-radius:4px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.bot-msg.assistant.loading{ opacity:.6; }
+.bot-disclaimer{
+  padding:8px 14px; font-size:10px; color:#6b7280;
+  background:#f0fdf4; border-top:1px solid #d1fae5;
+  text-align:center; flex-shrink:0;
+}
+.bot-input-row{
+  display:flex; gap:8px; padding:12px;
+  border-top:1px solid #e5e7eb; flex-shrink:0; background:white;
+}
+.bot-input{
+  flex:1; padding:9px 12px; border-radius:10px;
+  border:1px solid #d1fae5; font-size:13px;
+  font-family:inherit; outline:none;
+  resize:none; max-height:80px;
+}
+.bot-input:focus{ border-color:var(--accent); }
+.bot-send-btn{
+  padding:9px 14px; border-radius:10px;
+  background:var(--primary); color:white;
+  border:none; font-size:16px; cursor:pointer;
+  flex-shrink:0;
+}
+.bot-send-btn:hover{ background:#15803d; }
+.bot-send-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+/* ══ QIBLA OVERLAY ══ */
+#qiblaOverlay{
+  position:fixed; inset:0; z-index:10002;
+  background:rgba(0,0,0,.7);
+  display:none; align-items:center; justify-content:center;
+}
+#qiblaOverlay.open{ display:flex; }
+.qibla-box{
+  background:white; border-radius:20px;
+  padding:24px; text-align:center;
+  max-width:300px; width:90%;
+}
+.qibla-box h3{ margin:0 0 6px; color:var(--primary); font-size:18px; }
+.qibla-box p{ margin:0 0 16px; font-size:12px; color:#6b7280; }
+.compass-wrap{
+  width:200px; height:200px; margin:0 auto 16px;
+  position:relative;
+}
+.compass-rose{
+  width:100%; height:100%; border-radius:50%;
+  background:linear-gradient(135deg,#f0fdf4,#dcfce7);
+  border:3px solid var(--primary);
+  position:relative; transition:transform .5s ease;
+}
+.compass-n{
+  position:absolute; top:6px; left:50%; transform:translateX(-50%);
+  font-size:11px; font-weight:700; color:var(--primary);
+}
+.compass-needle{
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-100%);
+  transform-origin:bottom center;
+  width:0; height:0;
+}
+.needle-north{
+  width:4px; height:80px; background:red;
+  border-radius:4px 4px 0 0;
+  position:absolute; left:-2px; bottom:0;
+}
+.needle-south{
+  width:4px; height:60px; background:#aaa;
+  border-radius:0 0 4px 4px;
+  position:absolute; left:-2px; top:0;
+}
+.kaaba-icon{
+  position:absolute; font-size:24px;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+}
+.qibla-degrees{
+  font-size:28px; font-weight:700; color:var(--primary);
+  margin-bottom:4px;
+}
+.qibla-direction{ font-size:13px; color:#6b7280; margin-bottom:16px; }
+.qibla-close-btn{
+  padding:10px 24px; border-radius:10px;
+  background:var(--primary); color:white;
+  border:none; font-weight:700; cursor:pointer; font-size:14px;
+}
+
+/* Azan banner animation */
+@keyframes fadeInDown{
+  from{ opacity:0; transform:translateX(-50%) translateY(-20px); }
+  to{   opacity:1; transform:translateX(-50%) translateY(0); }
+}
+
+/* ══ CONNECTING ANIMATION ══ */
+@keyframes dotPulse{
+  0%,20%{ content:"⏳ Connecting"; }
+  33%{ content:"⏳ Connecting ·"; }
+  66%{ content:"⏳ Connecting ··"; }
+  100%{ content:"⏳ Connecting ···"; }
+}
+.connecting-dots::after{
+  content:"⏳ Connecting";
+  animation: dotPulse 1.5s infinite steps(1);
+}
+.connecting-dots{ font-size:0; }
+.connecting-dots::after{ font-size:13px; }
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:680px){
+  .p-grid{ grid-template-columns:repeat(4,1fr); }
+  .bot-panel{ width:100%; right:-100%; }
+  .bot-panel.open{ right:0; }
+  .tafsir-panel{
+    top:auto; bottom:-100%; right:0;
+    width:100%; height:92dvh;
+    border-radius:20px 20px 0 0;
+    transition:bottom .3s ease;
+    box-shadow:0 -4px 20px rgba(0,0,0,.2);
+  }
+  .tafsir-panel.open{ bottom:0; }
+  .tafsir-body{ font-size:14px; padding:14px; }
+  .p-dt-item{ padding:2px 6px; }
+  .p-dt-item .p-dt-label{ display:none; }
+}
+@media(max-width:420px){
+  .p-grid{ grid-template-columns:repeat(3,1fr); }
+  #pClock{ font-size:12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ STICKY TOP ══ -->
+<div id="stickyTop">
+
+<header>
+  <h2>🕌 Quran Companion</h2>
+  <div class="controls">
+    <select id="surahSelect"></select>
+    <select id="reciterSelect">
+      <option value="Alafasy_128kbps">Mishary Rashid Alafasy</option>
+      <option value="Abdurrahmaan_As-Sudais_192kbps">Abdurrahman Al-Sudais</option>
+      <option value="Saood_ash-Shuraym_128kbps">Saud Al-Shuraim</option>
+      <option value="Husary_128kbps">Mahmoud Al-Husary</option>
+      <option value="Abdul_Basit_Murattal_192kbps">Abdul Basit</option>
+    </select>
+    <button id="studyBtn" onclick="toggleStudy()">📖 Study Mode</button>
+    <button onclick="playFull()">▶ Play Full</button>
+    <button onclick="pauseAudio()">⏸ Pause</button>
+    <button onclick="stopAudio()">⏹ Stop</button>
+  </div>
+</header>
+
+<!-- ══ PRAYER BAR ══ -->
+<div id="prayerBar">
+
+  <!-- Date / Time row — always visible -->
+  <div class="p-datetime-row">
+    <div class="p-dt-item">
+      <span class="p-dt-label">Time</span>
+      <span class="p-dt-value" id="pClock">--:--:-- --</span>
+    </div>
+    <div class="p-dt-item">
+      <span class="p-dt-label">Date</span>
+      <span class="p-dt-value" id="pGregorian">--</span>
+    </div>
+    <div class="p-dt-item">
+      <span class="p-dt-label">Hijri</span>
+      <span class="p-dt-value" id="pHijriInline">--</span>
+    </div>
+  </div>
+
+  <!-- Next prayer strip -->
+  <div class="p-strip">
+    <div class="p-left" onclick="togglePanel()">
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+          <span class="p-label">Current Prayer</span>
+          <span class="p-name" id="pCurrName" style="font-size:13px;opacity:.85">—</span>
+        </div>
+        <div>
+          <span class="p-label">Next Prayer</span>
+          <span class="p-name" id="pNextName">📍 Locating…</span>
+          <span class="p-time" id="pNextTime"></span>
+        </div>
+      </div>
+    </div>
+    <div class="p-middle">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+        <span id="pCountdownLabel" style="font-size:12px;opacity:.95;white-space:nowrap;font-weight:700;color:rgba(255,255,255,1);letter-spacing:.2px;">Next in</span>
+        <div class="p-countdown" id="pCountdown">--:--</div>
+      </div>
+      <button class="p-icon-btn" id="azanBtn" onclick="toggleAzan()" title="Toggle azan">🔔</button>
+      <button class="p-icon-btn" id="pExpandBtn" onclick="togglePanel()">▼</button>
+    </div>
+  </div>
+
+  <!-- Expanded panel -->
+  <div class="p-panel" id="pPanel">
+
+    <div class="p-grid" id="pGrid"></div>
+
+    <!-- City search -->
+    <div class="p-city-row" style="margin-top:12px">
+      <input class="p-city-input" id="cityInput" type="text"
+        placeholder="City name or ZIP code…"
+        onkeydown="if(event.key==='Enter')searchCity()">
+      <button class="p-search-btn" onclick="searchCity()">🔍</button>
+      <button class="p-gps-btn" onclick="requestGPS()" title="Use my current location">📍 Use My Location</button>
+    </div>
+    <div class="p-location" id="pLocation">Detecting location…</div>
+
+    <!-- Calc + Asr -->
+    <div class="p-settings">
+      <select id="calcMethod" onchange="savePS();fetchPrayerTimes()">
+        <option value="3">Muslim World League</option>
+        <option value="2">ISNA – North America</option>
+        <option value="5">Egyptian General Authority</option>
+        <option value="1">University of Karachi</option>
+        <option value="4">Umm Al-Qura (Makkah)</option>
+        <option value="16">Dubai</option>
+        <option value="9">Kuwait</option>
+        <option value="10">Qatar</option>
+        <option value="11">Singapore / Malaysia</option>
+        <option value="13">Diyanet İşleri – Turkey</option>
+        <option value="7">Tehran (Shia)</option>
+      </select>
+      <select id="asrMethod" onchange="savePS();fetchPrayerTimes()">
+        <option value="0">Asr: Standard (Shafi'i · Maliki · Hanbali)</option>
+        <option value="1">Asr: Hanafi</option>
+      </select>
+    </div>
+
+    <!-- Azan -->
+    <div class="p-azan-row">
+      <span class="p-azan-label">🕌 Azan:</span>
+      <select id="azanSelect" onchange="savePS()">
+        <option value="makkah">Makkah</option>
+        <option value="madinah">Madinah</option>
+        <option value="aqsa">Al-Aqsa</option>
+        <option value="turkey">Turkish style</option>
+      </select>
+    </div>
+
+    <!-- Tools: Masjid + Qibla -->
+    <div class="p-tools-row">
+      <button class="p-tool-btn" onclick="findMasjid()">🕌 Nearest Masjid</button>
+      <button class="p-tool-btn" onclick="openQibla()">🧭 Qibla Direction</button>
+    </div>
+
+    <!-- Masjid list -->
+    <div class="masjid-list" id="masjidList"></div>
+
+  </div>
+</div>
+</div><!-- /stickyTop -->
+
+<!-- ══ HADITH CARD ══ -->
+<div id="hadithCard">
+  <div class="hadith-card-inner">
+    <div class="hadith-header" onclick="toggleHadith()">
+      <div class="hadith-header-left">
+        <span class="hadith-title">📿 Hadith</span>
+        <span class="hadith-preview" id="hadithPreview">Loading hadith of the day…</span>
+      </div>
+      <button class="p-icon-btn" id="hadithExpandBtn" style="background:rgba(255,255,255,.12)">▼</button>
+    </div>
+    <div class="hadith-tabs-bar" id="hadithTabsBar">
+      <button class="h-tab active" id="htab1" onclick="switchHTab(1)">📿 Hadith of the Day</button>
+      <button class="h-tab" id="htab2" onclick="switchHTab(2)">🔍 Search Hadiths</button>
+    </div>
+    <div class="hadith-body" id="hadithBody">
+      <!-- Tab 1: Hadith of the day -->
+      <div id="hPane1">
+        <div class="hadith-text" id="hadithText">Loading…</div>
+        <div class="hadith-meta" id="hadithMeta"></div>
+        <div style="margin-top:10px">
+          <button onclick="loadHadith()" style="background:rgba(255,255,255,.2);color:white;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:12px;font-weight:600">🔄 New Hadith</button>
+        </div>
+      </div>
+      <!-- Tab 2: Search -->
+      <div id="hPane2" style="display:none">
+        <div class="hadith-search-row">
+          <input class="hadith-search-input" id="hadithSearchInput" type="text"
+            placeholder="Search topic e.g. patience, prayer, fasting…"
+            onkeydown="if(event.key==='Enter')searchHadith()">
+          <button class="hadith-search-btn" onclick="searchHadith()">Search</button>
+        </div>
+        <div id="hadithResults"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<main><div id="ayahContainer"></div></main>
+
+<!-- Audio floater -->
+<div class="audio-floater" id="audioFloater">
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+  <div class="floater-controls">
+    <div id="nowPlaying"></div>
+    <div>
+      <button onclick="pauseAudio()">⏸</button>
+      <button onclick="stopAudio()">⏹</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tafsir panel -->
+<div class="tafsir-panel" id="tafsirPanel">
+  <div class="tafsir-header">
+    <span id="tafsirTitle">Tafsir</span>
+    <button onclick="closeTafsir()">✕ Close</button>
+  </div>
+  <div class="tafsir-toolbar">
+    <label><input type="checkbox" id="compareToggle"> Compare</label>
+    <select id="tafseer1">
+      <option value="169">Ibn Kathir</option>
+      <option value="168">Jalalayn</option>
+    </select>
+    <span id="vsLabel" style="color:#666;font-size:13px;display:none">vs</span>
+    <select id="tafseer2" disabled>
+      <option value="168">Jalalayn</option>
+      <option value="169">Ibn Kathir</option>
+    </select>
+  </div>
+  <div class="tafsir-tabs" id="tafsirTabs">
+    <button class="tafsir-tab active" id="tab1" onclick="switchTab(1)"></button>
+    <button class="tafsir-tab"        id="tab2" onclick="switchTab(2)"></button>
+  </div>
+  <div class="tafsir-body" id="tafsirBody">
+    <p style="color:#aaa;text-align:center;margin-top:40px">Tap "Tafsir" on any verse to begin.</p>
+  </div>
+</div>
+
+<!-- Islamic Q&A Bot panel -->
+<div class="bot-panel" id="botPanel">
+  <div class="bot-header">
+    <div class="bot-header-left">
+      <h3>🕌 Islamic Q&amp;A</h3>
+      <small>Powered by Gemini AI · Quran &amp; Sunnah</small>
+    </div>
+    <button onclick="closeBot()">✕</button>
+  </div>
+  <div class="bot-messages" id="botMessages">
+    <div class="bot-msg assistant">
+      Assalamu Alaikum! 👋<br><br>
+      I can answer questions about the Quran, Hadith, Islamic history, and Islamic practice — always with source references.<br><br>
+      <em style="font-size:11px;opacity:.7">Ask me anything Islamic, e.g. "What does the Quran say about patience?" or "Hadith about honesty"</em>
+    </div>
+  </div>
+  <div class="bot-disclaimer">
+    ⚠️ Always verify rulings with a qualified scholar. This is for educational purposes only.
+  </div>
+  <div class="bot-input-row">
+    <textarea class="bot-input" id="botInput" rows="1"
+      placeholder="Ask about Quran or Sunnah…"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendBotMsg()}"
+      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <button class="bot-send-btn" id="botSendBtn" onclick="sendBotMsg()">➤</button>
+  </div>
+</div>
+
+<!-- Bot floating button -->
+<button id="botBtn" onclick="toggleBot()" title="Islamic Q&A">🤲</button>
+
+<!-- Word popup -->
+<div class="word-popup" id="wordPopup"></div>
+
+<!-- Azan audio -->
+<audio id="azanAudio" preload="none"></audio>
+
+<!-- Qibla overlay -->
+<div id="qiblaOverlay">
+  <div class="qibla-box">
+    <h3>🧭 Qibla Direction</h3>
+    <p id="qiblaSubtitle">Calculating…</p>
+    <p style="font-size:11px;color:#6b7280;margin:-8px 0 10px;background:#f0fdf4;padding:6px 10px;border-radius:8px;">
+      💡 On laptop: use this angle with a physical compass or phone compass to face Qibla.<br>
+      On mobile: the angle auto-updates with device orientation.
+    </p>
+    <div class="compass-wrap">
+      <div class="compass-rose" id="compassRose">
+        <div class="compass-n">N</div>
+        <div class="compass-needle" id="compassNeedle">
+          <div class="needle-south"></div>
+          <div class="needle-north"></div>
+        </div>
+        <div class="kaaba-icon">🕋</div>
+      </div>
+    </div>
+    <div class="qibla-degrees" id="qiblaDeg">--°</div>
+    <div class="qibla-direction" id="qiblaDir">from North</div>
+    <button class="qibla-close-btn" onclick="closeQibla()">Close</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   BACKEND URL
+═══════════════════════════════════════════ */
+const BACKEND = "https://quran-companion-backend-q9zk.onrender.com";
+
+/* Smart fetch — retries on 504 (Render cold start gateway timeout) */
+async function backendFetch(url, options={}, maxRetries=4){
+  for(let attempt=1; attempt<=maxRetries; attempt++){
+    try{
+      const res=await fetch(url,{...options, signal:AbortSignal.timeout(60000)});
+      if(res.status===504){
+        // Server was sleeping — it is now waking up, wait and retry
+        console.log(`Backend 504 on attempt ${attempt}, retrying in ${attempt*8}s...`);
+        await new Promise(r=>setTimeout(r, attempt*8000));
+        continue;
+      }
+      return res;
+    } catch(e){
+      if(attempt===maxRetries) throw e;
+      await new Promise(r=>setTimeout(r, attempt*5000));
+    }
+  }
+  throw new Error("Backend unreachable after "+maxRetries+" attempts");
+}
+
+/* ═══════════════════════════════════════════
+   LIVE CLOCK + DATES
+═══════════════════════════════════════════ */
+function updateClock(){
+  const now = new Date();
+  // Time
+  pClock.textContent = now.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  // Gregorian
+  pGregorian.textContent = now.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric",year:"numeric"});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ═══════════════════════════════════════════
+   PRAYER TIMES
+═══════════════════════════════════════════ */
+const AZAN_SRCS = {
+  makkah:  "https://www.islamcan.com/audio/adhan/azan1.mp3",
+  madinah: "https://www.islamcan.com/audio/adhan/azan2.mp3",
+  aqsa:    "https://www.islamcan.com/audio/adhan/azan3.mp3",
+  turkey:  "https://www.islamcan.com/audio/adhan/azan4.mp3"
+};
+
+const PRAYERS = [
+  { key:"Fajr",    icon:"🌙", name:"Fajr",    azan:true  },
+  { key:"Sunrise", icon:"🌅", name:"Sunrise",  azan:false },
+  { key:"Ishraq",  icon:"🌄", name:"Ishraq",   azan:false },
+  { key:"Dhuhr",   icon:"☀️", name:"Dhuhr",   azan:true  },
+  { key:"Asr",     icon:"🌤️", name:"Asr",     azan:true  },
+  { key:"Maghrib", icon:"🌇", name:"Maghrib",  azan:true  },
+  { key:"Isha",    icon:"🌃", name:"Isha",     azan:true  },
+];
+function getPrayerName(p){
+  if(p.key==="Asr" && document.getElementById("asrMethod")?.value==="1")
+    return "Asr (Hanafi)";
+  return p.name;
+}
+
+let pCoords=null, pTimeObjs=null, pExpanded=false;
+let azanOn=true, pTickTimer=null, lastAzanFired={};
+
+const _calc=localStorage.getItem("pCalc")||"3";
+const _asr =localStorage.getItem("pAsr") ||"0";
+const _azan=localStorage.getItem("pAzan")||"makkah";
+const _mute=localStorage.getItem("pMute")||"0";
+document.getElementById("calcMethod").value=_calc;
+document.getElementById("asrMethod").value=_asr;
+document.getElementById("azanSelect").value=_azan;
+azanOn=_mute!=="1";
+refreshAzanBtn();
+
+function savePS(){
+  localStorage.setItem("pCalc",calcMethod.value);
+  localStorage.setItem("pAsr", asrMethod.value);
+  localStorage.setItem("pAzan",azanSelect.value);
+}
+function togglePanel(){
+  pExpanded=!pExpanded;
+  pPanel.classList.toggle("open",pExpanded);
+  pExpandBtn.textContent=pExpanded?"▲":"▼";
+}
+function toggleAzan(){ azanOn=!azanOn; localStorage.setItem("pMute",azanOn?"0":"1"); refreshAzanBtn(); }
+function refreshAzanBtn(){
+  azanBtn.textContent=azanOn?"🔔":"🔕";
+  azanBtn.title=azanOn?"Azan ON – tap to mute":"Azan OFF – tap to unmute";
+}
+
+function requestGPS(){
+  // First load saved coords instantly while waiting for GPS
+  const saved=localStorage.getItem("pCoords");
+  if(saved){
+    pCoords=JSON.parse(saved);
+    const savedLabel=localStorage.getItem("pCoordsLabel");
+    pLocation.textContent=savedLabel||"📍 Last known location";
+    fetchPrayerTimes();
+  }
+  pLocation.textContent=(saved?"📍 Updating location…":"📍 Detecting…");
+  pNextName.textContent=(saved?pNextName.textContent:"📍 Locating…");
+  if(!navigator.geolocation){
+    if(!saved) pLocation.textContent="Geolocation not supported. Search a city above.";
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      pCoords={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      localStorage.setItem("pCoords",JSON.stringify(pCoords));
+      reverseGeocode(pCoords.lat,pCoords.lng);
+      fetchPrayerTimes();
+    },
+    ()=>{
+      if(!saved){
+        pLocation.textContent="GPS denied. Search a city or ZIP above.";
+        pNextName.textContent="📍 Location needed";
+      }
+    },
+    {timeout:10000, enableHighAccuracy:false}
+  );
+}
+
+async function searchCity(){
+  const q=cityInput.value.trim(); if(!q) return;
+  cityInput.disabled=true; pLocation.textContent="🔍 Searching…";
+  try{
+    // Support zip codes: if all digits, add countrycodes=us for better results
+    const isZip=/^\d{4,6}$/.test(q.replace(/\s/g,""));
+    const extra=isZip?"&countrycodes=us,gb,ca,au&addressdetails=1":"";
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1${extra}`);
+    const d=await r.json();
+    if(!d.length){
+      pLocation.textContent=isZip?"ZIP code not found. Try a city name instead.":"City not found.";
+      cityInput.disabled=false; return;
+    }
+    pCoords={lat:parseFloat(d[0].lat),lng:parseFloat(d[0].lon)};
+    localStorage.setItem("pCoords",JSON.stringify(pCoords));
+    const label=d[0].display_name.split(",").slice(0,3).join(", ");
+    pLocation.textContent="📍 "+label;
+    localStorage.setItem("pCoordsLabel","📍 "+label);
+    cityInput.value="";
+    fetchPrayerTimes();
+  } catch(e){ pLocation.textContent="Search failed. Check connection."; }
+  cityInput.disabled=false;
+}
+
+async function reverseGeocode(lat,lng){
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+    const d=await r.json();
+    const a=d.address;
+    const city=a?.city||a?.town||a?.village||a?.county||"";
+    const country=a?.country||"";
+    const label=`📍 ${city}${country?", "+country:""}`;
+    pLocation.textContent=label;
+    localStorage.setItem("pCoordsLabel",label);
+  } catch(e){ pLocation.textContent=`📍 ${lat.toFixed(3)}, ${lng.toFixed(3)}`; }
+}
+
+async function fetchPrayerTimes(){
+  if(!pCoords){ pNextName.textContent="📍 Location needed"; return; }
+  pNextName.textContent="⏳ Loading…";
+  try{
+    const now=new Date();
+    const url=`https://api.aladhan.com/v1/timings/${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}`
+             +`?latitude=${pCoords.lat}&longitude=${pCoords.lng}&method=${calcMethod.value}&school=${asrMethod.value}`;
+    const r=await fetch(url);
+    const d=await r.json();
+    if(d.code!==200) throw new Error("API error");
+
+    /* Hijri date */
+    const h=d.data.date.hijri;
+    pHijriInline.textContent=`${h.day} ${h.month.en} ${h.year} AH`;
+
+    buildTimeObjects(now, d.data.timings);
+    renderGrid();
+    updateStrip();
+    clearInterval(pTickTimer);
+    pTickTimer=setInterval(()=>{ updateStrip(); checkAzanTrigger(); },1000);
+  } catch(err){
+    console.error(err);
+    pNextName.textContent="⚠️ Could not load times";
+  }
+}
+
+function parseTime(str,ref){
+  const[h,m]=str.split(":").map(Number);
+  const d=new Date(ref); d.setHours(h,m,0,0); return d;
+}
+
+function buildTimeObjects(now,t){
+  const sunrise=parseTime(t.Sunrise,now);
+  pTimeObjs={
+    Fajr:   parseTime(t.Fajr,   now),
+    Sunrise:sunrise,
+    Ishraq: new Date(sunrise.getTime()+15*60000),
+    Dhuhr:  parseTime(t.Dhuhr,  now),
+    Asr:    parseTime(t.Asr,    now),
+    Maghrib:parseTime(t.Maghrib,now),
+    Isha:   parseTime(t.Isha,   now),
+  };
+}
+
+function fmt(d){ return d?d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"--:--"; }
+
+function renderGrid(){
+  if(!pTimeObjs) return;
+  const now=new Date();
+  let curKey=null;
+  for(const p of PRAYERS){ if(pTimeObjs[p.key]&&pTimeObjs[p.key]<=now) curKey=p.key; }
+  pGrid.innerHTML=PRAYERS.map(p=>{
+    const t=pTimeObjs[p.key];
+    const passed=t&&t<now&&p.key!==curKey;
+    const current=p.key===curKey;
+    return `<div class="p-cell ${current?"current":""} ${passed?"passed":""}">
+      <div class="p-cell-icon">${p.icon}</div>
+      <div class="p-cell-name">${getPrayerName(p)}</div>
+      <div class="p-cell-time">${fmt(t)}</div>
+    </div>`;
+  }).join("");
+}
+
+function updateStrip(){
+  if(!pTimeObjs) return;
+  const now=new Date();
+  let next=PRAYERS.find(p=>pTimeObjs[p.key]&&pTimeObjs[p.key]>now);
+  if(!next) next=PRAYERS[0];
+  // Current prayer = last prayer whose time has passed
+  let curr=null;
+  for(const p of PRAYERS){ if(pTimeObjs[p.key]&&pTimeObjs[p.key]<=now) curr=p; }
+  if(curr) pCurrName.textContent=curr.icon+" "+getPrayerName(curr);
+  else pCurrName.textContent="—";
+  pNextName.textContent=next.icon+" "+getPrayerName(next);
+  pNextTime.textContent=fmt(pTimeObjs[next.key]);
+  const diff=Math.max(0,pTimeObjs[next.key]-now);
+  const h=Math.floor(diff/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  const countdownStr=h>0?`${h}h ${String(m).padStart(2,"0")}m`:`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  pCountdown.textContent=countdownStr;
+  // Label: "Dhuhr ends in" or "Asr in"
+  if(curr){
+    pCountdownLabel.textContent=getPrayerName(curr)+" ends in";
+  } else {
+    pCountdownLabel.textContent=getPrayerName(next)+" starts in";
+  }
+  if(s===0) renderGrid();
+}
+
+function checkAzanTrigger(){
+  if(!pTimeObjs||!azanOn) return;
+  const now=new Date(); const today=now.toDateString();
+  for(const p of PRAYERS){
+    if(!p.azan) continue;
+    const t=pTimeObjs[p.key]; if(!t) continue;
+    const diff=now-t;
+    if(diff>=0&&diff<60000){
+      const uid=p.key+"_"+today;
+      if(!lastAzanFired[uid]){ lastAzanFired[uid]=true; playAzan(p.name); }
+    }
+  }
+}
+
+function playAzan(prayerName){
+  const src=AZAN_SRCS[azanSelect.value]||AZAN_SRCS.makkah;
+  azanAudio.src=src; azanAudio.currentTime=0;
+  azanAudio.play().catch(()=>{});
+  showAzanBanner(prayerName);
+}
+
+function showAzanBanner(name){
+  const b=document.createElement("div");
+  b.style.cssText=`position:fixed;top:20px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,#065f46,#166534);color:white;
+    padding:14px 28px;border-radius:16px;font-size:16px;font-weight:700;
+    z-index:99999;box-shadow:0 8px 25px rgba(0,0,0,.4);
+    text-align:center;animation:fadeInDown .4s ease;white-space:nowrap;`;
+  b.innerHTML=`🕌 Time for <strong>${name}</strong>`;
+  document.body.appendChild(b);
+  setTimeout(()=>b.remove(),9000);
+}
+
+/* Midnight refresh */
+setInterval(()=>{
+  const n=new Date();
+  if(n.getHours()===0&&n.getMinutes()===0&&n.getSeconds()<5){
+    lastAzanFired={};
+    if(pCoords) fetchPrayerTimes();
+  }
+},5000);
+
+requestGPS();
+
+/* Wake up Render server on page load + keep alive every 14 min */
+(async function pingServer(){
+  try{ await fetch(`${BACKEND}/`,{method:"GET",signal:AbortSignal.timeout(60000)}); } catch(e){}
+})();
+setInterval(async()=>{
+  try{ await fetch(`${BACKEND}/`,{method:"GET",signal:AbortSignal.timeout(10000)}); } catch(e){}
+}, 14 * 60 * 1000); // 14 minutes — Render sleeps after 15
+
+/* ═══════════════════════════════════════════
+   NEAREST MASJID (OpenStreetMap Overpass API)
+═══════════════════════════════════════════ */
+async function findMasjid(){
+  const list=document.getElementById("masjidList");
+  if(!pCoords){
+    list.className="masjid-list open";
+    list.innerHTML='<div class="masjid-item">📍 Please enable location or search a city first.</div>';
+    return;
+  }
+  list.className="masjid-list open";
+  list.innerHTML='<div class="masjid-item">🔍 Finding nearby masjids…</div>';
+  try{
+    const {lat,lng}=pCoords;
+    const radius=5000;
+    const query=`[out:json][timeout:15];(node["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng});way["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng});relation["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng}););out center 15;`;
+    const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+    const res=await fetch(url,{signal:AbortSignal.timeout(20000)});
+    if(!res.ok) throw new Error("API "+res.status);
+    const data=await res.json();
+    if(!data.elements||!data.elements.length){
+      list.innerHTML='<div class="masjid-item">No masjids found within 5km. Try searching a different city.</div>';
+      return;
+    }
+    const withDist=data.elements.map(el=>{
+      const elLat=el.lat||(el.center?.lat)||0;
+      const elLng=el.lon||(el.center?.lon)||0;
+      return{...el,elLat,elLng,dist:calcDist(lat,lng,elLat,elLng)};
+    }).filter(el=>el.elLat&&el.elLng).sort((a,b)=>a.dist-b.dist);
+    list.innerHTML=withDist.slice(0,8).map(el=>{
+      const name=el.tags?.name||el.tags?.["name:en"]||el.tags?.["name:ar"]||"Masjid";
+      const distStr=el.dist<1?(el.dist*1000).toFixed(0)+"m":el.dist.toFixed(1)+"km";
+      const mapsUrl=`https://www.google.com/maps/search/?api=1&query=${el.elLat},${el.elLng}`;
+      const dirsUrl=`https://www.google.com/maps/dir/?api=1&destination=${el.elLat},${el.elLng}`;
+      return `<div class="masjid-item">
+        <div class="masjid-name">🕌 ${name}</div>
+        <div class="masjid-dist">📍 ${distStr} away &nbsp;·&nbsp;
+          <a href="${mapsUrl}" target="_blank" style="color:var(--accent);text-decoration:none">View ↗</a> &nbsp;·&nbsp;
+          <a href="${dirsUrl}" target="_blank" style="color:var(--accent);text-decoration:none">Directions ↗</a>
+        </div>
+      </div>`;
+    }).join("");
+  } catch(e){
+    console.error("Masjid:",e);
+    list.innerHTML=`<div class="masjid-item">Could not load automatically.
+      <br><a href="https://www.google.com/maps/search/mosque+near+me" target="_blank"
+        style="color:var(--accent);text-decoration:none">🔍 Search on Google Maps ↗</a></div>`;
+  }
+}
+
+function calcDist(lat1,lon1,lat2,lon2){
+  const R=6371;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+/* ═══════════════════════════════════════════
+   QIBLA FINDER (pure math)
+═══════════════════════════════════════════ */
+const MAKKAH={lat:21.4225,lng:39.8262};
+
+function openQibla(){
+  if(!pCoords){ alert("Please enable location first."); return; }
+  qiblaOverlay.classList.add("open");
+  const{lat,lng}=pCoords;
+  const dLng=(MAKKAH.lng-lng)*Math.PI/180;
+  const lat1=lat*Math.PI/180;
+  const lat2=MAKKAH.lat*Math.PI/180;
+  const y=Math.sin(dLng)*Math.cos(lat2);
+  const x=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLng);
+  let bearing=Math.atan2(y,x)*180/Math.PI;
+  bearing=(bearing+360)%360;
+
+  qiblaAngle=bearing;
+  qiblaDeg.textContent=bearing.toFixed(1)+"°";
+  qiblaDir.textContent=getCardinal(bearing)+" from North";
+  qiblaSubtitle.textContent="From your location toward Makkah";
+  compassNeedle.style.transform=`translate(-50%,-100%) rotate(${bearing}deg)`;
+  compassRose.style.transform=`rotate(${-bearing}deg)`;
+  startCompass();
+}
+
+function getCardinal(deg){
+  const dirs=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+  return dirs[Math.round(deg/22.5)%16];
+}
+
+let qiblaAngle=0;
+let compassListener=null;
+
+function startCompass(){
+  if(window.DeviceOrientationEvent){
+    if(typeof DeviceOrientationEvent.requestPermission==="function"){
+      // iOS 13+
+      DeviceOrientationEvent.requestPermission().then(state=>{
+        if(state==="granted") listenCompass();
+      }).catch(()=>{});
+    } else {
+      listenCompass();
+    }
+  }
+}
+
+function listenCompass(){
+  compassListener=e=>{
+    const heading = e.webkitCompassHeading || (e.alpha ? (360 - e.alpha) : null);
+    if(heading===null||heading===undefined) return;
+    // Rotate the compass rose so North always points up relative to device
+    const rose=document.getElementById("compassRose");
+    if(rose) rose.style.transform=`rotate(${heading - qiblaAngle}deg)`;
+  };
+  window.addEventListener("deviceorientation", compassListener);
+}
+
+function closeQibla(){
+  qiblaOverlay.classList.remove("open");
+  if(compassListener){
+    window.removeEventListener("deviceorientation", compassListener);
+    compassListener=null;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   HADITH CARD
+═══════════════════════════════════════════ */
+let hadithExpanded=false;
+let activeHTab=1;
+
+function toggleHadith(){
+  hadithExpanded=!hadithExpanded;
+  hadithBody.classList.toggle("open",hadithExpanded);
+  hadithTabsBar.classList.toggle("open",hadithExpanded);
+  hadithExpandBtn.textContent=hadithExpanded?"▲":"▼";
+  if(hadithExpanded){
+    const txt=hadithText.textContent.trim();
+    const isEmpty=!txt||txt==="Loading…"||txt.startsWith("Could not")||txt.startsWith("Server waking");
+    if(isEmpty) loadHadith();
+  }
+}
+
+function switchHTab(n){
+  activeHTab=n;
+  htab1.classList.toggle("active",n===1);
+  htab2.classList.toggle("active",n===2);
+  hPane1.style.display=n===1?"block":"none";
+  hPane2.style.display=n===2?"block":"none";
+}
+
+async function loadHadith(attempt=1){
+  hadithText.className="connecting-dots";
+  hadithText.textContent="";
+  hadithMeta.textContent="";
+  if(attempt>1) hadithText.title=`Attempt ${attempt}/3`;
+  if(attempt===1) hadithPreview.textContent="⏳ Connecting, please wait…";
+  try{
+    const r=await backendFetch(`${BACKEND}/hadith/random`);
+    const d=await r.json();
+    if(d.error) throw new Error(d.error);
+    const text=d.ENGLISH||d.English||"Not available";
+    const collection=d.COLLECTION||d.Collection||"";
+    const number=d.NUMBER||d.Number||"";
+    const narrator=d.NARRATOR||d.Narrator||"";
+    const grade=d.GRADE||d.Grade||"";
+    hadithText.className="hadith-text";
+    hadithText.textContent=`"${text}"`;
+    hadithMeta.textContent=`${narrator?narrator+" · ":""}${collection} ${number}${grade?" · "+grade:""}`;
+    hadithPreview.textContent=text.length>80?text.substring(0,80)+"…":text;
+  } catch(e){
+    if(attempt<3){
+      // Retry after 20 seconds
+      hadithText.className="hadith-text";
+      hadithText.textContent=`⏳ Server waking up, retrying automatically… (${attempt}/3)`;
+      setTimeout(()=>loadHadith(attempt+1), 20000);
+    } else {
+      hadithText.className="hadith-text";
+      hadithText.textContent="Could not load hadith. Tap 🔄 New Hadith to try again.";
+      hadithPreview.textContent="Tap to load hadith of the day";
+    }
+  }
+}
+
+async function searchHadith(){
+  const q=hadithSearchInput.value.trim();
+  if(!q) return;
+  hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">Searching…</div>';
+  try{
+    const r=await backendFetch(`${BACKEND}/hadith/search?q=${encodeURIComponent(q)}`);
+    const d=await r.json();
+    if(!d.results||!d.results.length){
+      hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">No results found. Try a different topic.</div>';
+      return;
+    }
+    hadithResults.innerHTML=d.results.map(h=>`
+      <div class="hadith-result">
+        <div>"${h.ENGLISH||h.English||""}"</div>
+        <div class="hadith-result-meta">${h.COLLECTION||""} ${h.NUMBER||""} · ${h.GRADE||""}</div>
+      </div>`).join("");
+  } catch(e){
+    hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">Search failed. Check connection.</div>';
+  }
+}
+
+/* Load hadith after 35s delay — gives Render server time to wake up */
+/* If user manually opens the card before that, it triggers immediately */
+let hadithAutoLoaded=false;
+setTimeout(()=>{
+  hadithAutoLoaded=true;
+  loadHadith();
+}, 35000);
+
+/* ═══════════════════════════════════════════
+   ISLAMIC Q&A BOT
+═══════════════════════════════════════════ */
+let botOpen=false;
+let botTyping=false;
+
+function toggleBot(){ botOpen?closeBot():openBot(); }
+function openBot(){ botOpen=true; botPanel.classList.add("open"); botBtn.textContent="✕"; }
+function closeBot(){ botOpen=false; botPanel.classList.remove("open"); botBtn.textContent="🤲"; }
+
+/* Islamic topic keywords — client-side pre-filter */
+const ISLAMIC_KEYWORDS = [
+  "quran","surah","ayah","verse","allah","prophet","muhammad","islam","muslim",
+  "hadith","sunnah","salah","prayer","fasting","zakat","hajj","ramadan","eid",
+  "wudu","ghusl","halal","haram","dua","dhikr","tafsir","iman","tawbah",
+  "jannah","jahannam","angels","jinn","qibla","masjid","mosque","ummah",
+  "sahaba","companion","caliphate","seerah","hijra","mecca","makkah","madinah",
+  "quran","sunnah","fiqh","fatwa","scholar","imam","khutbah","friday",
+  "tahajjud","witr","ishraq","asr","fajr","maghrib","isha","dhuhr",
+  "bismillah","alhamdulillah","subhanallah","inshallah","mashallah",
+  "taqwa","sabr","patience","gratitude","charity","orphan","parents",
+  "marriage","divorce","inheritance","nikaah","talaq","riba","interest",
+  "sin","repentance","forgiveness","mercy","compassion","justice","truth",
+  "arabic","tajweed","memorize","memorization","hifz","hafiz",
+  "how many","how","what","when","where","who","why","which","tell me",
+  "explain","meaning","definition","describe","difference","between"
+];
+
+function isIslamicQuestion(q){
+  const lower = q.toLowerCase();
+  return ISLAMIC_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+async function sendBotMsg(){
+  const input=botInput;
+  const q=input.value.trim();
+  if(!q||botTyping) return;
+  input.value=""; input.style.height="auto";
+
+  appendBotMsg(q,"user");
+
+  /* Client-side topic filter */
+  if(!isIslamicQuestion(q)){
+    appendBotMsg(
+      "I can only answer questions related to Islam, the Quran, Hadith, Salah, and Islamic practice. Please ask me something Islamic! 🕌",
+      "assistant"
+    );
+    return;
+  }
+
+  botTyping=true;
+  botSendBtn.disabled=true;
+
+  const loadingEl=appendBotMsg("","assistant loading connecting-dots");
+
+  /* Wake-up warning after 5 seconds */
+  const wakeTimer=setTimeout(()=>{
+    if(loadingEl.isConnected){
+      loadingEl.className="bot-msg assistant";
+      loadingEl.textContent="⏳ Server waking up after sleep — retrying automatically, please wait…";
+    }
+  }, 8000);
+
+  try{
+    const timeoutId=null;
+    const r=await backendFetch(`${BACKEND}/ask`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({question:q})
+    });
+    clearTimeout(timeoutId);
+    clearTimeout(wakeTimer);
+    const d=await r.json();
+    loadingEl.remove();
+    appendBotMsg(d.answer||"Sorry, I could not process that.","assistant");
+  } catch(e){
+    clearTimeout(wakeTimer);
+    loadingEl.remove();
+    if(e.name==="AbortError"){
+      appendBotMsg("Server took too long to respond. Please try again in a moment — it may have been sleeping.","assistant");
+    } else {
+      appendBotMsg("Connection error. Please check your internet and try again.","assistant");
+    }
+  }
+
+  botTyping=false;
+  botSendBtn.disabled=false;
+}
+
+function appendBotMsg(text,cls){
+  const el=document.createElement("div");
+  el.className="bot-msg "+cls;
+  el.textContent=text;
+  botMessages.appendChild(el);
+  botMessages.scrollTop=botMessages.scrollHeight;
+  return el;
+}
+
+/* ═══════════════════════════════════════════
+   QURAN
+═══════════════════════════════════════════ */
+let verses=[],chaptersData=[],quranAudio=new Audio();
+let studyMode=false,currentIndex=0,currentTafsirKey=null;
+let bookmarks=JSON.parse(localStorage.getItem("bookmarks")||"{}");
+
+compareToggle.addEventListener("change",function(){
+  tafseer2.disabled=!this.checked;
+  vsLabel.style.display=this.checked?"inline":"none";
+  renderTafsir();
+});
+tafseer1.addEventListener("change",renderTafsir);
+tafseer2.addEventListener("change",renderTafsir);
+
+async function loadSurahNames(){
+  const res=await fetch("https://api.quran.com/api/v4/chapters");
+  const data=await res.json();
+  chaptersData=data.chapters;
+  data.chapters.forEach(ch=>{
+    let opt=document.createElement("option");
+    opt.value=ch.id;
+    opt.textContent=ch.id+". "+ch.name_simple;
+    surahSelect.appendChild(opt);
+  });
+  loadSurah(localStorage.getItem("lastSurah")||1);
+}
+
+async function loadSurah(id){
+  let url=studyMode
+    ?`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani&words=true&word_fields=text_uthmani,translation,transliteration,root,lemma`
+    :`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani`;
+  const res=await fetch(url);
+  const data=await res.json();
+  verses=data.verses;
+  render();
+}
+
+function toggleStudy(){
+  studyMode=!studyMode;
+  document.getElementById("studyBtn").classList.toggle("active",studyMode);
+  loadSurah(surahSelect.value);
+}
+
+function render(){
+  ayahContainer.innerHTML="";
+  verses.forEach((v,i)=>{
+    let arabicHTML=v.text_uthmani;
+    if(studyMode&&v.words){
+      arabicHTML=v.words.map(w=>
+        `<span class="word" onclick='showWord(${JSON.stringify(w)})'>${w.text_uthmani}</span>`
+      ).join(" ");
+    }
+    let markClass=bookmarks[v.verse_key]?"bookmark bookmarked":"bookmark";
+    let div=document.createElement("div");
+    div.className="ayah"; div.id="ayah-"+i;
+    div.innerHTML=`
+      <span class="${markClass}" onclick="toggleBookmark('${v.verse_key}')">🔖</span>
+      <div class="arabic">${arabicHTML}</div>
+      <div class="translation">${v.translations[0].text}</div>
+      <div style="margin-top:10px">
+        <button onclick="playSingle(${i})">▶ Play</button>
+        <button onclick="openTafsir('${v.verse_key}')">📚 Tafsir</button>
+      </div>`;
+    ayahContainer.appendChild(div);
+  });
+}
+
+function showWord(w){
+  wordPopup.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
+      <strong style="font-family:'Amiri',serif;font-size:28px">${w.text_uthmani}</strong>
+      <button onclick="wordPopup.classList.remove('show')"
+        style="background:#e5e7eb;color:#374151;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600">✕</button>
+    </div>
+    <b>Meaning:</b> ${w.translation?.text||"Not available"}<br>
+    <b>Transliteration:</b> ${w.transliteration?.text||"—"}<br>
+    <b>Root:</b> ${w.root||w.lemma||"Not available"}`;
+  wordPopup.classList.add("show");
+}
+
+function toggleBookmark(key){
+  if(bookmarks[key]) delete bookmarks[key]; else bookmarks[key]=true;
+  localStorage.setItem("bookmarks",JSON.stringify(bookmarks));
+  render();
+}
+
+function buildURL(key){
+  const reciter=reciterSelect.value;
+  const[s,a]=key.split(":");
+  return `https://everyayah.com/data/${reciter}/${s.padStart(3,"0")}${a.padStart(3,"0")}.mp3`;
+}
+
+function playSingle(i){ currentIndex=i; playCurrent(); }
+function playFull(){ currentIndex=0; playCurrent(); }
+
+function playCurrent(){
+  if(currentIndex>=verses.length){ stopAudio(); return; }
+  document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("playing"));
+  const el=document.getElementById("ayah-"+currentIndex);
+  el.classList.add("playing");
+  el.scrollIntoView({behavior:"smooth",block:"center"});
+  const key=verses[currentIndex].verse_key;
+  const[s,a]=key.split(":");
+  const surahObj=chaptersData.find(c=>c.id==s);
+  quranAudio.src=buildURL(key);
+  quranAudio.play();
+  nowPlaying.textContent=surahObj?`${surahObj.name_simple} (${s}) – Ayah ${a}`:`Surah ${s} – Ayah ${a}`;
+  audioFloater.classList.add("show");
+  localStorage.setItem("lastSurah",surahSelect.value);
+  localStorage.setItem("lastAyah",currentIndex);
+  quranAudio.onended=()=>{ currentIndex++; playCurrent(); };
+}
+
+quranAudio.ontimeupdate=function(){
+  if(quranAudio.duration) progress.style.width=(quranAudio.currentTime/quranAudio.duration*100)+"%";
+};
+function pauseAudio(){ quranAudio.pause(); }
+function stopAudio(){
+  quranAudio.pause(); quranAudio.currentTime=0;
+  audioFloater.classList.remove("show");
+  progress.style.width="0%";
+}
+
+/* Tafsir */
+async function openTafsir(key){
+  currentTafsirKey=key;
+  tafsirPanel.classList.add("open");
+  renderTafsir();
+}
+let tafsirPaneHTML=["",""]; let activeTab=1;
+function switchTab(n){
+  activeTab=n;
+  tab1.classList.toggle("active",n===1);
+  tab2.classList.toggle("active",n===2);
+  tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[n-1]}</div>`;
+  tafsirBody.scrollTop=0;
+}
+async function renderTafsir(){
+  if(!currentTafsirKey) return;
+  const[s,a]=currentTafsirKey.split(":");
+  const surahObj=chaptersData.find(c=>c.id==s);
+  tafsirTitle.textContent=surahObj?`${surahObj.name_simple} – Ayah ${a}`:`Surah ${s} – Ayah ${a}`;
+  const id1=tafseer1.value,id2=tafseer2.value;
+  const compare=compareToggle.checked;
+  const label1=tafseer1.options[tafseer1.selectedIndex].text;
+  const label2=tafseer2.options[tafseer2.selectedIndex].text;
+  tafsirTabs.classList.toggle("show",compare);
+  tab1.textContent=label1; tab2.textContent=label2;
+  activeTab=1; tab1.classList.add("active"); tab2.classList.remove("active");
+  tafsirBody.innerHTML=`<p style="color:#aaa;text-align:center;padding:30px 0">Loading…</p>`;
+  try{
+    if(compare){
+      const[r1,r2]=await Promise.all([
+        fetch(`https://api.quran.com/api/v4/tafsirs/${id1}/by_ayah/${currentTafsirKey}`),
+        fetch(`https://api.quran.com/api/v4/tafsirs/${id2}/by_ayah/${currentTafsirKey}`)
+      ]);
+      const[d1,d2]=await Promise.all([r1.json(),r2.json()]);
+      tafsirPaneHTML[0]=`<h3>${label1}</h3>${d1.tafsir?.text||"<em>Not available</em>"}`;
+      tafsirPaneHTML[1]=`<h3>${label2}</h3>${d2.tafsir?.text||"<em>Not available</em>"}`;
+    } else {
+      const r1=await fetch(`https://api.quran.com/api/v4/tafsirs/${id1}/by_ayah/${currentTafsirKey}`);
+      const d1=await r1.json();
+      tafsirPaneHTML[0]=`<h3>${label1}</h3>${d1.tafsir?.text||"<em>Not available</em>"}`;
+      tafsirPaneHTML[1]="";
+    }
+    tafsirBody.innerHTML=`<div class="tafsir-box">${tafsirPaneHTML[0]}</div>`;
+  } catch(e){
+    tafsirBody.innerHTML=`<p style="color:red;padding:20px">Error loading tafsir.</p>`;
+  }
+}
+function closeTafsir(){ tafsirPanel.classList.remove("open"); }
+
+surahSelect.addEventListener("change",e=>{
+  localStorage.removeItem("lastAyah");
+  loadSurah(e.target.value);
+});
+
+loadSurahNames();
+</script>
+</body>
+</html>
