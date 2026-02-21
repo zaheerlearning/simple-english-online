@@ -5,6 +5,13 @@
 <title>Quran Companion</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#166534">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Quran Companion">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
   --primary:#166534;
@@ -1093,28 +1100,30 @@ async function findMasjid(){
   list.innerHTML='<div class="masjid-item">🔍 Finding nearby masjids…</div>';
   try{
     const {lat,lng}=pCoords;
-    const radius=5000;
-    const query=`[out:json][timeout:15];(node["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng});way["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng});relation["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng}););out center 15;`;
+    const radius=10000;
+    const query=`[out:json][timeout:25];(node["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng});way["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng});relation["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lng}););out center 20;`;
     const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
     const res=await fetch(url,{signal:AbortSignal.timeout(20000)});
     if(!res.ok) throw new Error("API "+res.status);
     const data=await res.json();
     if(!data.elements||!data.elements.length){
-      list.innerHTML='<div class="masjid-item">No masjids found within 5km. Try searching a different city.</div>';
+      list.innerHTML='<div class="masjid-item">No masjids found within 10km. Try searching a different city above.</div>';
       return;
     }
     const withDist=data.elements.map(el=>{
-      const elLat=el.lat||(el.center?.lat)||0;
-      const elLng=el.lon||(el.center?.lon)||0;
-      return{...el,elLat,elLng,dist:calcDist(lat,lng,elLat,elLng)};
+      const elLat=Number(el.lat||(el.center&&el.center.lat)||0);
+      const elLng=Number(el.lon||(el.center&&el.center.lon)||0);
+      const tags=el.tags||{};
+      const name=tags.name||tags["name:en"]||tags["name:ar"]||
+                 tags["name:ur"]||tags["name:tr"]||tags.operator||"Masjid";
+      return{elLat,elLng,name,dist:calcDist(lat,lng,elLat,elLng)};
     }).filter(el=>el.elLat&&el.elLng).sort((a,b)=>a.dist-b.dist);
-    list.innerHTML=withDist.slice(0,8).map(el=>{
-      const name=el.tags?.name||el.tags?.["name:en"]||el.tags?.["name:ar"]||"Masjid";
-      const distStr=el.dist<1?(el.dist*1000).toFixed(0)+"m":el.dist.toFixed(1)+"km";
+    list.innerHTML=withDist.slice(0,10).map(el=>{
+      const distStr=el.dist<1?(el.dist*1000).toFixed(0)+" m":el.dist.toFixed(2)+" km";
       const mapsUrl=`https://www.google.com/maps/search/?api=1&query=${el.elLat},${el.elLng}`;
       const dirsUrl=`https://www.google.com/maps/dir/?api=1&destination=${el.elLat},${el.elLng}`;
       return `<div class="masjid-item">
-        <div class="masjid-name">🕌 ${name}</div>
+        <div class="masjid-name">🕌 ${el.name}</div>
         <div class="masjid-dist">📍 ${distStr} away &nbsp;·&nbsp;
           <a href="${mapsUrl}" target="_blank" style="color:var(--accent);text-decoration:none">View ↗</a> &nbsp;·&nbsp;
           <a href="${dirsUrl}" target="_blank" style="color:var(--accent);text-decoration:none">Directions ↗</a>
@@ -1500,6 +1509,9 @@ function playCurrent(){
   audioFloater.classList.add("show");
   localStorage.setItem("lastSurah",surahSelect.value);
   localStorage.setItem("lastAyah",currentIndex);
+  // Update lock screen controls
+  const surahObj2=chaptersData.find(c=>c.id==s);
+  updateMediaSession(surahObj2?surahObj2.name_simple:"Quran", a, s);
   quranAudio.onended=()=>{ currentIndex++; playCurrent(); };
 }
 
@@ -1568,6 +1580,37 @@ surahSelect.addEventListener("change",e=>{
 });
 
 loadSurahNames();
+
+/* ═══════════════════════════════════════════
+   PWA — Service Worker Registration
+═══════════════════════════════════════════ */
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").catch(e=>console.log("SW:",e));
+}
+
+/* ═══════════════════════════════════════════
+   MEDIA SESSION — Lock Screen Controls
+═══════════════════════════════════════════ */
+function updateMediaSession(surahName, ayahNum, surahId){
+  if(!("mediaSession" in navigator)) return;
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: `Ayah ${ayahNum}`,
+    artist: surahName,
+    album: "Quran Companion",
+    artwork: [
+      { src: "icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "icon-512.png", sizes: "512x512", type: "image/png" }
+    ]
+  });
+  navigator.mediaSession.setActionHandler("play", ()=>{ quranAudio.play(); });
+  navigator.mediaSession.setActionHandler("pause", ()=>{ quranAudio.pause(); });
+  navigator.mediaSession.setActionHandler("previoustrack", ()=>{
+    if(currentIndex>0){ currentIndex--; playCurrent(); }
+  });
+  navigator.mediaSession.setActionHandler("nexttrack", ()=>{
+    if(currentIndex<verses.length-1){ currentIndex++; playCurrent(); }
+  });
+}
 </script>
 </body>
 </html>
