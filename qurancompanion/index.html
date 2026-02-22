@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,9 +43,18 @@ h2{ text-align:center; margin:0 0 8px; font-size:clamp(15px,3vw,20px); }
   display:flex; gap:6px; justify-content:center;
 }
 .header-btns button{
-  flex:1; max-width:90px;
-  padding:7px 6px; font-size:12px;
+  flex:1; max-width:80px;
+  padding:7px 4px; font-size:11px;
 }
+.surah-nav-btn{
+  padding:7px 10px; border-radius:10px;
+  background:rgba(255,255,255,.2); color:white;
+  border:1px solid rgba(255,255,255,.25);
+  font-size:14px; font-weight:700;
+  cursor:pointer; flex-shrink:0;
+  transition:.2s;
+}
+.surah-nav-btn:hover{ background:rgba(255,255,255,.35); }
 select,button,label{
   padding:7px 10px; border:none;
   border-radius:10px; font-weight:600; cursor:pointer;
@@ -540,18 +548,26 @@ body.focus-mode .translation.hidden{ display:none; }
 
 body.focus-mode .bookmark{ display:none; }
 
-/* Ayah number in focus mode — mushaf style */
-body.focus-mode .ayah-num{
+/* Ayah number — always visible, mushaf style circle */
+.ayah-num{
   display:inline-flex; align-items:center; justify-content:center;
-  width:32px; height:32px;
-  border:1.5px solid var(--primary);
+  width:26px; height:26px;
+  border:1.5px solid #d1fae5;
   border-radius:50%;
-  font-size:11px; font-weight:700;
-  color:var(--primary);
-  margin-right:8px;
-  font-family:'Amiri',serif;
+  font-size:10px; font-weight:700;
+  color:#6b7280;
+  margin-right:6px;
+  font-family:'Inter',sans-serif;
   flex-shrink:0;
   vertical-align:middle;
+  background:#f0fdf4;
+}
+body.focus-mode .ayah-num{
+  width:30px; height:30px;
+  border-color:var(--primary);
+  color:var(--primary);
+  font-size:11px;
+  background:transparent;
 }
 body.focus-night .ayah-num{
   border-color:#22c55e !important;
@@ -740,22 +756,15 @@ body.focus-night .translation{ color:#aaa !important; }
     <h2>🕌 Quran Companion</h2>
   </div>
   <div class="header-selects">
-    <select id="surahSelect"></select>
-    <select id="reciterSelect">
-      <option value="Alafasy_128kbps">Mishary Rashid Alafasy</option>
-      <option value="Abdurrahmaan_As-Sudais_192kbps">Abdurrahman Al-Sudais</option>
-      <option value="Saood_ash-Shuraym_128kbps">Saud Al-Shuraim</option>
-      <option value="Husary_128kbps">Mahmoud Al-Husary</option>
-      <option value="Abdul_Basit_Murattal_192kbps">Abdul Basit</option>
-    </select>
+    <button class="surah-nav-btn" onclick="prevSurah()" title="Previous Surah">◀</button>
+    <select id="surahSelect" style="flex:1"></select>
+    <button class="surah-nav-btn" onclick="nextSurah()" title="Next Surah">▶</button>
   </div>
   <div class="header-btns">
     <button id="studyBtn" onclick="toggleStudy()">📖 Study</button>
     <button onclick="enterFocus()" title="Focus Mode">🎯 Focus</button>
     <button onclick="openLearn()" title="Learn Arabic">📚 Learn</button>
-    <button onclick="playFull()">▶ Play</button>
-    <button onclick="pauseAudio()">⏸ Pause</button>
-    <button onclick="stopAudio()">⏹ Stop</button>
+    <button onclick="playFull()">▶ Play All</button>
   </div>
 </header>
 
@@ -824,6 +833,17 @@ body.focus-night .translation{ color:#aaa !important; }
       <button class="p-gps-btn" onclick="requestGPS()" title="Use my current location">📍 Use My Location</button>
     </div>
     <div class="p-location" id="pLocation">Detecting location…</div>
+
+    <!-- Reciter -->
+    <div class="p-settings" style="margin-top:8px">
+      <select id="reciterSelect" onchange="savePS()" style="width:100%">
+        <option value="Alafasy_128kbps">🎙 Mishary Rashid Alafasy</option>
+        <option value="Abdurrahmaan_As-Sudais_192kbps">🎙 Abdurrahman Al-Sudais</option>
+        <option value="Saood_ash-Shuraym_128kbps">🎙 Saud Al-Shuraim</option>
+        <option value="Husary_128kbps">🎙 Mahmoud Al-Husary</option>
+        <option value="Abdul_Basit_Murattal_192kbps">🎙 Abdul Basit</option>
+      </select>
+    </div>
 
     <!-- Calc + Asr -->
     <div class="p-settings">
@@ -914,10 +934,12 @@ body.focus-night .translation{ color:#aaa !important; }
 <div class="audio-floater" id="audioFloater">
   <div class="progress-bar"><div class="progress" id="progress"></div></div>
   <div class="floater-controls">
-    <div id="nowPlaying"></div>
-    <div>
-      <button onclick="pauseAudio()">⏸</button>
-      <button onclick="stopAudio()">⏹</button>
+    <div id="nowPlaying" style="font-size:12px;font-weight:600;color:#166534;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <button onclick="prevAyah()" title="Previous">⏮</button>
+      <button onclick="pauseAudio()" id="pauseBtn" title="Pause">⏸</button>
+      <button onclick="nextAyah()" title="Next">⏭</button>
+      <button onclick="stopAudio()" title="Stop">⏹</button>
     </div>
   </div>
 </div>
@@ -1082,16 +1104,24 @@ const _calc=localStorage.getItem("pCalc")||"3";
 const _asr =localStorage.getItem("pAsr") ||"0";
 const _azan=localStorage.getItem("pAzan")||"makkah";
 const _mute=localStorage.getItem("pMute")||"0";
+const _reciter=localStorage.getItem("pReciter")||"Alafasy_128kbps";
 document.getElementById("calcMethod").value=_calc;
 document.getElementById("asrMethod").value=_asr;
 document.getElementById("azanSelect").value=_azan;
 azanOn=_mute!=="1";
 refreshAzanBtn();
+// Restore reciter after panel renders
+setTimeout(()=>{
+  const rs=document.getElementById("reciterSelect");
+  if(rs) rs.value=_reciter;
+},100);
 
 function savePS(){
   localStorage.setItem("pCalc",calcMethod.value);
   localStorage.setItem("pAsr", asrMethod.value);
   localStorage.setItem("pAzan",azanSelect.value);
+  if(document.getElementById("reciterSelect"))
+    localStorage.setItem("pReciter",document.getElementById("reciterSelect").value);
 }
 function togglePanel(){
   pExpanded=!pExpanded;
@@ -1869,6 +1899,23 @@ function buildURL(key){
 
 function playSingle(i){ currentIndex=i; playCurrent(); }
 function playFull(){ currentIndex=0; playCurrent(); }
+function prevAyah(){ if(currentIndex>0){ currentIndex--; playCurrent(); } }
+function nextAyah(){ if(currentIndex<verses.length-1){ currentIndex++; playCurrent(); } }
+
+function prevSurah(){
+  const sel=document.getElementById("surahSelect");
+  const cur=parseInt(sel.value);
+  if(cur<=1) return;
+  sel.value=cur-1;
+  sel.dispatchEvent(new Event("change"));
+}
+function nextSurah(){
+  const sel=document.getElementById("surahSelect");
+  const cur=parseInt(sel.value);
+  if(cur>=114) return;
+  sel.value=cur+1;
+  sel.dispatchEvent(new Event("change"));
+}
 
 function playCurrent(){
   if(currentIndex>=verses.length){ stopAudio(); return; }
