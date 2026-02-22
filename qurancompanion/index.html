@@ -82,19 +82,32 @@ button{ background:var(--accent); color:white; }
 /* Collapsed strip */
 .p-strip{
   display:flex; align-items:center;
-  justify-content:space-between;
-  padding:6px 12px; gap:8px;
+  padding:7px 10px; gap:0; cursor:pointer;
 }
-.p-left{ display:flex; flex-direction:column; cursor:pointer; flex:1; min-width:0; }
-.p-label{ font-size:9px; text-transform:uppercase; letter-spacing:.8px; opacity:.6; }
-.p-name{ font-size:14px; font-weight:700; line-height:1.3; white-space:nowrap; }
-.p-time{ font-size:11px; opacity:.75; }
-.p-middle{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.p-strip-col{
+  display:flex; flex-direction:column;
+  flex:1; min-width:0; padding:0 6px;
+}
+.p-strip-center{ align-items:center; }
+.p-strip-btns{
+  display:flex; align-items:center;
+  gap:5px; flex-shrink:0; padding-left:6px;
+}
+.p-vline{
+  width:1px; height:36px;
+  background:rgba(255,255,255,.2);
+  flex-shrink:0;
+}
+.p-label{ font-size:9px; text-transform:uppercase; letter-spacing:.6px; opacity:.6; margin-bottom:1px; }
+.p-name{ font-size:13px; font-weight:700; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.p-curr{ font-size:12px !important; }
+.p-time{ font-size:10px; opacity:.75; }
 .p-countdown{
-  background:rgba(255,255,255,.15);
-  padding:4px 10px; border-radius:20px;
+  background:rgba(255,255,255,.18);
+  padding:3px 10px; border-radius:20px;
   font-size:13px; font-weight:700;
-  letter-spacing:.4px; min-width:60px; text-align:center;
+  letter-spacing:.4px; min-width:56px; text-align:center;
+  margin-top:2px;
 }
 .p-icon-btn{
   background:rgba(255,255,255,.12); border:none; color:white;
@@ -553,30 +566,36 @@ main{ max-width:1000px; margin:auto; padding:15px; }
       <span class="p-dt-label">Hijri</span>
       <span class="p-dt-value" id="pHijriInline">--</span>
     </div>
+    <div class="p-dt-item" id="pWeatherItem" style="display:none">
+      <span class="p-dt-value" id="pWeather">--</span>
+    </div>
   </div>
 
   <!-- Next prayer strip -->
-  <div class="p-strip">
-    <div class="p-left" onclick="togglePanel()">
-      <div class="p-prayer-row">
-        <div class="p-prayer-item">
-          <span class="p-label">Current</span>
-          <span class="p-name p-curr" id="pCurrName">—</span>
-        </div>
-        <div class="p-prayer-divider"></div>
-        <div class="p-prayer-item">
-          <span class="p-label">Next</span>
-          <span class="p-name" id="pNextName">📍 Locating…</span>
-          <span class="p-time" id="pNextTime"></span>
-        </div>
-      </div>
+  <div class="p-strip" onclick="togglePanel()">
+    <!-- Current -->
+    <div class="p-strip-col">
+      <span class="p-label">Current</span>
+      <span class="p-name p-curr" id="pCurrName">—</span>
     </div>
-    <div class="p-middle">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-        <span id="pCountdownLabel" style="font-size:12px;opacity:.95;white-space:nowrap;font-weight:700;color:rgba(255,255,255,1);letter-spacing:.2px;">Next in</span>
-        <div class="p-countdown" id="pCountdown">--:--</div>
-      </div>
-      <button class="p-icon-btn" id="azanBtn" onclick="toggleAzan()" title="Toggle azan">🔔</button>
+    <!-- Divider -->
+    <div class="p-vline"></div>
+    <!-- Next -->
+    <div class="p-strip-col">
+      <span class="p-label">Next</span>
+      <span class="p-name" id="pNextName">📍 Locating…</span>
+      <span class="p-time" id="pNextTime"></span>
+    </div>
+    <!-- Divider -->
+    <div class="p-vline"></div>
+    <!-- Countdown -->
+    <div class="p-strip-col p-strip-center">
+      <span id="pCountdownLabel" class="p-label">ends in</span>
+      <div class="p-countdown" id="pCountdown">--:--</div>
+    </div>
+    <!-- Buttons -->
+    <div class="p-strip-btns" onclick="event.stopPropagation()">
+      <button class="p-icon-btn" id="azanBtn" onclick="toggleAzan()">🔔</button>
       <button class="p-icon-btn" id="pExpandBtn" onclick="togglePanel()">▼</button>
     </div>
   </div>
@@ -944,6 +963,42 @@ async function reverseGeocode(lat,lng){
   } catch(e){ pLocation.textContent=`📍 ${lat.toFixed(3)}, ${lng.toFixed(3)}`; }
 }
 
+/* Weather code to description */
+function weatherDesc(code){
+  if(code===0) return "☀️";
+  if(code<=2) return "🌤️";
+  if(code<=3) return "☁️";
+  if(code<=48) return "🌫️";
+  if(code<=57) return "🌧️";
+  if(code<=67) return "🌧️";
+  if(code<=77) return "🌨️";
+  if(code<=82) return "🌧️";
+  if(code<=86) return "❄️";
+  if(code<=99) return "⛈️";
+  return "🌡️";
+}
+
+async function fetchWeather(){
+  if(!pCoords) return;
+  try{
+    const{lat,lng}=pCoords;
+    const r=await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}`+
+      `&current=temperature_2m,apparent_temperature,weathercode`+
+      `&temperature_unit=fahrenheit&timezone=auto`
+    );
+    const d=await r.json();
+    const c=d.current;
+    const icon=weatherDesc(c.weathercode);
+    const tempF=Math.round(c.temperature_2m);
+    const tempC=Math.round((c.temperature_2m-32)*5/9);
+    const feelsF=Math.round(c.apparent_temperature);
+    pWeather.textContent=`${icon} ${tempF}°F / ${tempC}°C`;
+    pWeather.title=`Feels like ${feelsF}°F`;
+    pWeatherItem.style.display="flex";
+  } catch(e){ console.log("Weather:",e); }
+}
+
 async function fetchPrayerTimes(){
   if(!pCoords){ pNextName.textContent="📍 Location needed"; return; }
   pNextName.textContent="⏳ Loading…";
@@ -962,6 +1017,7 @@ async function fetchPrayerTimes(){
     buildTimeObjects(now, d.data.timings);
     renderGrid();
     updateStrip();
+    fetchWeather();
     clearInterval(pTickTimer);
     pTickTimer=setInterval(()=>{ updateStrip(); checkAzanTrigger(); },1000);
   } catch(err){
