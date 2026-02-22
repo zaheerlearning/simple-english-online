@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -499,6 +500,199 @@ main{ max-width:1000px; margin:auto; padding:15px; }
 .connecting-dots{ font-size:0; }
 .connecting-dots::after{ font-size:13px; }
 
+
+/* ══ FOCUS MODE ══ */
+body.focus-mode #stickyTop,
+body.focus-mode #hadithCard,
+body.focus-mode #botBtn,
+body.focus-mode .audio-floater,
+body.focus-mode .word-popup{ display:none !important; }
+
+body.focus-mode{ background:#fdf6e3; }
+
+body.focus-mode main{
+  max-width:720px; padding:20px 24px;
+}
+
+body.focus-mode .ayah{
+  background:transparent;
+  box-shadow:none;
+  border-bottom:1px solid rgba(0,0,0,.07);
+  border-radius:0;
+  padding:28px 10px;
+  margin-bottom:0;
+}
+
+body.focus-mode .arabic{
+  font-size:clamp(26px,5vw,42px);
+  line-height:2.2;
+  color:#1a1a1a;
+}
+
+body.focus-mode .translation{
+  font-size:16px;
+  color:#555;
+  line-height:1.8;
+  margin-top:12px;
+}
+
+body.focus-mode .translation.hidden{ display:none; }
+
+body.focus-mode .bookmark{ display:none; }
+
+/* Ayah number in focus mode — mushaf style */
+body.focus-mode .ayah-num{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px;
+  border:1.5px solid var(--primary);
+  border-radius:50%;
+  font-size:11px; font-weight:700;
+  color:var(--primary);
+  margin-right:8px;
+  font-family:'Amiri',serif;
+  flex-shrink:0;
+  vertical-align:middle;
+}
+body.focus-night .ayah-num{
+  border-color:#22c55e !important;
+  color:#22c55e !important;
+}
+
+body.focus-mode .ayah > div:last-child{ display:none; }
+
+/* Focus toolbar — fixed top */
+#focusToolbar{
+  display:none;
+  position:fixed; top:0; left:0; width:100%;
+  background:rgba(22,101,52,.95);
+  backdrop-filter:blur(8px);
+  z-index:9999;
+  padding:10px 16px;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  box-shadow:0 2px 12px rgba(0,0,0,.2);
+}
+body.focus-mode #focusToolbar{ display:flex; }
+body.focus-mode main{ padding-top:60px; }
+
+.focus-title{
+  color:white; font-weight:700; font-size:15px;
+  flex:1; text-align:center;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.focus-btn{
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+  color:white; border-radius:8px;
+  padding:6px 12px; cursor:pointer;
+  font-size:12px; font-weight:700;
+  white-space:nowrap; flex-shrink:0;
+  transition:.2s;
+}
+.focus-btn:hover{ background:rgba(255,255,255,.28); }
+.focus-btn.active{ background:rgba(255,255,255,.35); outline:1px solid white; }
+
+/* Font size control */
+.focus-font-ctrl{
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+}
+.focus-font-ctrl span{ color:rgba(255,255,255,.7); font-size:11px; }
+.focus-font-btn{
+  background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25);
+  color:white; border-radius:6px; width:28px; height:28px;
+  cursor:pointer; font-size:14px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Night mode in focus */
+body.focus-night{ background:#1a1a1a !important; }
+body.focus-night .ayah{ border-bottom-color:rgba(255,255,255,.08) !important; }
+body.focus-night .arabic{ color:#f5f0e8 !important; }
+body.focus-night .translation{ color:#aaa !important; }
+
+
+/* ══ LEARN PANEL ══ */
+.learn-panel{
+  position:fixed; top:0; right:-660px;
+  width:640px; height:100%;
+  background:white; transition:.3s;
+  z-index:10000; display:flex; flex-direction:column;
+  box-shadow:-4px 0 20px rgba(0,0,0,.15);
+}
+.learn-panel.open{ right:0; }
+.learn-header{
+  background:var(--primary); color:white;
+  padding:14px 16px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.learn-header span{ font-weight:700; font-size:16px; }
+.learn-header button{ background:rgba(255,255,255,.2); color:white; padding:6px 14px; }
+.learn-tabs{
+  display:flex; border-bottom:2px solid #d1fae5;
+  background:#f0fdf4; flex-shrink:0;
+}
+.learn-tab{
+  flex:1; padding:11px 6px; text-align:center;
+  font-weight:600; font-size:12px; cursor:pointer;
+  border:none; background:transparent; color:#6b7280;
+  border-bottom:3px solid transparent; margin-bottom:-2px;
+  transition:.2s;
+}
+.learn-tab.active{ color:var(--primary); border-bottom-color:var(--primary); background:white; }
+.learn-body{ flex:1; overflow-y:auto; padding:16px; }
+
+/* Transliteration line under Arabic */
+.transliteration{
+  font-size:13px; color:#6b7280; font-style:italic;
+  line-height:1.8; margin-top:4px; display:none;
+  direction:ltr; text-align:left;
+}
+.transliteration.show{ display:block; }
+
+/* Alphabet grid */
+.alpha-grid{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:8px; margin-top:8px;
+}
+.alpha-card{
+  background:#f0fdf4; border:1px solid #d1fae5;
+  border-radius:10px; padding:10px 6px;
+  text-align:center;
+}
+.alpha-letter{
+  font-family:'Amiri',serif; font-size:28px;
+  color:var(--primary); display:block; line-height:1.4;
+}
+.alpha-name{ font-size:11px; font-weight:700; color:#374151; }
+.alpha-roman{ font-size:10px; color:#6b7280; }
+.alpha-forms{
+  font-family:'Amiri',serif; font-size:12px;
+  color:#6b7280; margin-top:3px; direction:rtl;
+}
+
+/* Tajweed guide */
+.tajweed-rule{
+  display:flex; align-items:flex-start; gap:12px;
+  padding:12px; border-radius:10px; margin-bottom:8px;
+}
+.tajweed-dot{
+  width:14px; height:14px; border-radius:50%;
+  flex-shrink:0; margin-top:3px;
+}
+.tajweed-name{ font-weight:700; font-size:13px; margin-bottom:3px; }
+.tajweed-desc{ font-size:12px; color:#6b7280; line-height:1.6; }
+.tajweed-example{
+  font-family:'Amiri',serif; font-size:18px;
+  color:var(--primary); margin-top:4px;
+}
+
+@media(max-width:680px){
+  .learn-panel{ width:100%; right:-100%; }
+  .learn-panel.open{ right:0; }
+  .alpha-grid{ grid-template-columns:repeat(3,1fr); }
+}
+
 /* ══ RESPONSIVE ══ */
 @media(max-width:680px){
   .p-grid{ grid-template-columns:repeat(4,1fr); }
@@ -524,6 +718,20 @@ main{ max-width:1000px; margin:auto; padding:15px; }
 </head>
 <body>
 
+
+<!-- ══ FOCUS TOOLBAR ══ -->
+<div id="focusToolbar">
+  <button class="focus-btn" onclick="exitFocus()">✕ Exit Focus</button>
+  <span class="focus-title" id="focusSurahName">Quran</span>
+  <div class="focus-font-ctrl">
+    <button class="focus-font-btn" onclick="focusFont(-2)">A−</button>
+    <button class="focus-font-btn" onclick="focusFont(+2)">A+</button>
+  </div>
+  <button class="focus-btn" id="focusPlayBtn" onclick="toggleFocusPlay()">▶</button>
+  <button class="focus-btn" id="focusTransBtn" onclick="toggleFocusTrans()">Tr</button>
+  <button class="focus-btn" id="focusNightBtn" onclick="toggleFocusNight()">🌙</button>
+</div>
+
 <!-- ══ STICKY TOP ══ -->
 <div id="stickyTop">
 
@@ -543,6 +751,8 @@ main{ max-width:1000px; margin:auto; padding:15px; }
   </div>
   <div class="header-btns">
     <button id="studyBtn" onclick="toggleStudy()">📖 Study</button>
+    <button onclick="enterFocus()" title="Focus Mode">🎯 Focus</button>
+    <button onclick="openLearn()" title="Learn Arabic">📚 Learn</button>
     <button onclick="playFull()">▶ Play</button>
     <button onclick="pauseAudio()">⏸ Pause</button>
     <button onclick="stopAudio()">⏹ Stop</button>
@@ -1134,6 +1344,13 @@ setInterval(()=>{
 
 requestGPS();
 
+/* ── LOCATION PERMISSION NOTICE ──
+   The browser asks for location every time with local files (file://).
+   We load saved location instantly and only re-request GPS silently.
+   To avoid the popup permanently: host the file on a web server,
+   or in Chrome go to Settings → Privacy → Site Settings → Location
+   and add an exception for this file. */
+
 /* Wake up Render server on page load + keep alive every 14 min */
 (async function pingServer(){
   try{ await fetch(`${BACKEND}/`,{method:"GET",signal:AbortSignal.timeout(60000)}); } catch(e){}
@@ -1294,67 +1511,132 @@ function switchHTab(n){
   hPane2.style.display=n===2?"block":"none";
 }
 
-async function loadHadith(attempt=1){
-  hadithText.className="connecting-dots";
-  hadithText.textContent="";
-  hadithMeta.textContent="";
-  if(attempt>1) hadithText.title=`Attempt ${attempt}/3`;
-  if(attempt===1) hadithPreview.textContent="⏳ Connecting, please wait…";
-  try{
-    const r=await backendFetch(`${BACKEND}/hadith/random`);
-    const d=await r.json();
-    if(d.error) throw new Error(d.error);
-    const text=d.ENGLISH||d.English||"Not available";
-    const collection=d.COLLECTION||d.Collection||"";
-    const number=d.NUMBER||d.Number||"";
-    const narrator=d.NARRATOR||d.Narrator||"";
-    const grade=d.GRADE||d.Grade||"";
-    hadithText.className="hadith-text";
-    hadithText.textContent=`"${text}"`;
-    hadithMeta.textContent=`${narrator?narrator+" · ":""}${collection} ${number}${grade?" · "+grade:""}`;
-    hadithPreview.textContent=text.length>80?text.substring(0,80)+"…":text;
-  } catch(e){
-    if(attempt<3){
-      // Retry after 20 seconds
-      hadithText.className="hadith-text";
-      hadithText.textContent=`⏳ Server waking up, retrying automatically… (${attempt}/3)`;
-      setTimeout(()=>loadHadith(attempt+1), 20000);
-    } else {
-      hadithText.className="hadith-text";
-      hadithText.textContent="Could not load hadith. Tap 🔄 New Hadith to try again.";
-      hadithPreview.textContent="Tap to load hadith of the day";
-    }
-  }
+/* ═══════════════════════════════════════════
+   HADITH — BUILT-IN COLLECTION (instant, no server)
+═══════════════════════════════════════════ */
+const HADITHS=[
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"1",g:"Sahih",
+   e:"Actions are judged by intentions, and every person will get the reward according to what he has intended."},
+  {n:"Aisha (RA)",c:"Sahih Bukhari",num:"6018",g:"Sahih",
+   e:"The Prophet (ﷺ) said: 'The most beloved of deeds to Allah are those that are most consistent, even if they are small.'"},
+  {n:"Abu Huraira (RA)",c:"Sahih Muslim",num:"2564",g:"Sahih",
+   e:"Do not envy one another, do not artificially raise prices against one another, do not hate one another, do not turn away from one another, and do not undercut one another in trade. Be servants of Allah and brothers to one another."},
+  {n:"Abdullah ibn Masud (RA)",c:"Sahih Bukhari",num:"6094",g:"Sahih",
+   e:"Truthfulness leads to righteousness and righteousness leads to Paradise. A man keeps speaking the truth until he is recorded with Allah as a truthful person."},
+  {n:"Abu Huraira (RA)",c:"Sahih Muslim",num:"223",g:"Sahih",
+   e:"Cleanliness is half of faith."},
+  {n:"Anas ibn Malik (RA)",c:"Sahih Bukhari",num:"13",g:"Sahih",
+   e:"None of you truly believes until he loves for his brother what he loves for himself."},
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"5673",g:"Sahih",
+   e:"The strong person is not the one who overcomes people by his strength, but the one who controls himself while in anger."},
+  {n:"Ibn Abbas (RA)",c:"Sahih Bukhari",num:"6412",g:"Sahih",
+   e:"Take advantage of five matters before five other matters: your youth before you become old; your health before you fall sick; your wealth before you become poor; your free time before you become preoccupied; and your life before your death."},
+  {n:"Abu Huraira (RA)",c:"Sahih Muslim",num:"2699",g:"Sahih",
+   e:"Whoever follows a path in pursuit of knowledge, Allah will make easy for him a path to Paradise."},
+  {n:"Abdullah ibn Amr (RA)",c:"Sahih Bukhari",num:"4798",g:"Sahih",
+   e:"The merciful are shown mercy by the Most Merciful. Be merciful to those on earth and the One above the heavens will have mercy upon you."},
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"6475",g:"Sahih",
+   e:"Allah said: I am as my servant thinks of Me, and I am with him when he remembers Me."},
+  {n:"Aisha (RA)",c:"Sahih Bukhari",num:"2009",g:"Sahih",
+   e:"Whoever introduces into this affair of ours something that does not belong to it, it is rejected."},
+  {n:"Abu Huraira (RA)",c:"Sahih Muslim",num:"2626",g:"Sahih",
+   e:"A good man treats women with honour and a despicable man treats women with degradation."},
+  {n:"Abu Dharr (RA)",c:"Sahih Muslim",num:"2588",g:"Sahih",
+   e:"Do not consider any act of kindness insignificant, even meeting your brother with a cheerful face."},
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"2442",g:"Sahih",
+   e:"Whoever relieves a Muslim of a burden from the burdens of the world, Allah will relieve him of a burden from the burdens of the Hereafter."},
+  {n:"Muadh ibn Jabal (RA)",c:"Tirmidhi",num:"2616",g:"Sahih",
+   e:"Fear Allah wherever you are, follow a bad deed with a good one and it will erase it, and treat people with good character."},
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"6507",g:"Sahih",
+   e:"Allah the Exalted says: I am as my servant expects Me to be, and I am with him when he remembers Me."},
+  {n:"Abdullah ibn Umar (RA)",c:"Sahih Bukhari",num:"6416",g:"Sahih",
+   e:"Be in this world as though you are a stranger or a traveller."},
+  {n:"Abu Huraira (RA)",c:"Sahih Muslim",num:"2607",g:"Sahih",
+   e:"Part of the perfection of one's Islam is his leaving that which does not concern him."},
+  {n:"Anas ibn Malik (RA)",c:"Tirmidhi",num:"1987",g:"Sahih",
+   e:"Make things easy and do not make things difficult. Give good news and do not repel people."},
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"5765",g:"Sahih",
+   e:"There is a piece of flesh in the body; if it is sound, the whole body is sound, and if it is corrupt, the whole body is corrupt. Verily it is the heart."},
+  {n:"Abu Huraira (RA)",c:"Sahih Muslim",num:"2162",g:"Sahih",
+   e:"The rights of one Muslim over another are six: when you meet him, greet him; when he invites you, accept; when he seeks your advice, advise him sincerely; when he sneezes and praises Allah, say yarhamukallah; when he is sick, visit him; when he dies, follow his funeral."},
+  {n:"Abdullah ibn Masud (RA)",c:"Sahih Bukhari",num:"5765",g:"Sahih",
+   e:"No one should wish for death because of a calamity that has befallen him. If he must do so, let him say: O Allah, keep me alive as long as life is good for me, and cause me to die when death is good for me."},
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"3",g:"Sahih",
+   e:"The first thing revealed was: Read in the name of your Lord who created — created man from a clinging substance."},
+  {n:"Jabir (RA)",c:"Sahih Muslim",num:"1017",g:"Sahih",
+   e:"Whoever starts a good practice in Islam has its reward and the reward of all who follow it, without their rewards being diminished."},
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"6502",g:"Sahih",
+   e:"When a man dies, his deeds come to an end except for three: a continuing charity, knowledge that benefits others, or a righteous son who prays for him."},
+  {n:"Aisha (RA)",c:"Sahih Muslim",num:"746",g:"Sahih",
+   e:"The most beloved prayer to the Prophet (ﷺ) was the one that was done regularly even if it were little."},
+  {n:"Abu Huraira (RA)",c:"Sahih Bukhari",num:"1358",g:"Sahih",
+   e:"Every child is born upon fitrah (natural disposition). His parents then make him a Jew, a Christian, or a Magian."},
+  {n:"Anas ibn Malik (RA)",c:"Sahih Bukhari",num:"6010",g:"Sahih",
+   e:"By the One in Whose Hand my soul is, none of you truly believes until he loves for his neighbour what he loves for himself."},
+  {n:"Abu Huraira (RA)",c:"Sahih Muslim",num:"2996",g:"Sahih",
+   e:"The world is a prison for the believer and a paradise for the disbeliever."},
+];
+
+let lastHadithIndex=-1;
+
+function loadHadith(){
+  // Pick a random hadith different from the last one — instant, no server
+  let idx;
+  do { idx=Math.floor(Math.random()*HADITHS.length); } while(idx===lastHadithIndex&&HADITHS.length>1);
+  lastHadithIndex=idx;
+  const h=HADITHS[idx];
+  hadithText.className="hadith-text";
+  hadithText.textContent=`"${h.e}"`;
+  hadithMeta.textContent=`${h.n} · ${h.c} ${h.num} · ${h.g}`;
+  hadithPreview.textContent=h.e.length>80?h.e.substring(0,80)+"…":h.e;
 }
 
 async function searchHadith(){
   const q=hadithSearchInput.value.trim();
   if(!q) return;
-  hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">Searching…</div>';
+
+  // Always show local results first — instant
+  const qLow=q.toLowerCase();
+  const local=HADITHS.filter(h=>h.e.toLowerCase().includes(qLow)||h.n.toLowerCase().includes(qLow));
+  if(local.length){
+    hadithResults.innerHTML=`<div style="opacity:.6;font-size:11px;padding:4px 0 8px">
+      Showing ${local.length} result${local.length>1?"s":""} from built-in collection · searching full literature…
+    </div>`+local.map(h=>`
+      <div class="hadith-result">
+        <div>"${h.e}"</div>
+        <div class="hadith-result-meta">${h.n} · ${h.c} ${h.num} · ${h.g}</div>
+      </div>`).join("");
+  } else {
+    hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">⏳ Searching full hadith literature…</div>';
+  }
+
+  // Then fetch from backend for deeper results
   try{
     const r=await backendFetch(`${BACKEND}/hadith/search?q=${encodeURIComponent(q)}`);
     const d=await r.json();
     if(!d.results||!d.results.length){
-      hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">No results found. Try a different topic.</div>';
+      if(!local.length)
+        hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">No results found. Try: fasting, prayer, patience, charity, parents…</div>';
       return;
     }
-    hadithResults.innerHTML=d.results.map(h=>`
+    // Show backend results (replace local)
+    hadithResults.innerHTML=`<div style="opacity:.6;font-size:11px;padding:4px 0 8px">
+      ${d.results.length} result${d.results.length>1?"s":""} from full hadith literature
+    </div>`+d.results.map(h=>`
       <div class="hadith-result">
-        <div>"${h.ENGLISH||h.English||""}"</div>
-        <div class="hadith-result-meta">${h.COLLECTION||""} ${h.NUMBER||""} · ${h.GRADE||""}</div>
+        <div>"${h.ENGLISH||h.English||h.english||""}"</div>
+        <div class="hadith-result-meta">
+          ${h.NARRATOR||h.Narrator||""} · ${h.COLLECTION||h.Collection||""} ${h.NUMBER||h.Number||""} · ${h.GRADE||h.Grade||""}
+        </div>
       </div>`).join("");
   } catch(e){
-    hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">Search failed. Check connection.</div>';
+    if(!local.length)
+      hadithResults.innerHTML='<div style="opacity:.7;font-size:12px;padding:8px 0">Could not reach server. Showing local results only.</div>';
   }
 }
 
-/* Load hadith after 35s delay — gives Render server time to wake up */
-/* If user manually opens the card before that, it triggers immediately */
-let hadithAutoLoaded=false;
-setTimeout(()=>{
-  hadithAutoLoaded=true;
-  loadHadith();
-}, 35000);
+/* Load hadith instantly on startup */
+loadHadith();
 
 /* ═══════════════════════════════════════════
    ISLAMIC Q&A BOT
@@ -1460,6 +1742,7 @@ function appendBotMsg(text,cls){
 let verses=[],chaptersData=[],quranAudio=new Audio();
 let studyMode=false,currentIndex=0,currentTafsirKey=null;
 let bookmarks=JSON.parse(localStorage.getItem("bookmarks")||"{}");
+let translitOn=false; // transliteration toggle — must be declared before render()
 
 compareToggle.addEventListener("change",function(){
   tafseer2.disabled=!this.checked;
@@ -1483,9 +1766,8 @@ async function loadSurahNames(){
 }
 
 async function loadSurah(id){
-  let url=studyMode
-    ?`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani&words=true&word_fields=text_uthmani,translation,transliteration,root,lemma&per_page=300`
-    :`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani&per_page=300`;
+  // Always fetch words so transliteration is available even in normal mode
+  const url=`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani&words=true&word_fields=text_uthmani,translation,transliteration,root,lemma&per_page=300`;
   const res=await fetch(url);
   const data=await res.json();
   verses=data.verses;
@@ -1502,17 +1784,27 @@ function render(){
   ayahContainer.innerHTML="";
   verses.forEach((v,i)=>{
     let arabicHTML=v.text_uthmani;
+    // Build transliteration from words if available
+    let translit="";
+    if(v.words) translit=v.words.map(w=>w.transliteration?.text||"").filter(Boolean).join(" ");
+
     if(studyMode&&v.words){
-      arabicHTML=v.words.map(w=>
-        `<span class="word" onclick='showWord(${JSON.stringify(w)})'>${w.text_uthmani}</span>`
-      ).join(" ");
+      arabicHTML=v.words.map(w=>{
+        const wData=JSON.stringify(w).replace(/'/g,"&apos;");
+        return `<span class="word" onclick="playWordAudio(${i});showWord(JSON.parse(this.getAttribute('data-w')))" data-w='${wData}'>${w.text_uthmani}</span>`;
+      }).join(" ");
     }
     let markClass=bookmarks[v.verse_key]?"bookmark bookmarked":"bookmark";
     let div=document.createElement("div");
     div.className="ayah"; div.id="ayah-"+i;
+    const ayahNum = v.verse_key.split(":")[1];
+    const showTr=translitOn&&translit?"show":"";
+    const trText=translit||"(Enable Study Mode for transliteration)";
     div.innerHTML=`
       <span class="${markClass}" onclick="toggleBookmark('${v.verse_key}')">🔖</span>
-      <div class="arabic">${arabicHTML}</div>
+      <div class="arabic" onclick="if(!event.target.classList.contains('word'))playWordAudio(${i})"
+        style="cursor:pointer" title="Tap to play">${arabicHTML}<span class="ayah-num" title="Ayah ${ayahNum}">${ayahNum}</span></div>
+      <div class="transliteration ${showTr}" id="tr-${i}">${trText}</div>
       <div class="translation">${v.translations[0].text}</div>
       <div style="margin-top:10px">
         <button onclick="playSingle(${i})">▶ Play</button>
@@ -1525,14 +1817,42 @@ function render(){
 function showWord(w){
   wordPopup.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">
-      <strong style="font-family:'Amiri',serif;font-size:28px">${w.text_uthmani}</strong>
+      <div>
+        <strong style="font-family:'Amiri',serif;font-size:32px;display:block">${w.text_uthmani}</strong>
+        <span style="font-size:14px;color:#6b7280;font-style:italic">${w.transliteration?.text||""}</span>
+      </div>
       <button onclick="wordPopup.classList.remove('show')"
         style="background:#e5e7eb;color:#374151;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600">✕</button>
     </div>
     <b>Meaning:</b> ${w.translation?.text||"Not available"}<br>
-    <b>Transliteration:</b> ${w.transliteration?.text||"—"}<br>
-    <b>Root:</b> ${w.root||w.lemma||"Not available"}`;
+    <b>Root:</b> ${w.root||w.lemma||"Not available"}<br>
+    <div style="margin-top:10px;font-size:11px;color:#9ca3af">
+      💡 The audio plays the full verse so you hear the word in correct recitation context
+    </div>`;
   wordPopup.classList.add("show");
+}
+
+function playWordAudio(i){
+  // Play just this ayah then stop — do not auto-advance
+  if(currentIndex===i && !quranAudio.paused){ return; } // already playing this ayah
+  currentIndex=i;
+  document.querySelectorAll(".ayah").forEach(a=>a.classList.remove("playing"));
+  const el=document.getElementById("ayah-"+i);
+  if(el) el.classList.add("playing");
+  const key=verses[i].verse_key;
+  quranAudio.src=buildURL(key);
+  quranAudio.play();
+  audioFloater.classList.add("show");
+  const[s,a]=key.split(":");
+  const surahObj=chaptersData.find(c=>c.id==s);
+  nowPlaying.textContent=surahObj?`${surahObj.name_simple} – Ayah ${a}`:`Surah ${s} – Ayah ${a}`;
+  // Stop after this ayah — do not continue
+  quranAudio.onended=()=>{
+    el.classList.remove("playing");
+    audioFloater.classList.remove("show");
+    progress.style.width="0%";
+    quranAudio.onended=()=>{ currentIndex++; playCurrent(); }; // restore normal behaviour
+  };
 }
 
 function toggleBookmark(key){
@@ -1667,6 +1987,276 @@ function updateMediaSession(surahName, ayahNum, surahId){
     if(currentIndex<verses.length-1){ currentIndex++; playCurrent(); }
   });
 }
+
+/* ═══════════════════════════════════════════
+   FOCUS MODE
+═══════════════════════════════════════════ */
+let focusTransVisible=false;
+let focusNight=false;
+let focusFontDelta=0;
+
+function toggleFocusPlay(){
+  const btn=document.getElementById("focusPlayBtn");
+  if(quranAudio.paused){
+    playFull();
+    btn.textContent="⏸";
+    btn.classList.add("active");
+    // Keep button in sync when audio ends
+    quranAudio.addEventListener("ended",function onEnd(){
+      if(currentIndex>=verses.length){
+        btn.textContent="▶";
+        btn.classList.remove("active");
+        quranAudio.removeEventListener("ended",onEnd);
+      }
+    });
+  } else {
+    pauseAudio();
+    btn.textContent="▶";
+    btn.classList.remove("active");
+  }
+}
+
+function enterFocus(){
+  document.body.classList.add("focus-mode");
+  document.body.classList.remove("focus-night");
+  focusNight=false;
+  // Update surah name in toolbar
+  const sel=document.getElementById("surahSelect");
+  const name=sel.options[sel.selectedIndex]?.text||"Quran";
+  document.getElementById("focusSurahName").textContent=name;
+  // Arabic only by default — hide translations
+  focusTransVisible=false;
+  applyFocusTrans();
+  document.getElementById("focusTransBtn").classList.remove("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function exitFocus(){
+  document.body.classList.remove("focus-mode","focus-night");
+  document.querySelectorAll(".translation").forEach(t=>t.classList.remove("hidden"));
+  focusFontDelta=0;
+  applyFocusFont();
+  // Reset play button
+  const btn=document.getElementById("focusPlayBtn");
+  if(btn){ btn.textContent="▶"; btn.classList.remove("active"); }
+}
+
+function toggleFocusTrans(){
+  focusTransVisible=!focusTransVisible;
+  applyFocusTrans();
+  document.getElementById("focusTransBtn").classList.toggle("active",focusTransVisible);
+}
+
+function applyFocusTrans(){
+  document.querySelectorAll(".translation").forEach(t=>{
+    if(focusTransVisible) t.classList.remove("hidden");
+    else t.classList.add("hidden");
+  });
+}
+
+function toggleFocusNight(){
+  focusNight=!focusNight;
+  document.body.classList.toggle("focus-night",focusNight);
+  document.getElementById("focusNightBtn").textContent=focusNight?"☀️":"🌙";
+  document.getElementById("focusNightBtn").classList.toggle("active",focusNight);
+}
+
+function focusFont(delta){
+  focusFontDelta+=delta;
+  focusFontDelta=Math.max(-8,Math.min(20,focusFontDelta));
+  applyFocusFont();
+}
+
+function applyFocusFont(){
+  document.querySelectorAll("body.focus-mode .arabic").forEach(el=>{
+    el.style.fontSize=focusFontDelta===0?"":
+      `clamp(${26+focusFontDelta}px,5vw,${42+focusFontDelta}px)`;
+  });
+}
+
+// When surah changes in focus mode, update toolbar title
+document.getElementById("surahSelect").addEventListener("change",function(){
+  if(document.body.classList.contains("focus-mode")){
+    const name=this.options[this.selectedIndex]?.text||"Quran";
+    document.getElementById("focusSurahName").textContent=name;
+  }
+});
+
+// ESC key exits focus mode
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&document.body.classList.contains("focus-mode")) exitFocus();
+});
+
+/* ═══════════════════════════════════════════
+   LEARN PANEL
+═══════════════════════════════════════════ */
+function openLearn(){
+  document.getElementById("learnPanel").classList.add("open");
+  renderAlphabet();
+  renderTajweed();
+}
+function closeLearn(){
+  document.getElementById("learnPanel").classList.remove("open");
+}
+
+function switchLTab(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById("ltab"+i).classList.toggle("active",i===n);
+    document.getElementById("lPane"+i).style.display=i===n?"block":"none";
+  });
+}
+
+function toggleTransliteration(){
+  translitOn=!translitOn;
+  const btn=document.getElementById("transToggleBtn");
+  btn.textContent=translitOn?"Hide Transliteration":"Show Transliteration";
+  btn.style.background=translitOn?"#065f46":"var(--primary)";
+  document.querySelectorAll(".transliteration").forEach(el=>{
+    const hasText=el.textContent&&!el.textContent.includes("Enable Study Mode");
+    if(translitOn&&hasText) el.classList.add("show");
+    else el.classList.remove("show");
+  });
+}
+
+/* Arabic Alphabet */
+const ALPHABET=[
+  {a:"ا",n:"Alif",r:"a / ā",f:"ا ـا"},
+  {a:"ب",n:"Ba",r:"b",f:"بـ ـبـ ـب"},
+  {a:"ت",n:"Ta",r:"t",f:"تـ ـتـ ـت"},
+  {a:"ث",n:"Tha",r:"th",f:"ثـ ـثـ ـث"},
+  {a:"ج",n:"Jim",r:"j",f:"جـ ـجـ ـج"},
+  {a:"ح",n:"Ha",r:"ḥ",f:"حـ ـحـ ـح"},
+  {a:"خ",n:"Kha",r:"kh",f:"خـ ـخـ ـخ"},
+  {a:"د",n:"Dal",r:"d",f:"د ـد"},
+  {a:"ذ",n:"Dhal",r:"dh",f:"ذ ـذ"},
+  {a:"ر",n:"Ra",r:"r",f:"ر ـر"},
+  {a:"ز",n:"Zay",r:"z",f:"ز ـز"},
+  {a:"س",n:"Sin",r:"s",f:"سـ ـسـ ـس"},
+  {a:"ش",n:"Shin",r:"sh",f:"شـ ـشـ ـش"},
+  {a:"ص",n:"Sad",r:"ṣ",f:"صـ ـصـ ـص"},
+  {a:"ض",n:"Dad",r:"ḍ",f:"ضـ ـضـ ـض"},
+  {a:"ط",n:"Tta",r:"ṭ",f:"طـ ـطـ ـط"},
+  {a:"ظ",n:"Ddha",r:"ẓ",f:"ظـ ـظـ ـظ"},
+  {a:"ع",n:"Ain",r:"ʿ",f:"عـ ـعـ ـع"},
+  {a:"غ",n:"Ghain",r:"gh",f:"غـ ـغـ ـغ"},
+  {a:"ف",n:"Fa",r:"f",f:"فـ ـفـ ـف"},
+  {a:"ق",n:"Qaf",r:"q",f:"قـ ـقـ ـق"},
+  {a:"ك",n:"Kaf",r:"k",f:"كـ ـكـ ـك"},
+  {a:"ل",n:"Lam",r:"l",f:"لـ ـلـ ـل"},
+  {a:"م",n:"Mim",r:"m",f:"مـ ـمـ ـم"},
+  {a:"ن",n:"Nun",r:"n",f:"نـ ـنـ ـن"},
+  {a:"ه",n:"Ha",r:"h",f:"هـ ـهـ ـه"},
+  {a:"و",n:"Waw",r:"w / ū",f:"و ـو"},
+  {a:"ي",n:"Ya",r:"y / ī",f:"يـ ـيـ ـي"},
+];
+
+function renderAlphabet(){
+  const g=document.getElementById("alphaGrid");
+  if(g.children.length) return;
+  g.innerHTML=ALPHABET.map(l=>`
+    <div class="alpha-card">
+      <span class="alpha-letter">${l.a}</span>
+      <div class="alpha-name">${l.n}</div>
+      <div class="alpha-roman">${l.r}</div>
+      <div class="alpha-forms">${l.f}</div>
+    </div>`).join("");
+}
+
+/* Tajweed rules */
+const TAJWEED=[
+  {color:"#16a34a",name:"Ghunnah (غنة)",
+   desc:"A nasal sound held for 2 counts. Occurs on Noon (ن) or Mim (م) with a shaddah.",
+   ex:"إِنَّ · مِمَّا"},
+  {color:"#2563eb",name:"Ikhfa (إخفاء)",
+   desc:"Hidden pronunciation — Noon Sakin or Tanwin is partially hidden before 15 letters.",
+   ex:"مَنْ كَانَ"},
+  {color:"#dc2626",name:"Idgham (إدغام)",
+   desc:"Merging — Noon Sakin or Tanwin merges into the next letter.",
+   ex:"مَن يَقُولُ"},
+  {color:"#9333ea",name:"Iqlab (إقلاب)",
+   desc:"Conversion — Noon Sakin or Tanwin changes to a Mim sound before Ba (ب).",
+   ex:"مِنْ بَعْدِ"},
+  {color:"#ea580c",name:"Izhar (إظهار)",
+   desc:"Clear pronunciation — Noon Sakin or Tanwin is pronounced clearly before 6 throat letters.",
+   ex:"مَنْ أَرَادَ"},
+  {color:"#ca8a04",name:"Madd (مد)",
+   desc:"Elongation — stretching a vowel sound for 2, 4, or 6 counts depending on the type.",
+   ex:"قَالُوا · جَاءَ"},
+  {color:"#0891b2",name:"Qalqalah (قلقلة)",
+   desc:"Echoing bounce — occurs on letters ق ط ب ج د when they have a sukoon.",
+   ex:"يَطْمَعُ · قَدْ"},
+];
+
+function renderTajweed(){
+  const el=document.getElementById("tajweedList");
+  if(el.children.length) return;
+  el.innerHTML=TAJWEED.map(r=>`
+    <div class="tajweed-rule" style="background:${r.color}15;border:1px solid ${r.color}30">
+      <div class="tajweed-dot" style="background:${r.color}"></div>
+      <div>
+        <div class="tajweed-name" style="color:${r.color}">${r.name}</div>
+        <div class="tajweed-desc">${r.desc}</div>
+        <div class="tajweed-example">${r.ex}</div>
+      </div>
+    </div>`).join("");
+}
+
 </script>
+
+<!-- ══ LEARN PANEL ══ -->
+<div class="learn-panel" id="learnPanel">
+  <div class="learn-header">
+    <span>📚 Learn Arabic & Tajweed</span>
+    <button onclick="closeLearn()">✕ Close</button>
+  </div>
+  <div class="learn-tabs">
+    <button class="learn-tab active" id="ltab1" onclick="switchLTab(1)">🔤 Transliteration</button>
+    <button class="learn-tab" id="ltab2" onclick="switchLTab(2)">أ Alphabet</button>
+    <button class="learn-tab" id="ltab3" onclick="switchLTab(3)">🎨 Tajweed</button>
+  </div>
+  <div class="learn-body" id="learnBody">
+
+    <!-- Tab 1: Transliteration -->
+    <div id="lPane1">
+      <p style="color:#374151;font-size:13px;line-height:1.7;margin-bottom:16px">
+        Transliteration shows Arabic words written in English letters so you can read along 
+        even before learning the Arabic script. It appears below each verse.
+      </p>
+      <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:12px;padding:16px;margin-bottom:16px">
+        <div style="font-weight:700;color:var(--primary);margin-bottom:8px;font-size:14px">Example:</div>
+        <div style="font-family:'Amiri',serif;font-size:24px;direction:rtl;text-align:right;margin-bottom:6px">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+        <div style="font-size:13px;color:#6b7280;font-style:italic">Bismillāhi r-raḥmāni r-raḥīm</div>
+        <div style="font-size:13px;color:#374151;margin-top:4px">In the name of Allah, the Entirely Merciful, the Especially Merciful.</div>
+      </div>
+      <button onclick="toggleTransliteration()" id="transToggleBtn"
+        style="width:100%;padding:12px;border-radius:10px;background:var(--primary);
+        color:white;border:none;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px">
+        Show Transliteration
+      </button>
+      <p style="font-size:11px;color:#9ca3af;line-height:1.6;text-align:center">
+        💡 Tip: Transliteration helps with pronunciation but learning Arabic script 
+        gives you a much deeper connection with the Quran.
+      </p>
+    </div>
+
+    <!-- Tab 2: Arabic Alphabet -->
+    <div id="lPane2" style="display:none">
+      <p style="color:#374151;font-size:13px;line-height:1.7;margin-bottom:12px">
+        Arabic has 28 letters. Each letter changes shape depending on its position in a word.
+      </p>
+      <div class="alpha-grid" id="alphaGrid"></div>
+    </div>
+
+    <!-- Tab 3: Tajweed -->
+    <div id="lPane3" style="display:none">
+      <p style="color:#374151;font-size:13px;line-height:1.7;margin-bottom:12px">
+        Tajweed are the rules of Quran recitation. These are the main rules you will encounter:
+      </p>
+      <div id="tajweedList"></div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
