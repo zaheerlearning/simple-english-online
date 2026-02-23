@@ -717,8 +717,13 @@ body.focus-night .translation{ color:#aaa !important; }
 #kidsMode{
   display:none;
   position:fixed; top:0; left:0; right:0; bottom:0;
-  width:100%; height:100%;
-  background:linear-gradient(160deg,#ecfdf5,#d1fae5);
+  width:100%; height:100%; min-height:100%;
+  min-height:-webkit-fill-available;
+  background-color:#ecfdf5;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 34px, rgba(134,239,172,.2) 34px, rgba(134,239,172,.2) 35px),
+    repeating-linear-gradient(60deg, transparent, transparent 34px, rgba(134,239,172,.15) 34px, rgba(134,239,172,.15) 35px),
+    repeating-linear-gradient(120deg, transparent, transparent 34px, rgba(134,239,172,.15) 34px, rgba(134,239,172,.15) 35px);
   z-index:50000;
   overflow-y:auto; overflow-x:hidden;
   font-family:'Inter',sans-serif;
@@ -726,7 +731,7 @@ body.focus-night .translation{ color:#aaa !important; }
 }
 body.kids-active #kidsMode{ display:block; }
 body.kids-active>*:not(#kidsMode){ display:none !important; }
-.kids-body{ padding:16px; width:100%; box-sizing:border-box; max-width:700px; margin:0 auto; }
+.kids-body{ padding:16px 16px 40px; width:100%; box-sizing:border-box; max-width:700px; margin:0 auto; }
 
 /* Kids header */
 .kids-header{
@@ -748,14 +753,16 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
   color:white; border-radius:10px; padding:7px 14px;
   font-size:12px; font-weight:700; cursor:pointer;
 }
-.kids-tabs{
-  display:flex; gap:6px; justify-content:center;
+.kids-tabs-row{
+  display:flex; gap:6px;
+  padding:3px 12px;
+  justify-content:center;
 }
 .kids-tab{
   background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25);
-  color:white; border-radius:20px; padding:7px 14px;
-  font-size:12px; font-weight:700; cursor:pointer;
-  transition:.2s; white-space:nowrap;
+  color:white; border-radius:20px; padding:6px 12px;
+  font-size:11px; font-weight:700; cursor:pointer;
+  transition:.2s; white-space:nowrap; flex:1;
 }
 .kids-tab.active{
   background:white; color:#166534;
@@ -814,20 +821,22 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
 }
 .kids-verse-nav{
   display:flex; align-items:center; justify-content:center;
-  gap:12px; margin-top:16px;
+  gap:8px; margin-top:14px; flex-wrap:nowrap;
 }
 .kids-nav-btn{
   background:#f0fdf4; border:2px solid #d1fae5;
   color:#166534; border-radius:14px;
-  padding:10px 20px; font-size:16px; font-weight:800;
-  cursor:pointer; transition:.2s;
+  padding:8px 14px; font-size:14px; font-weight:800;
+  cursor:pointer; transition:.2s; flex:1; min-width:0;
+  text-align:center; white-space:nowrap;
 }
 .kids-nav-btn:hover{ background:#d1fae5; }
 .kids-play-btn{
   background:#166534; color:white;
   border:none; border-radius:14px;
-  padding:12px 28px; font-size:16px; font-weight:800;
-  cursor:pointer; transition:.2s;
+  padding:10px 20px; font-size:14px; font-weight:800;
+  cursor:pointer; transition:.2s; flex:2; min-width:0;
+  text-align:center;
 }
 .kids-play-btn:hover{ background:#15803d; }
 
@@ -1472,7 +1481,7 @@ async function fetchPrayerTimes(){
 
     /* Hijri date */
     const h=d.data.date.hijri;
-    pHijriInline.textContent=`${h.day} ${h.month.en} ${h.year} AH`;
+    pHijriInline.textContent=`${h.day} ${h.month.en} ${h.year}`;
 
     buildTimeObjects(now, d.data.timings);
     renderGrid();
@@ -2531,6 +2540,9 @@ function switchKidsTab(n){
     document.getElementById("ktab"+i).classList.toggle("active",i===n);
     document.getElementById("kPane"+i).style.display=i===n?"block":"none";
   });
+  // Scroll active tab into view
+  const activeTab=document.getElementById("ktab"+n);
+  if(activeTab) activeTab.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});
   if(n===5) renderKids40();
 }
 
@@ -2551,14 +2563,10 @@ async function loadKidsSurah(id,name,meaning,count){
     const data=await res.json();
     kidsVerses=data.verses;
     showKidsVerse();
-    // Scroll verse area into view inside kids mode container
+    // Scroll verse area into view
     setTimeout(()=>{
-      const area=document.getElementById("kidsVerseArea");
-      const km=document.getElementById("kidsMode");
-      const areaTop=area.getBoundingClientRect().top;
-      const kmTop=km.getBoundingClientRect().top;
-      km.scrollBy({top:areaTop-kmTop-80,behavior:"smooth"});
-    },300);
+      document.getElementById("kidsVerseArea").scrollIntoView({behavior:"smooth",block:"start"});
+    },400);
   } catch(e){
     document.getElementById("kidsArabic").textContent="Could not load. Check connection.";
   }
@@ -2725,21 +2733,37 @@ function renderKids40(){
       <div class="kids-title">🌟 Quran for Kids</div>
       <button class="kids-exit-btn" onclick="exitKidsMode()">✕ Exit</button>
     </div>
-    <div class="kids-tabs">
-      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">&#9312; Surahs</button>
-      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">&#9313; Duas</button>
-      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">&#9314; Pillars</button>
-      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">&#9315; Seerah</button>
-      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">&#9316; Hadith</button>
-      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">&#9317; Adab</button>
-      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">&#9318; Salah</button>
+    <div class="kids-tabs-row">
+      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:3px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Surahs
+      </button>
+      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:3px"><path d="M6 12 C6 6, 18 6, 18 12"/><path d="M4 17 C4 10, 20 10, 20 17"/><line x1="12" y1="6" x2="12" y2="3"/><line x1="7" y1="8" x2="5" y2="6"/><line x1="17" y1="8" x2="19" y2="6"/></svg>Duas
+      </button>
+      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:3px"><line x1="3" y1="20" x2="21" y2="20"/><rect x="3" y="7" width="2" height="13"/><rect x="7" y="4" width="2" height="16"/><rect x="11" y="2" width="2" height="18"/><rect x="15" y="4" width="2" height="16"/><rect x="19" y="7" width="2" height="13"/></svg>Pillars
+      </button>
+      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Seerah
+      </button>
+    </div>
+    <div class="kids-tabs-row">
+      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:3px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Hadith
+      </button>
+      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:3px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Adab
+      </button>
+      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:3px"><path d="M4 20 L4 12 Q12 2 20 12 L20 20 Z"/><line x1="2" y1="20" x2="22" y2="20"/><line x1="12" y1="2" x2="12" y2="0"/><path d="M14 1 A3 3 0 0 1 10 1" fill="none"/></svg>Salah
+      </button>
     </div>
   </div>
 
   <div class="kids-body">
 
     <!-- TAB 1: SURAHS -->
-    <div id="kPane1">
+    <div id="kPane1" style="display:flex;flex-direction:column;min-height:calc(100vh - 140px)">
       <!-- Age toggle -->
       <div style="display:flex;gap:8px;margin-bottom:14px">
         <button class="kids-age-btn active" id="kAge1" onclick="switchKidsAge(1)">Beginners</button>
@@ -2751,9 +2775,9 @@ function renderKids40(){
         <div class="kids-surah-card" onclick="loadKidsSurah(1,'Al-Fatihah','The Opening',7)" id="ks1"><div class="kids-surah-emoji">📖</div><div class="kids-surah-name">Al-Fatihah</div><div class="kids-surah-meaning">The Opening</div><div class="kids-surah-count">7 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(112,'Al-Ikhlas','Sincerity',4)" id="ks112"><div class="kids-surah-emoji">✨</div><div class="kids-surah-name">Al-Ikhlas</div><div class="kids-surah-meaning">Sincerity</div><div class="kids-surah-count">4 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(113,'Al-Falaq','The Daybreak',5)" id="ks113"><div class="kids-surah-emoji">🌅</div><div class="kids-surah-name">Al-Falaq</div><div class="kids-surah-meaning">The Daybreak</div><div class="kids-surah-count">5 ayahs</div></div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(114,'An-Nas','Mankind',6)" id="ks114"><div class="kids-surah-emoji">👥</div><div class="kids-surah-name">An-Nas</div><div class="kids-surah-meaning">Mankind</div><div class="kids-surah-count">6 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(114,'An-Nas','Mankind',6)" id="ks114"><div class="kids-surah-emoji">🌍</div><div class="kids-surah-name">An-Nas</div><div class="kids-surah-meaning">Mankind</div><div class="kids-surah-count">6 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(108,'Al-Kawthar','Abundance',3)" id="ks108"><div class="kids-surah-emoji">🌊</div><div class="kids-surah-name">Al-Kawthar</div><div class="kids-surah-meaning">Abundance</div><div class="kids-surah-count">3 ayahs</div></div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(110,'An-Nasr','The Help',3)" id="ks110"><div class="kids-surah-emoji">🙏</div><div class="kids-surah-name">An-Nasr</div><div class="kids-surah-meaning">The Help</div><div class="kids-surah-count">3 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(110,'An-Nasr','The Help',3)" id="ks110"><div class="kids-surah-emoji">🌟</div><div class="kids-surah-name">An-Nasr</div><div class="kids-surah-meaning">The Help</div><div class="kids-surah-count">3 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(103,'Al-Asr','The Time',3)" id="ks103"><div class="kids-surah-emoji">⏰</div><div class="kids-surah-name">Al-Asr</div><div class="kids-surah-meaning">The Time</div><div class="kids-surah-count">3 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(107,'Al-Maun','Small Kindnesses',7)" id="ks107"><div class="kids-surah-emoji">💝</div><div class="kids-surah-name">Al-Maun</div><div class="kids-surah-meaning">Small Kindnesses</div><div class="kids-surah-count">7 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(105,'Al-Fil','The Elephant',5)" id="ks105"><div class="kids-surah-emoji">🐘</div><div class="kids-surah-name">Al-Fil</div><div class="kids-surah-meaning">The Elephant</div><div class="kids-surah-count">5 ayahs</div></div>
@@ -2764,7 +2788,7 @@ function renderKids40(){
       <div id="kOlderGrid" class="kids-surah-grid" style="display:none">
         <div class="kids-surah-card" onclick="loadKidsSurah(78,'An-Naba','The News',40)" id="ks78"><div class="kids-surah-emoji">📰</div><div class="kids-surah-name">An-Naba</div><div class="kids-surah-meaning">The News</div><div class="kids-surah-count">40 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(79,'An-Naziat','Those Who Drag',46)" id="ks79"><div class="kids-surah-emoji">⭐</div><div class="kids-surah-name">An-Naziat</div><div class="kids-surah-meaning">Those Who Drag</div><div class="kids-surah-count">46 ayahs</div></div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(80,'Abasa','He Frowned',42)" id="ks80"><div class="kids-surah-emoji">😶</div><div class="kids-surah-name">Abasa</div><div class="kids-surah-meaning">He Frowned</div><div class="kids-surah-count">42 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(80,'Abasa','He Frowned',42)" id="ks80"><div class="kids-surah-emoji">🌿</div><div class="kids-surah-name">Abasa</div><div class="kids-surah-meaning">He Frowned</div><div class="kids-surah-count">42 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(81,'At-Takwir','The Overthrowing',29)" id="ks81"><div class="kids-surah-emoji">🌌</div><div class="kids-surah-name">At-Takwir</div><div class="kids-surah-meaning">The Overthrowing</div><div class="kids-surah-count">29 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(82,'Al-Infitar','The Cleaving',19)" id="ks82"><div class="kids-surah-emoji">💫</div><div class="kids-surah-name">Al-Infitar</div><div class="kids-surah-meaning">The Cleaving</div><div class="kids-surah-count">19 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(83,'Al-Mutaffifin','The Defrauders',36)" id="ks83"><div class="kids-surah-emoji">⚖️</div><div class="kids-surah-name">Al-Mutaffifin</div><div class="kids-surah-meaning">The Defrauders</div><div class="kids-surah-count">36 ayahs</div></div>
@@ -2793,12 +2817,12 @@ function renderKids40(){
         <div class="kids-surah-card" onclick="loadKidsSurah(106,'Quraysh','Quraysh',4)" id="ks106"><div class="kids-surah-emoji">🕋</div><div class="kids-surah-name">Quraysh</div><div class="kids-surah-meaning">Quraysh</div><div class="kids-surah-count">4 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(107,'Al-Maun','Small Kindnesses',7)" id="ks107b"><div class="kids-surah-emoji">💝</div><div class="kids-surah-name">Al-Maun</div><div class="kids-surah-meaning">Small Kindnesses</div><div class="kids-surah-count">7 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(108,'Al-Kawthar','Abundance',3)" id="ks108b"><div class="kids-surah-emoji">🌊</div><div class="kids-surah-name">Al-Kawthar</div><div class="kids-surah-meaning">Abundance</div><div class="kids-surah-count">3 ayahs</div></div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(109,'Al-Kafirun','The Disbelievers',6)" id="ks109"><div class="kids-surah-emoji">🤝</div><div class="kids-surah-name">Al-Kafirun</div><div class="kids-surah-meaning">The Disbelievers</div><div class="kids-surah-count">6 ayahs</div></div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(110,'An-Nasr','The Help',3)" id="ks110b"><div class="kids-surah-emoji">🙏</div><div class="kids-surah-name">An-Nasr</div><div class="kids-surah-meaning">The Help</div><div class="kids-surah-count">3 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(109,'Al-Kafirun','The Disbelievers',6)" id="ks109"><div class="kids-surah-emoji">⚖️</div><div class="kids-surah-name">Al-Kafirun</div><div class="kids-surah-meaning">The Disbelievers</div><div class="kids-surah-count">6 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(110,'An-Nasr','The Help',3)" id="ks110b"><div class="kids-surah-emoji">🌟</div><div class="kids-surah-name">An-Nasr</div><div class="kids-surah-meaning">The Help</div><div class="kids-surah-count">3 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(111,'Al-Masad','The Palm Fibre',5)" id="ks111b"><div class="kids-surah-emoji">🔥</div><div class="kids-surah-name">Al-Masad</div><div class="kids-surah-meaning">The Palm Fibre</div><div class="kids-surah-count">5 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(112,'Al-Ikhlas','Sincerity',4)" id="ks112b"><div class="kids-surah-emoji">✨</div><div class="kids-surah-name">Al-Ikhlas</div><div class="kids-surah-meaning">Sincerity</div><div class="kids-surah-count">4 ayahs</div></div>
         <div class="kids-surah-card" onclick="loadKidsSurah(113,'Al-Falaq','The Daybreak',5)" id="ks113b"><div class="kids-surah-emoji">🌅</div><div class="kids-surah-name">Al-Falaq</div><div class="kids-surah-meaning">The Daybreak</div><div class="kids-surah-count">5 ayahs</div></div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(114,'An-Nas','Mankind',6)" id="ks114b"><div class="kids-surah-emoji">👥</div><div class="kids-surah-name">An-Nas</div><div class="kids-surah-meaning">Mankind</div><div class="kids-surah-count">6 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(114,'An-Nas','Mankind',6)" id="ks114b"><div class="kids-surah-emoji">🌍</div><div class="kids-surah-name">An-Nas</div><div class="kids-surah-meaning">Mankind</div><div class="kids-surah-count">6 ayahs</div></div>
       </div>
 
       <!-- Verse display area -->
@@ -2943,7 +2967,7 @@ function renderKids40(){
         </div>
       </div>
       <div class="kids-pillar-card">
-        <div class="kids-pillar-icon">🙏</div>
+        <div class="kids-pillar-icon">🕌</div>
         <div>
           <div class="kids-pillar-name">2. Salah — Prayer</div>
           <div class="kids-pillar-arabic">الصَّلَاة</div>
@@ -2995,7 +3019,7 @@ function renderKids40(){
         <div class="kids-pillar-desc">His mother Aminah passed away when he was 6 years old. His grandfather Abdul Muttalib then cared for him with great love. When Abdul Muttalib passed away two years later, his uncle Abu Talib took him in and protected him throughout his life.</div>
       </div></div>
 
-      <div class="kids-pillar-card"><div class="kids-pillar-icon">🤝</div><div>
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">⭐</div><div>
         <div class="kids-pillar-name">Al-Amin — The Trustworthy</div>
         <div class="kids-pillar-desc">Before becoming a Prophet, he was known throughout Makkah as Al-Amin — The Trustworthy — and As-Sadiq — The Truthful. Even his enemies trusted him with their valuables. When he married Khadijah RA at age 25, she was 40 and chose him for his honesty and character.</div>
       </div></div>
@@ -3075,7 +3099,7 @@ function renderKids40(){
         <div class="kids-dua-meaning">The Prophet ﷺ said: "He is not one of us who does not respect the elderly." Always greet elders first, let them speak, give them your seat, and never raise your voice at them — especially your parents.</div>
       </div>
 
-      <div class="kids-dua-card"><div class="kids-dua-title">🤝 Keeping Promises</div>
+      <div class="kids-dua-card"><div class="kids-dua-title">📋 Keeping Promises</div>
         <div class="kids-dua-meaning">The Prophet ﷺ said the signs of a hypocrite are three: when he speaks he lies, when he promises he breaks it, when trusted he betrays. A Muslim always keeps their word — even with children.</div>
       </div>
 
@@ -3091,7 +3115,7 @@ function renderKids40(){
         <div class="kids-dua-meaning">The Prophet ﷺ said: "Whoever believes in Allah and the Last Day should speak good or remain silent." Never lie, backbite, gossip, or mock others. Words can hurt more than actions — use them kindly.</div>
       </div>
 
-      <div class="kids-dua-card"><div class="kids-dua-title">😊 Smiling</div>
+      <div class="kids-dua-card"><div class="kids-dua-title">✨ Smiling</div>
         <div class="kids-dua-arabic">تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ صَدَقَةٌ</div>
         <div class="kids-dua-translit">Tabassumukat fī wajhi akhīka ṣadaqah</div>
         <div class="kids-dua-meaning">The Prophet ﷺ said: "Your smile in the face of your brother is charity." Smiling costs nothing but means everything. It is one of the easiest forms of sadaqah.</div>
