@@ -1514,7 +1514,15 @@ function updateStrip(){
   if(!pTimeObjs) return;
   const now=new Date();
   let next=PRAYERS.find(p=>pTimeObjs[p.key]&&pTimeObjs[p.key]>now);
-  if(!next) next=PRAYERS[0];
+  if(!next){
+    // All prayers passed — next is Fajr tomorrow
+    next=PRAYERS[0];
+    if(pTimeObjs[next.key] && pTimeObjs[next.key]<=now){
+      const tom=new Date(pTimeObjs[next.key]);
+      tom.setDate(tom.getDate()+1);
+      pTimeObjs[next.key]=tom;
+    }
+  }
   // Current prayer = last prayer whose time has passed
   let curr=null;
   for(const p of PRAYERS){ if(pTimeObjs[p.key]&&pTimeObjs[p.key]<=now) curr=p; }
@@ -2691,13 +2699,13 @@ function renderKids40(){
       <button class="kids-exit-btn" onclick="exitKidsMode()">✕ Exit</button>
     </div>
     <div class="kids-tabs">
-      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">&#128214; Surahs</button>
-      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">&#128591; Duas</button>
-      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">&#128331; Pillars</button>
-      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">&#11088; Seerah</button>
-      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">&#128221; Hadith</button>
-      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">&#10024; Adab</button>
-      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">&#128591; Salah</button>
+      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">Surahs</button>
+      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">Duas</button>
+      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">Pillars</button>
+      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">Seerah</button>
+      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">Hadith</button>
+      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">Adab</button>
+      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">Salah</button>
     </div>
   </div>
 
@@ -2707,8 +2715,8 @@ function renderKids40(){
     <div id="kPane1">
       <!-- Age toggle -->
       <div style="display:flex;gap:8px;margin-bottom:14px">
-        <button class="kids-age-btn active" id="kAge1" onclick="switchKidsAge(1)">📗 Beginners</button>
-        <button class="kids-age-btn" id="kAge2" onclick="switchKidsAge(2)">📘 Advanced</button>
+        <button class="kids-age-btn active" id="kAge1" onclick="switchKidsAge(1)">Beginners</button>
+        <button class="kids-age-btn" id="kAge2" onclick="switchKidsAge(2)">Advanced</button>
       </div>
 
       <!-- Young grid (6-10) -->
