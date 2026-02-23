@@ -718,14 +718,17 @@ body.focus-night .translation{ color:#aaa !important; }
 ══════════════════════════════════════════ */
 #kidsMode{
   display:none;
-  position:fixed; inset:0;
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  width:100%; height:100%;
   background:linear-gradient(160deg,#ecfdf5,#d1fae5);
   z-index:50000;
-  overflow-y:auto;
+  overflow-y:auto; overflow-x:hidden;
   font-family:'Inter',sans-serif;
+  -webkit-overflow-scrolling:touch;
 }
 body.kids-active #kidsMode{ display:block; }
 body.kids-active>*:not(#kidsMode){ display:none !important; }
+.kids-body{ padding:16px; width:100%; box-sizing:border-box; max-width:700px; margin:0 auto; }
 
 /* Kids header */
 .kids-header{
@@ -761,7 +764,6 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
 }
 
 /* Kids body */
-.kids-body{ padding:16px; max-width:700px; margin:0 auto; }
 
 /* Surah cards */
 .kids-surah-grid{
@@ -1524,15 +1526,26 @@ function updateStrip(){
   const h=Math.floor(diff/3600000);
   const m=Math.floor((diff%3600000)/60000);
   const s=Math.floor((diff%60000)/1000);
-  const countdownStr=h>0?`${h}h ${String(m).padStart(2,"0")}m`:`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-  pCountdown.textContent=countdownStr;
-  // Label: "Dhuhr ends in" or "Asr in"
-  if(curr){
-    pCountdownLabel.textContent=getPrayerName(curr)+" ends in";
+  const totalSec=Math.floor(diff/1000);
+  let countdownStr;
+  if(totalSec===0){
+    countdownStr="--:--";
+  } else if(h>0){
+    countdownStr=`${h}h ${String(m).padStart(2,"0")}m`;
   } else {
-    pCountdownLabel.textContent=getPrayerName(next)+" starts in";
+    countdownStr=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
   }
-  if(s===0) renderGrid();
+  pCountdown.textContent=countdownStr;
+  // Label: "Dhuhr ENDS IN" 
+  const lbl=document.getElementById("pCountdownLabel");
+  if(lbl){
+    if(curr && totalSec>0){
+      lbl.textContent=getPrayerName(curr).toUpperCase()+" ENDS IN";
+    } else {
+      lbl.textContent=getPrayerName(next).toUpperCase()+" STARTS IN";
+    }
+  }
+  if(totalSec===0) fetchPrayerTimes(); // refresh at prayer time
 }
 
 function checkAzanTrigger(){
@@ -2503,10 +2516,14 @@ async function loadKidsSurah(id,name,meaning,count){
     const data=await res.json();
     kidsVerses=data.verses;
     showKidsVerse();
-    // Scroll verse area into view smoothly
+    // Scroll verse area into view inside kids mode container
     setTimeout(()=>{
-      document.getElementById("kidsVerseArea").scrollIntoView({behavior:"smooth",block:"start"});
-    },200);
+      const area=document.getElementById("kidsVerseArea");
+      const km=document.getElementById("kidsMode");
+      const areaTop=area.getBoundingClientRect().top;
+      const kmTop=km.getBoundingClientRect().top;
+      km.scrollBy({top:areaTop-kmTop-80,behavior:"smooth"});
+    },300);
   } catch(e){
     document.getElementById("kidsArabic").textContent="Could not load. Check connection.";
   }
@@ -2674,13 +2691,13 @@ function renderKids40(){
       <button class="kids-exit-btn" onclick="exitKidsMode()">✕ Exit</button>
     </div>
     <div class="kids-tabs">
-      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">📖 Surahs</button>
-      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">🤲 Duas</button>
-      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">🕌 5 Pillars</button>
-      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">🌹 Seerah</button>
-      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">📿 40 Hadiths</button>
-      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">😊 Adab</button>
-      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">🙏 Salah</button>
+      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">&#128214; Surahs</button>
+      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">&#128591; Duas</button>
+      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">&#128331; Pillars</button>
+      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">&#11088; Seerah</button>
+      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">&#128221; Hadith</button>
+      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">&#10024; Adab</button>
+      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">&#128591; Salah</button>
     </div>
   </div>
 
@@ -2690,8 +2707,8 @@ function renderKids40(){
     <div id="kPane1">
       <!-- Age toggle -->
       <div style="display:flex;gap:8px;margin-bottom:14px">
-        <button class="kids-age-btn active" id="kAge1" onclick="switchKidsAge(1)">🌱 Young (6–10)</button>
-        <button class="kids-age-btn" id="kAge2" onclick="switchKidsAge(2)">🌟 Older (11–15)</button>
+        <button class="kids-age-btn active" id="kAge1" onclick="switchKidsAge(1)">📗 Beginners</button>
+        <button class="kids-age-btn" id="kAge2" onclick="switchKidsAge(2)">📘 Advanced</button>
       </div>
 
       <!-- Young grid (6-10) -->
@@ -2838,7 +2855,7 @@ function renderKids40(){
       </div>
 
       <div class="kids-dua-card">
-        <div class="kids-dua-title">😴 Before Sleeping</div>
+        <div class="kids-dua-title">🌙 Before Sleeping</div>
         <div class="kids-dua-arabic">بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا</div>
         <div class="kids-dua-translit">Bismika Allāhumma amūtu wa aḥyā</div>
         <div class="kids-dua-meaning">In Your name O Allah I die and I live. — Bukhari. Also recite Ayatul Kursi before sleeping — the Prophet ﷺ said it protects you all night.</div>
@@ -2852,7 +2869,7 @@ function renderKids40(){
       </div>
 
       <div class="kids-dua-card">
-        <div class="kids-dua-title">😣 When in Difficulty</div>
+        <div class="kids-dua-title">🤲 When in Difficulty</div>
         <div class="kids-dua-arabic">لَا إِلَهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ</div>
         <div class="kids-dua-translit">Lā ilāha illā anta subḥānaka innī kuntu minaẓ-ẓālimīn</div>
         <div class="kids-dua-meaning">There is no god but You, glory be to You, indeed I was among the wrongdoers. — This is the dua of Prophet Yunus ﷺ from inside the whale. Allah responded and saved him.</div>
@@ -2933,12 +2950,12 @@ function renderKids40(){
         <div class="kids-pillar-desc">The Prophet Muhammad ﷺ was born in Makkah. That same year, Abraha came with an army of elephants to destroy the Kaaba — but Allah sent birds that destroyed the army. His father Abdullah had passed away before his birth. His mother was Aminah bint Wahb.</div>
       </div></div>
 
-      <div class="kids-pillar-card"><div class="kids-pillar-icon">🤱</div><div>
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🌿</div><div>
         <div class="kids-pillar-name">Childhood with Halimah</div>
         <div class="kids-pillar-desc">As was the custom in Arabia, the Prophet ﷺ was sent to the desert to be raised by a foster mother named Halimah As-Sadiyyah. The family noticed blessings in their home from the moment he arrived. He returned to his mother Aminah at age 4-5.</div>
       </div></div>
 
-      <div class="kids-pillar-card"><div class="kids-pillar-icon">👶</div><div>
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">⭐</div><div>
         <div class="kids-pillar-name">Orphaned — Age 6</div>
         <div class="kids-pillar-desc">His mother Aminah passed away when he was 6 years old. His grandfather Abdul Muttalib then cared for him with great love. When Abdul Muttalib passed away two years later, his uncle Abu Talib took him in and protected him throughout his life.</div>
       </div></div>
@@ -2958,7 +2975,7 @@ function renderKids40(){
         <div class="kids-pillar-desc">The first to believe were his wife Khadijah RA, his cousin Ali RA (then a young boy), his close friend Abu Bakr RA, and his freed slave Zayd RA. For three years he called to Islam quietly. Then Allah commanded him to call people openly.</div>
       </div></div>
 
-      <div class="kids-pillar-card"><div class="kids-pillar-icon">😔</div><div>
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">💧</div><div>
         <div class="kids-pillar-name">Year of Sorrow — 619 CE</div>
         <div class="kids-pillar-desc">In one year, the Prophet ﷺ lost both his beloved wife Khadijah RA and his uncle Abu Talib who had protected him. This year is called the Year of Sorrow. Despite this pain, he continued his mission with patience and trust in Allah.</div>
       </div></div>
