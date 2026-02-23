@@ -71,11 +71,14 @@ button{ background:var(--accent); color:white; }
 
 /* Date/time row - always visible */
 .p-datetime-row{
-  display:flex; align-items:center; justify-content:center;
-  gap:0; padding:5px 14px 5px;
-  flex-wrap:wrap; overflow:visible;
+  display:flex; align-items:center; justify-content:flex-start;
+  gap:0; padding:5px 10px;
+  flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden;
   border-bottom:1px solid rgba(255,255,255,.08);
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
 }
+.p-datetime-row::-webkit-scrollbar{ display:none; }
 .p-dt-item{
   display:flex; align-items:center; gap:4px;
   padding:2px 8px; flex-shrink:0;
@@ -2476,10 +2479,11 @@ function exitKidsMode(){
 }
 
 function switchKidsTab(n){
-  [1,2,3].forEach(i=>{
+  [1,2,3,4,5,6].forEach(i=>{
     document.getElementById("ktab"+i).classList.toggle("active",i===n);
     document.getElementById("kPane"+i).style.display=i===n?"block":"none";
   });
+  if(n===5) renderKids40();
 }
 
 async function loadKidsSurah(id,name,meaning,count){
@@ -2499,6 +2503,10 @@ async function loadKidsSurah(id,name,meaning,count){
     const data=await res.json();
     kidsVerses=data.verses;
     showKidsVerse();
+    // Scroll verse area into view smoothly
+    setTimeout(()=>{
+      document.getElementById("kidsVerseArea").scrollIntoView({behavior:"smooth",block:"start"});
+    },200);
   } catch(e){
     document.getElementById("kidsArabic").textContent="Could not load. Check connection.";
   }
@@ -2537,6 +2545,65 @@ function kidsPlayVerse(){
       setTimeout(()=>kidsPlayVerse(),600);
     }
   };
+}
+
+/* ── 40 Hadiths for Kids ── */
+const KIDS_40=[
+  {n:1,e:"Actions are judged by intentions.",s:"Bukhari 1"},
+  {n:2,e:"None of you truly believes until he loves for his brother what he loves for himself.",s:"Bukhari 13"},
+  {n:3,e:"The strong person is not the one who wrestles others down, but the one who controls himself when angry.",s:"Bukhari 6114"},
+  {n:4,e:"Cleanliness is half of faith.",s:"Muslim 223"},
+  {n:5,e:"Smiling at your brother is charity.",s:"Tirmidhi 1956"},
+  {n:6,e:"The merciful are shown mercy by the Most Merciful. Be merciful to those on earth and the One above the heavens will have mercy upon you.",s:"Tirmidhi 1924"},
+  {n:7,e:"Whoever believes in Allah and the Last Day should speak good or remain silent.",s:"Bukhari 6018"},
+  {n:8,e:"Do not consider any act of kindness too small, even meeting your brother with a cheerful face.",s:"Muslim 2626"},
+  {n:9,e:"The best among you are those with the best manners and character.",s:"Bukhari 3559"},
+  {n:10,e:"Pay the worker his wages before his sweat dries.",s:"Ibn Majah 2443"},
+  {n:11,e:"Seeking knowledge is an obligation upon every Muslim.",s:"Ibn Majah 224"},
+  {n:12,e:"Whoever follows a path seeking knowledge, Allah will make easy for him a path to Paradise.",s:"Muslim 2699"},
+  {n:13,e:"The best of you are those who learn the Quran and teach it.",s:"Bukhari 5027"},
+  {n:14,e:"Allah is kind and loves kindness in all matters.",s:"Bukhari 6927"},
+  {n:15,e:"Make things easy and do not make them difficult. Give good news and do not drive people away.",s:"Bukhari 69"},
+  {n:16,e:"Feed the hungry, visit the sick, and free the captive.",s:"Bukhari 5373"},
+  {n:17,e:"The most beloved deeds to Allah are those done consistently, even if small.",s:"Bukhari 6465"},
+  {n:18,e:"Paradise lies at the feet of your mother.",s:"Nasai 3104"},
+  {n:19,e:"A man's status is raised by his good character even if he has few good deeds.",s:"Tabarani"},
+  {n:20,e:"Be in this world as though you are a stranger or a traveller passing through.",s:"Bukhari 6416"},
+  {n:21,e:"Allah does not judge you by your appearance or wealth, but by your hearts and deeds.",s:"Muslim 2564"},
+  {n:22,e:"Whoever removes a hardship from a believer, Allah will remove a hardship from him on the Day of Judgement.",s:"Muslim 2699"},
+  {n:23,e:"The upper hand is better than the lower hand — the giver is better than the receiver.",s:"Bukhari 1429"},
+  {n:24,e:"Envy is not allowed except in two cases — a person given wealth who spends it righteously, and a person given knowledge who acts on it.",s:"Bukhari 73"},
+  {n:25,e:"Do not waste water even if you are washing at a flowing river.",s:"Ahmad"},
+  {n:26,e:"Every good deed is charity.",s:"Muslim 1005"},
+  {n:27,e:"A good word is charity.",s:"Bukhari 2989"},
+  {n:28,e:"Removing something harmful from the road is charity.",s:"Bukhari 2989"},
+  {n:29,e:"The world is a prison for the believer and a paradise for the disbeliever.",s:"Muslim 2956"},
+  {n:30,e:"Whoever is not thankful to people is not thankful to Allah.",s:"Tirmidhi 1954"},
+  {n:31,e:"Truthfulness leads to righteousness and righteousness leads to Paradise.",s:"Bukhari 6094"},
+  {n:32,e:"It is enough of a sin for a person to neglect those he is responsible for feeding.",s:"Abu Dawud 1692"},
+  {n:33,e:"The one who looks after a widow or a poor person is like a warrior fighting for Allah.",s:"Bukhari 5353"},
+  {n:34,e:"When a man dies, his deeds end except for three — ongoing charity, knowledge others benefit from, or a righteous child who prays for him.",s:"Muslim 1631"},
+  {n:35,e:"Two blessings which many people waste — health and free time.",s:"Bukhari 6412"},
+  {n:36,e:"Take advantage of your youth before your old age, your health before your illness.",s:"Bayhaqi"},
+  {n:37,e:"The best of you are those who are best to their families.",s:"Tirmidhi 3895"},
+  {n:38,e:"A person is on the religion of his friend, so let each of you look at who he befriends.",s:"Tirmidhi 2378"},
+  {n:39,e:"None of you should wish for death because of a hardship that has come to him.",s:"Bukhari 5671"},
+  {n:40,e:"Allah said: I am as my servant thinks of Me, so let him think of Me however he wishes.",s:"Bukhari 7405"},
+];
+
+function renderKids40(){
+  const el=document.getElementById("kids40List");
+  if(el.children.length) return;
+  el.innerHTML=KIDS_40.map(h=>`
+    <div class="kids-dua-card" style="display:flex;gap:12px;align-items:flex-start">
+      <div style="background:#166534;color:white;border-radius:50%;width:32px;height:32px;
+        display:flex;align-items:center;justify-content:center;font-weight:800;
+        font-size:13px;flex-shrink:0">${h.n}</div>
+      <div>
+        <div style="font-size:14px;color:#1a1a1a;line-height:1.7;margin-bottom:4px">"${h.e}"</div>
+        <div style="font-size:11px;color:#6b7280;font-weight:600">${h.s}</div>
+      </div>
+    </div>`).join("");
 }
 
 </script>
@@ -2610,6 +2677,9 @@ function kidsPlayVerse(){
       <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">📖 Surahs</button>
       <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">🤲 Duas</button>
       <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">🕌 5 Pillars</button>
+      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">🌹 Seerah</button>
+      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">📿 40 Hadiths</button>
+      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">😊 Adab</button>
     </div>
   </div>
 
@@ -2779,6 +2849,106 @@ function kidsPlayVerse(){
           <div class="kids-pillar-arabic">الْحَجّ</div>
           <div class="kids-pillar-desc">If a Muslim is healthy and can afford it, they must visit Makkah at least once in their life. Millions of Muslims go together every year.</div>
         </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: SEERAH -->
+    <div id="kPane4" style="display:none">
+      <p style="font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.7">The life of Prophet Muhammad ﷺ — these are the well-known milestones that all Muslims agree upon.</p>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🌟</div><div>
+        <div class="kids-pillar-name">Birth — approximately 570 CE</div>
+        <div class="kids-pillar-desc">The Prophet Muhammad ﷺ was born in Makkah in the Year of the Elephant — the same year Abraha tried to destroy the Kaaba with elephants but Allah protected it. His father Abdullah had passed away before his birth and his mother was Aminah bint Wahb.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">👶</div><div>
+        <div class="kids-pillar-name">Early Life</div>
+        <div class="kids-pillar-desc">His mother Aminah passed away when he was just 6 years old. He was then cared for by his grandfather Abdul Muttalib and later his uncle Abu Talib. He was known in Makkah as Al-Amin — The Trustworthy — because of his honesty.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">📖</div><div>
+        <div class="kids-pillar-name">First Revelation — 610 CE, Age 40</div>
+        <div class="kids-pillar-desc">While meditating in the Cave of Hira on Jabal al-Nour (Mountain of Light) near Makkah, the Angel Jibreel (Gabriel) came to him and revealed the first ayahs of the Quran: "Read in the name of your Lord who created." This was the beginning of his prophethood.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🕊️</div><div>
+        <div class="kids-pillar-name">First Muslims</div>
+        <div class="kids-pillar-desc">The first to believe in him were his beloved wife Khadijah RA, his cousin Ali ibn Abi Talib RA, his close friend Abu Bakr As-Siddiq RA, and his freed slave Zayd ibn Harithah RA. They accepted Islam when most of Makkah rejected the message.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🚶</div><div>
+        <div class="kids-pillar-name">The Hijra — 622 CE</div>
+        <div class="kids-pillar-desc">After years of persecution in Makkah, the Prophet ﷺ and his companions migrated to Madinah. This migration — called the Hijra — was so important that Muslims use it as the starting point of the Islamic calendar. Year 1 AH begins from this migration.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🕋</div><div>
+        <div class="kids-pillar-name">Conquest of Makkah — 630 CE</div>
+        <div class="kids-pillar-desc">Eight years after the Hijra, the Prophet ﷺ returned to Makkah with 10,000 companions. He entered peacefully and forgave the people of Makkah who had persecuted the Muslims for years. This was one of the greatest acts of mercy in history.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">📜</div><div>
+        <div class="kids-pillar-name">The Farewell Sermon — 632 CE</div>
+        <div class="kids-pillar-desc">On his final Hajj, the Prophet ﷺ gave a sermon to over 100,000 companions on Mount Arafah. He said: "All mankind is from Adam and Eve. An Arab has no superiority over a non-Arab, nor a non-Arab over an Arab. The best among you is the most righteous."</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🌹</div><div>
+        <div class="kids-pillar-name">Passing Away — 632 CE, Age 63</div>
+        <div class="kids-pillar-desc">The Prophet ﷺ passed away on the 12th of Rabi al-Awwal in Madinah at the age of approximately 63. He was buried in his room, which is now inside the Prophet's Mosque in Madinah. May Allah's peace and blessings be upon him.</div>
+      </div></div>
+    </div>
+
+    <!-- TAB 5: 40 HADITHS FOR KIDS -->
+    <div id="kPane5" style="display:none">
+      <p style="font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.7">40 authentic hadiths from Sahih Bukhari and Sahih Muslim — simple, short, and perfect to memorise.</p>
+      <div id="kids40List"></div>
+    </div>
+
+    <!-- TAB 6: ISLAMIC MANNERS (ADAB) -->
+    <div id="kPane6" style="display:none">
+      <p style="font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.7">Good manners are a big part of Islam. The Prophet ﷺ said: "The best among you are those with the best manners."</p>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">👋 Greeting</div>
+        <div class="kids-dua-arabic">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ</div>
+        <div class="kids-dua-translit">As-salāmu ʿalaykum wa raḥmatullāh</div>
+        <div class="kids-dua-meaning">Always greet Muslims with Salaam — it means "Peace be upon you and the mercy of Allah." The Prophet ﷺ said spreading Salaam spreads love between Muslims.</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">🍽️ Eating Manners</div>
+        <div class="kids-dua-meaning">• Eat with your right hand<br>• Say Bismillah before eating<br>• Eat what is in front of you<br>• Do not blow on hot food<br>• Say Alhamdulillah when finished<br>• Never waste food — the Prophet ﷺ said wasting is forbidden</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">👴 Respecting Elders</div>
+        <div class="kids-dua-meaning">The Prophet ﷺ said: "He is not one of us who does not respect the elderly." Always greet elders first, let them speak, give them your seat, and never raise your voice at them — especially your parents.</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">🤝 Keeping Promises</div>
+        <div class="kids-dua-meaning">The Prophet ﷺ said the signs of a hypocrite are three: when he speaks he lies, when he promises he breaks it, when trusted he betrays. A Muslim always keeps their word — even with children.</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">🐾 Kindness to Animals</div>
+        <div class="kids-dua-meaning">The Prophet ﷺ said a woman entered Hellfire because she locked up a cat without feeding it. And a sinful man was forgiven because he gave water to a thirsty dog. Islam teaches us to be kind to all of Allah's creatures.</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">💧 Not Wasting Water</div>
+        <div class="kids-dua-meaning">The Prophet ﷺ said do not waste water even if you are by a flowing river. Use only what you need for wudu and washing. Wasting water is disliked in Islam even when water is plentiful.</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">🗣️ Watching Your Words</div>
+        <div class="kids-dua-meaning">The Prophet ﷺ said: "Whoever believes in Allah and the Last Day should speak good or remain silent." Never lie, backbite, gossip, or mock others. Words can hurt more than actions — use them kindly.</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">😊 Smiling</div>
+        <div class="kids-dua-arabic">تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ صَدَقَةٌ</div>
+        <div class="kids-dua-translit">Tabassumukat fī wajhi akhīka ṣadaqah</div>
+        <div class="kids-dua-meaning">The Prophet ﷺ said: "Your smile in the face of your brother is charity." Smiling costs nothing but means everything. It is one of the easiest forms of sadaqah.</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">🏠 Entering a Home</div>
+        <div class="kids-dua-meaning">Always knock or ring the bell and wait. Greet with Salaam before entering. Do not enter without permission even if the door is open. If no one answers after three tries, go away — this is the Sunnah of the Prophet ﷺ.</div>
+      </div>
+
+      <div class="kids-dua-card"><div class="kids-dua-title">📱 Using Your Time Well</div>
+        <div class="kids-dua-meaning">The Prophet ﷺ said: "Two blessings which many people waste — health and free time." Islam encourages us to use time wisely. Read Quran, help at home, learn something new, be kind. Every good deed is recorded.</div>
       </div>
     </div>
 
