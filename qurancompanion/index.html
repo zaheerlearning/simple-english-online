@@ -72,13 +72,16 @@ button{ background:var(--accent); color:white; }
 /* Date/time row - always visible */
 .p-datetime-row{
   display:flex; align-items:center; justify-content:flex-start;
-  gap:0; padding:5px 10px;
+  gap:0; padding:5px 10px 5px 10px;
   flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden;
   border-bottom:1px solid rgba(255,255,255,.08);
   scrollbar-width:none;
   -webkit-overflow-scrolling:touch;
 }
 .p-datetime-row::-webkit-scrollbar{ display:none; }
+.p-datetime-row::after{
+  content:""; display:block; min-width:16px; flex-shrink:0;
+}
 .p-dt-item{
   display:flex; align-items:center; gap:4px;
   padding:2px 8px; flex-shrink:0;
@@ -978,8 +981,8 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
       <span class="p-dt-label">Hijri</span>
       <span class="p-dt-value" id="pHijriInline">--</span>
     </div>
-    <div class="p-dt-item" id="pWeatherItem" style="display:none">
-      <span class="p-dt-value" id="pWeather">--</span>
+    <div class="p-dt-item" id="pWeatherItem" style="display:none;flex-shrink:0">
+      <span class="p-dt-value" id="pWeather" style="white-space:nowrap;min-width:50px">--</span>
     </div>
   </div>
 
