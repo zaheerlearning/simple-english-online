@@ -878,6 +878,15 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
   font-size:13px; color:#6b7280; line-height:1.6;
 }
 
+.kids-age-btn{
+  flex:1; padding:9px 8px; border-radius:20px;
+  background:#f0fdf4; border:2px solid #d1fae5;
+  color:#6b7280; font-size:13px; font-weight:700;
+  cursor:pointer; transition:.2s; text-align:center;
+}
+.kids-age-btn.active{
+  background:#166534; color:white; border-color:#166534;
+}
 @media(max-width:420px){
   .kids-surah-grid{ grid-template-columns:1fr 1fr; gap:8px; }
   .kids-surah-card{ padding:12px 8px; }
@@ -2443,6 +2452,93 @@ function renderTajweed(){
     </div>`).join("");
 }
 
+/* ═══════════════════════════════════════════
+   KIDS MODE
+═══════════════════════════════════════════ */
+function enterKidsMode(){
+  document.body.classList.add("kids-active");
+  loadKidsSurah(1,"Al-Fatihah","The Opening",7);
+}
+
+function switchKidsAge(n){
+  [1,2].forEach(i=>{
+    document.getElementById("kAge"+i).classList.toggle("active",i===n);
+  });
+  document.getElementById("kYoungGrid").style.display=n===1?"grid":"none";
+  document.getElementById("kOlderGrid").style.display=n===2?"grid":"none";
+  document.getElementById("kidsVerseArea").style.display="none";
+  kidsAudio.pause();
+}
+
+function exitKidsMode(){
+  document.body.classList.remove("kids-active");
+  kidsAudio.pause();
+}
+
+function switchKidsTab(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById("ktab"+i).classList.toggle("active",i===n);
+    document.getElementById("kPane"+i).style.display=i===n?"block":"none";
+  });
+}
+
+async function loadKidsSurah(id,name,meaning,count){
+  document.querySelectorAll(".kids-surah-card").forEach(c=>c.classList.remove("active"));
+  const card=document.getElementById("ks"+id);
+  if(card) card.classList.add("active");
+  kidsCurrentSurah=id;
+  kidsIndex=0;
+  const area=document.getElementById("kidsVerseArea");
+  area.style.display="block";
+  document.getElementById("kidsArabic").textContent="⏳ Loading…";
+  document.getElementById("kidsTranslit").textContent="";
+  document.getElementById("kidsTrans").textContent="";
+  try{
+    const url=`https://api.quran.com/api/v4/verses/by_chapter/${id}?translations=20&fields=text_uthmani&words=true&word_fields=text_uthmani,translation,transliteration&per_page=50`;
+    const res=await fetch(url);
+    const data=await res.json();
+    kidsVerses=data.verses;
+    showKidsVerse();
+  } catch(e){
+    document.getElementById("kidsArabic").textContent="Could not load. Check connection.";
+  }
+}
+
+function showKidsVerse(){
+  if(!kidsVerses.length) return;
+  const v=kidsVerses[kidsIndex];
+  const ayahNum=v.verse_key.split(":")[1];
+  document.getElementById("kidsArabic").textContent=v.text_uthmani;
+  document.getElementById("kidsAyahNum").textContent=ayahNum;
+  const translit=v.words?v.words.map(w=>w.transliteration?.text||"").filter(Boolean).join(" "):"";
+  document.getElementById("kidsTranslit").textContent=translit;
+  const trans=(v.translations?.[0]?.text||"").replace(/<[^>]+>/g,"").replace(/[0-9]/g,"").trim();
+  document.getElementById("kidsTrans").textContent=trans;
+}
+
+function kidsNavVerse(dir){
+  kidsAudio.pause();
+  kidsIndex=Math.max(0,Math.min(kidsVerses.length-1,kidsIndex+dir));
+  showKidsVerse();
+}
+
+function kidsPlayVerse(){
+  if(!kidsVerses.length) return;
+  const v=kidsVerses[kidsIndex];
+  const[s,a]=v.verse_key.split(":");
+  const url=`https://everyayah.com/data/Alafasy_128kbps/${s.padStart(3,"0")}${a.padStart(3,"0")}.mp3`;
+  kidsAudio.pause();
+  kidsAudio.src=url;
+  kidsAudio.play();
+  kidsAudio.onended=()=>{
+    if(kidsIndex<kidsVerses.length-1){
+      kidsIndex++;
+      showKidsVerse();
+      setTimeout(()=>kidsPlayVerse(),600);
+    }
+  };
+}
+
 </script>
 
 <!-- ══ LEARN PANEL ══ -->
@@ -2519,45 +2615,67 @@ function renderTajweed(){
 
   <div class="kids-body">
 
-    <!-- TAB 1: SHORT SURAHS -->
+    <!-- TAB 1: SURAHS -->
     <div id="kPane1">
-      <div class="kids-surah-grid" id="kidsSurahGrid">
-        <div class="kids-surah-card" onclick="loadKidsSurah(112,'Al-Ikhlas','Sincerity',4)" id="ks112">
-          <div class="kids-surah-emoji">✨</div>
-          <div class="kids-surah-name">Al-Ikhlas</div>
-          <div class="kids-surah-meaning">Sincerity</div>
-          <div class="kids-surah-count">4 ayahs</div>
-        </div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(113,'Al-Falaq','The Daybreak',5)" id="ks113">
-          <div class="kids-surah-emoji">🌅</div>
-          <div class="kids-surah-name">Al-Falaq</div>
-          <div class="kids-surah-meaning">The Daybreak</div>
-          <div class="kids-surah-count">5 ayahs</div>
-        </div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(114,'An-Nas','Mankind',6)" id="ks114">
-          <div class="kids-surah-emoji">👥</div>
-          <div class="kids-surah-name">An-Nas</div>
-          <div class="kids-surah-meaning">Mankind</div>
-          <div class="kids-surah-count">6 ayahs</div>
-        </div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(108,'Al-Kawthar','Abundance',3)" id="ks108">
-          <div class="kids-surah-emoji">🌊</div>
-          <div class="kids-surah-name">Al-Kawthar</div>
-          <div class="kids-surah-meaning">Abundance</div>
-          <div class="kids-surah-count">3 ayahs</div>
-        </div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(1,'Al-Fatihah','The Opening',7)" id="ks1">
-          <div class="kids-surah-emoji">📖</div>
-          <div class="kids-surah-name">Al-Fatihah</div>
-          <div class="kids-surah-meaning">The Opening</div>
-          <div class="kids-surah-count">7 ayahs</div>
-        </div>
-        <div class="kids-surah-card" onclick="loadKidsSurah(110,'An-Nasr','The Help',3)" id="ks110">
-          <div class="kids-surah-emoji">🙏</div>
-          <div class="kids-surah-name">An-Nasr</div>
-          <div class="kids-surah-meaning">The Help</div>
-          <div class="kids-surah-count">3 ayahs</div>
-        </div>
+      <!-- Age toggle -->
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button class="kids-age-btn active" id="kAge1" onclick="switchKidsAge(1)">🌱 Young (6–10)</button>
+        <button class="kids-age-btn" id="kAge2" onclick="switchKidsAge(2)">🌟 Older (11–15)</button>
+      </div>
+
+      <!-- Young grid (6-10) -->
+      <div id="kYoungGrid" class="kids-surah-grid">
+        <div class="kids-surah-card" onclick="loadKidsSurah(1,'Al-Fatihah','The Opening',7)" id="ks1"><div class="kids-surah-emoji">📖</div><div class="kids-surah-name">Al-Fatihah</div><div class="kids-surah-meaning">The Opening</div><div class="kids-surah-count">7 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(112,'Al-Ikhlas','Sincerity',4)" id="ks112"><div class="kids-surah-emoji">✨</div><div class="kids-surah-name">Al-Ikhlas</div><div class="kids-surah-meaning">Sincerity</div><div class="kids-surah-count">4 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(113,'Al-Falaq','The Daybreak',5)" id="ks113"><div class="kids-surah-emoji">🌅</div><div class="kids-surah-name">Al-Falaq</div><div class="kids-surah-meaning">The Daybreak</div><div class="kids-surah-count">5 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(114,'An-Nas','Mankind',6)" id="ks114"><div class="kids-surah-emoji">👥</div><div class="kids-surah-name">An-Nas</div><div class="kids-surah-meaning">Mankind</div><div class="kids-surah-count">6 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(108,'Al-Kawthar','Abundance',3)" id="ks108"><div class="kids-surah-emoji">🌊</div><div class="kids-surah-name">Al-Kawthar</div><div class="kids-surah-meaning">Abundance</div><div class="kids-surah-count">3 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(110,'An-Nasr','The Help',3)" id="ks110"><div class="kids-surah-emoji">🙏</div><div class="kids-surah-name">An-Nasr</div><div class="kids-surah-meaning">The Help</div><div class="kids-surah-count">3 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(103,'Al-Asr','The Time',3)" id="ks103"><div class="kids-surah-emoji">⏰</div><div class="kids-surah-name">Al-Asr</div><div class="kids-surah-meaning">The Time</div><div class="kids-surah-count">3 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(107,'Al-Maun','Small Kindnesses',7)" id="ks107"><div class="kids-surah-emoji">💝</div><div class="kids-surah-name">Al-Maun</div><div class="kids-surah-meaning">Small Kindnesses</div><div class="kids-surah-count">7 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(105,'Al-Fil','The Elephant',5)" id="ks105"><div class="kids-surah-emoji">🐘</div><div class="kids-surah-name">Al-Fil</div><div class="kids-surah-meaning">The Elephant</div><div class="kids-surah-count">5 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(111,'Al-Masad','The Palm Fibre',5)" id="ks111"><div class="kids-surah-emoji">🔥</div><div class="kids-surah-name">Al-Masad</div><div class="kids-surah-meaning">The Palm Fibre</div><div class="kids-surah-count">5 ayahs</div></div>
+      </div>
+
+      <!-- Older grid (11-15) — full Juz Amma -->
+      <div id="kOlderGrid" class="kids-surah-grid" style="display:none">
+        <div class="kids-surah-card" onclick="loadKidsSurah(78,'An-Naba','The News',40)" id="ks78"><div class="kids-surah-emoji">📰</div><div class="kids-surah-name">An-Naba</div><div class="kids-surah-meaning">The News</div><div class="kids-surah-count">40 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(79,'An-Naziat','Those Who Drag',46)" id="ks79"><div class="kids-surah-emoji">⭐</div><div class="kids-surah-name">An-Naziat</div><div class="kids-surah-meaning">Those Who Drag</div><div class="kids-surah-count">46 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(80,'Abasa','He Frowned',42)" id="ks80"><div class="kids-surah-emoji">😶</div><div class="kids-surah-name">Abasa</div><div class="kids-surah-meaning">He Frowned</div><div class="kids-surah-count">42 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(81,'At-Takwir','The Overthrowing',29)" id="ks81"><div class="kids-surah-emoji">🌌</div><div class="kids-surah-name">At-Takwir</div><div class="kids-surah-meaning">The Overthrowing</div><div class="kids-surah-count">29 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(82,'Al-Infitar','The Cleaving',19)" id="ks82"><div class="kids-surah-emoji">💫</div><div class="kids-surah-name">Al-Infitar</div><div class="kids-surah-meaning">The Cleaving</div><div class="kids-surah-count">19 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(83,'Al-Mutaffifin','The Defrauders',36)" id="ks83"><div class="kids-surah-emoji">⚖️</div><div class="kids-surah-name">Al-Mutaffifin</div><div class="kids-surah-meaning">The Defrauders</div><div class="kids-surah-count">36 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(84,'Al-Inshiqaq','The Splitting',25)" id="ks84"><div class="kids-surah-emoji">🌙</div><div class="kids-surah-name">Al-Inshiqaq</div><div class="kids-surah-meaning">The Splitting</div><div class="kids-surah-count">25 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(85,'Al-Buruj','The Constellations',22)" id="ks85"><div class="kids-surah-emoji">⭐</div><div class="kids-surah-name">Al-Buruj</div><div class="kids-surah-meaning">The Constellations</div><div class="kids-surah-count">22 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(86,'At-Tariq','The Morning Star',17)" id="ks86"><div class="kids-surah-emoji">🌠</div><div class="kids-surah-name">At-Tariq</div><div class="kids-surah-meaning">The Morning Star</div><div class="kids-surah-count">17 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(87,'Al-Ala','The Most High',19)" id="ks87"><div class="kids-surah-emoji">🏔️</div><div class="kids-surah-name">Al-Ala</div><div class="kids-surah-meaning">The Most High</div><div class="kids-surah-count">19 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(88,'Al-Ghashiyah','The Overwhelming',26)" id="ks88"><div class="kids-surah-emoji">🌊</div><div class="kids-surah-name">Al-Ghashiyah</div><div class="kids-surah-meaning">The Overwhelming</div><div class="kids-surah-count">26 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(89,'Al-Fajr','The Dawn',30)" id="ks89"><div class="kids-surah-emoji">🌄</div><div class="kids-surah-name">Al-Fajr</div><div class="kids-surah-meaning">The Dawn</div><div class="kids-surah-count">30 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(90,'Al-Balad','The City',20)" id="ks90"><div class="kids-surah-emoji">🏙️</div><div class="kids-surah-name">Al-Balad</div><div class="kids-surah-meaning">The City</div><div class="kids-surah-count">20 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(91,'Ash-Shams','The Sun',15)" id="ks91"><div class="kids-surah-emoji">☀️</div><div class="kids-surah-name">Ash-Shams</div><div class="kids-surah-meaning">The Sun</div><div class="kids-surah-count">15 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(92,'Al-Layl','The Night',21)" id="ks92"><div class="kids-surah-emoji">🌙</div><div class="kids-surah-name">Al-Layl</div><div class="kids-surah-meaning">The Night</div><div class="kids-surah-count">21 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(93,'Ad-Duha','The Morning Hours',11)" id="ks93"><div class="kids-surah-emoji">🌅</div><div class="kids-surah-name">Ad-Duha</div><div class="kids-surah-meaning">The Morning Hours</div><div class="kids-surah-count">11 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(94,'Ash-Sharh','The Opening Up',8)" id="ks94"><div class="kids-surah-emoji">💚</div><div class="kids-surah-name">Ash-Sharh</div><div class="kids-surah-meaning">The Opening Up</div><div class="kids-surah-count">8 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(95,'At-Tin','The Fig',8)" id="ks95"><div class="kids-surah-emoji">🫐</div><div class="kids-surah-name">At-Tin</div><div class="kids-surah-meaning">The Fig</div><div class="kids-surah-count">8 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(96,'Al-Alaq','The Clot',19)" id="ks96"><div class="kids-surah-emoji">📚</div><div class="kids-surah-name">Al-Alaq</div><div class="kids-surah-meaning">The Clot</div><div class="kids-surah-count">19 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(97,'Al-Qadr','The Power',5)" id="ks97"><div class="kids-surah-emoji">✨</div><div class="kids-surah-name">Al-Qadr</div><div class="kids-surah-meaning">The Power</div><div class="kids-surah-count">5 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(98,'Al-Bayyinah','The Clear Proof',8)" id="ks98"><div class="kids-surah-emoji">📜</div><div class="kids-surah-name">Al-Bayyinah</div><div class="kids-surah-meaning">The Clear Proof</div><div class="kids-surah-count">8 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(99,'Az-Zalzalah','The Earthquake',8)" id="ks99"><div class="kids-surah-emoji">🌍</div><div class="kids-surah-name">Az-Zalzalah</div><div class="kids-surah-meaning">The Earthquake</div><div class="kids-surah-count">8 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(100,'Al-Adiyat','The Chargers',11)" id="ks100"><div class="kids-surah-emoji">🐎</div><div class="kids-surah-name">Al-Adiyat</div><div class="kids-surah-meaning">The Chargers</div><div class="kids-surah-count">11 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(101,'Al-Qariah','The Calamity',11)" id="ks101"><div class="kids-surah-emoji">💥</div><div class="kids-surah-name">Al-Qariah</div><div class="kids-surah-meaning">The Calamity</div><div class="kids-surah-count">11 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(102,'At-Takathur','The Rivalry',8)" id="ks102"><div class="kids-surah-emoji">🏆</div><div class="kids-surah-name">At-Takathur</div><div class="kids-surah-meaning">The Rivalry</div><div class="kids-surah-count">8 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(103,'Al-Asr','The Time',3)" id="ks103b"><div class="kids-surah-emoji">⏰</div><div class="kids-surah-name">Al-Asr</div><div class="kids-surah-meaning">The Time</div><div class="kids-surah-count">3 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(104,'Al-Humazah','The Slanderer',9)" id="ks104"><div class="kids-surah-emoji">🗣️</div><div class="kids-surah-name">Al-Humazah</div><div class="kids-surah-meaning">The Slanderer</div><div class="kids-surah-count">9 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(105,'Al-Fil','The Elephant',5)" id="ks105b"><div class="kids-surah-emoji">🐘</div><div class="kids-surah-name">Al-Fil</div><div class="kids-surah-meaning">The Elephant</div><div class="kids-surah-count">5 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(106,'Quraysh','Quraysh',4)" id="ks106"><div class="kids-surah-emoji">🕋</div><div class="kids-surah-name">Quraysh</div><div class="kids-surah-meaning">Quraysh</div><div class="kids-surah-count">4 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(107,'Al-Maun','Small Kindnesses',7)" id="ks107b"><div class="kids-surah-emoji">💝</div><div class="kids-surah-name">Al-Maun</div><div class="kids-surah-meaning">Small Kindnesses</div><div class="kids-surah-count">7 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(108,'Al-Kawthar','Abundance',3)" id="ks108b"><div class="kids-surah-emoji">🌊</div><div class="kids-surah-name">Al-Kawthar</div><div class="kids-surah-meaning">Abundance</div><div class="kids-surah-count">3 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(109,'Al-Kafirun','The Disbelievers',6)" id="ks109"><div class="kids-surah-emoji">🤝</div><div class="kids-surah-name">Al-Kafirun</div><div class="kids-surah-meaning">The Disbelievers</div><div class="kids-surah-count">6 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(110,'An-Nasr','The Help',3)" id="ks110b"><div class="kids-surah-emoji">🙏</div><div class="kids-surah-name">An-Nasr</div><div class="kids-surah-meaning">The Help</div><div class="kids-surah-count">3 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(111,'Al-Masad','The Palm Fibre',5)" id="ks111b"><div class="kids-surah-emoji">🔥</div><div class="kids-surah-name">Al-Masad</div><div class="kids-surah-meaning">The Palm Fibre</div><div class="kids-surah-count">5 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(112,'Al-Ikhlas','Sincerity',4)" id="ks112b"><div class="kids-surah-emoji">✨</div><div class="kids-surah-name">Al-Ikhlas</div><div class="kids-surah-meaning">Sincerity</div><div class="kids-surah-count">4 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(113,'Al-Falaq','The Daybreak',5)" id="ks113b"><div class="kids-surah-emoji">🌅</div><div class="kids-surah-name">Al-Falaq</div><div class="kids-surah-meaning">The Daybreak</div><div class="kids-surah-count">5 ayahs</div></div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(114,'An-Nas','Mankind',6)" id="ks114b"><div class="kids-surah-emoji">👥</div><div class="kids-surah-name">An-Nas</div><div class="kids-surah-meaning">Mankind</div><div class="kids-surah-count">6 ayahs</div></div>
       </div>
 
       <!-- Verse display area -->
