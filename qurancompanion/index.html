@@ -82,7 +82,7 @@ button{ background:var(--accent); color:white; }
 .p-dt-item{
   display:flex; align-items:center; gap:4px;
   padding:2px 8px; flex-shrink:0;
-  font-size:11px;
+  font-size:11px; white-space:nowrap;
 }
 .p-dt-item:not(:last-child){
   border-right:1px solid rgba(255,255,255,.2);
@@ -110,16 +110,16 @@ button{ background:var(--accent); color:white; }
   background:rgba(255,255,255,.2);
   flex-shrink:0;
 }
-.p-label{ font-size:9px; text-transform:uppercase; letter-spacing:.6px; opacity:.6; margin-bottom:1px; }
+.p-label{ font-size:9px; text-transform:uppercase; letter-spacing:.4px; opacity:.6; margin-bottom:1px; white-space:nowrap; }
 .p-name{ font-size:13px; font-weight:700; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .p-curr{ font-size:12px !important; }
 .p-time{ font-size:10px; opacity:.75; }
 .p-countdown{
   background:rgba(255,255,255,.18);
-  padding:3px 10px; border-radius:20px;
-  font-size:13px; font-weight:700;
-  letter-spacing:.4px; min-width:56px; text-align:center;
-  margin-top:2px;
+  padding:3px 8px; border-radius:20px;
+  font-size:14px; font-weight:700;
+  letter-spacing:.3px; min-width:64px; text-align:center;
+  margin-top:2px; white-space:nowrap;
 }
 .p-icon-btn{
   background:rgba(255,255,255,.12); border:none; color:white;
@@ -947,6 +947,10 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
     <button class="surah-nav-btn" onclick="prevSurah()" title="Previous Surah">◀</button>
     <select id="surahSelect" style="flex:1"></select>
     <button class="surah-nav-btn" onclick="nextSurah()" title="Next Surah">▶</button>
+  </div>
+  <div id="resumeBar" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 2px">
+    <span style="font-size:10px;opacity:.7;color:white">📌 Resuming from last visited surah</span>
+    <button onclick="resetToStart()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;border-radius:8px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer">↩ Start from Al-Fatihah</button>
   </div>
   <div class="header-btns">
     <button id="studyBtn" onclick="toggleStudy()">📖 Study</button>
@@ -2020,7 +2024,14 @@ async function loadSurahNames(){
     opt.textContent=ch.id+". "+ch.name_simple;
     surahSelect.appendChild(opt);
   });
-  loadSurah(localStorage.getItem("lastSurah")||1);
+  const lastS = localStorage.getItem("lastSurah");
+  const resumeBar = document.getElementById("resumeBar");
+  if(lastS && parseInt(lastS) > 1){
+    resumeBar.style.display = "flex";
+  } else {
+    resumeBar.style.display = "none";
+  }
+  loadSurah(lastS||1);
 }
 
 async function loadSurah(id){
@@ -2143,6 +2154,13 @@ function nextSurah(){
   if(cur>=114) return;
   sel.value=cur+1;
   sel.dispatchEvent(new Event("change"));
+}
+function resetToStart(){
+  localStorage.removeItem("lastSurah");
+  const sel=document.getElementById("surahSelect");
+  sel.value=1;
+  sel.dispatchEvent(new Event("change"));
+  document.getElementById("resumeBar").style.display="none";
 }
 
 function playCurrent(){
