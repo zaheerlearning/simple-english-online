@@ -73,7 +73,7 @@ button{ background:var(--accent); color:white; }
 .p-datetime-row{
   display:flex; align-items:center; justify-content:center;
   gap:0; padding:5px 14px 5px;
-  flex-wrap:nowrap; overflow:hidden;
+  flex-wrap:wrap; overflow:visible;
   border-bottom:1px solid rgba(255,255,255,.08);
 }
 .p-dt-item{
@@ -709,6 +709,180 @@ body.focus-night .translation{ color:#aaa !important; }
   .alpha-grid{ grid-template-columns:repeat(3,1fr); }
 }
 
+
+/* ══════════════════════════════════════════
+   KIDS MODE
+══════════════════════════════════════════ */
+#kidsMode{
+  display:none;
+  position:fixed; inset:0;
+  background:linear-gradient(160deg,#ecfdf5,#d1fae5);
+  z-index:50000;
+  overflow-y:auto;
+  font-family:'Inter',sans-serif;
+}
+body.kids-active #kidsMode{ display:block; }
+body.kids-active>*:not(#kidsMode){ display:none !important; }
+
+/* Kids header */
+.kids-header{
+  background:linear-gradient(135deg,#166534,#15803d);
+  color:white; padding:14px 16px 12px;
+  position:sticky; top:0; z-index:100;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+}
+.kids-header-top{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.kids-title{
+  font-size:20px; font-weight:800; text-align:center; flex:1;
+  letter-spacing:.3px;
+}
+.kids-exit-btn{
+  background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.3);
+  color:white; border-radius:10px; padding:7px 14px;
+  font-size:12px; font-weight:700; cursor:pointer;
+}
+.kids-tabs{
+  display:flex; gap:6px; justify-content:center;
+}
+.kids-tab{
+  background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25);
+  color:white; border-radius:20px; padding:7px 14px;
+  font-size:12px; font-weight:700; cursor:pointer;
+  transition:.2s; white-space:nowrap;
+}
+.kids-tab.active{
+  background:white; color:#166534;
+}
+
+/* Kids body */
+.kids-body{ padding:16px; max-width:700px; margin:0 auto; }
+
+/* Surah cards */
+.kids-surah-grid{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:12px; margin-bottom:20px;
+}
+.kids-surah-card{
+  background:white; border-radius:16px;
+  padding:16px 12px; text-align:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  cursor:pointer; transition:.2s;
+  border:2px solid transparent;
+}
+.kids-surah-card:hover,.kids-surah-card.active{
+  border-color:#22c55e; transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(22,101,52,.15);
+}
+.kids-surah-emoji{ font-size:28px; margin-bottom:6px; }
+.kids-surah-name{ font-size:15px; font-weight:800; color:#166534; }
+.kids-surah-meaning{ font-size:11px; color:#6b7280; margin-top:2px; }
+.kids-surah-count{ font-size:10px; color:#9ca3af; margin-top:2px; }
+
+/* Kids verse display */
+.kids-verse-area{
+  background:white; border-radius:20px;
+  padding:20px; margin-bottom:16px;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+}
+.kids-arabic{
+  font-family:'Amiri',serif;
+  font-size:clamp(28px,6vw,48px);
+  line-height:2.2; direction:rtl;
+  text-align:center; color:#1a1a1a;
+  margin-bottom:10px;
+}
+.kids-transliteration{
+  font-size:15px; color:#6b7280; font-style:italic;
+  text-align:center; margin-bottom:8px; line-height:1.7;
+}
+.kids-translation{
+  font-size:15px; color:#374151; text-align:center;
+  line-height:1.7; font-weight:500;
+}
+.kids-ayah-num{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; border-radius:50%;
+  background:#f0fdf4; border:2px solid #22c55e;
+  font-size:13px; font-weight:800; color:#166534;
+  margin:0 auto 14px; display:flex;
+}
+.kids-verse-nav{
+  display:flex; align-items:center; justify-content:center;
+  gap:12px; margin-top:16px;
+}
+.kids-nav-btn{
+  background:#f0fdf4; border:2px solid #d1fae5;
+  color:#166534; border-radius:14px;
+  padding:10px 20px; font-size:16px; font-weight:800;
+  cursor:pointer; transition:.2s;
+}
+.kids-nav-btn:hover{ background:#d1fae5; }
+.kids-play-btn{
+  background:#166534; color:white;
+  border:none; border-radius:14px;
+  padding:12px 28px; font-size:16px; font-weight:800;
+  cursor:pointer; transition:.2s;
+}
+.kids-play-btn:hover{ background:#15803d; }
+
+/* Duas cards */
+.kids-dua-card{
+  background:white; border-radius:16px;
+  padding:18px; margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.07);
+}
+.kids-dua-title{
+  font-size:15px; font-weight:800; color:#166534;
+  margin-bottom:10px; display:flex; align-items:center; gap:8px;
+}
+.kids-dua-arabic{
+  font-family:'Amiri',serif; font-size:24px;
+  direction:rtl; text-align:right;
+  color:#1a1a1a; line-height:2; margin-bottom:8px;
+}
+.kids-dua-translit{
+  font-size:13px; color:#6b7280; font-style:italic;
+  margin-bottom:6px; line-height:1.7;
+}
+.kids-dua-meaning{
+  font-size:13px; color:#374151; line-height:1.6;
+}
+.kids-play-dua{
+  background:#f0fdf4; border:2px solid #d1fae5;
+  color:#166534; border-radius:10px;
+  padding:8px 16px; font-size:13px; font-weight:700;
+  cursor:pointer; margin-top:10px; width:100%;
+}
+
+/* 5 Pillars */
+.kids-pillar-card{
+  background:white; border-radius:16px;
+  padding:18px; margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.07);
+  display:flex; gap:14px; align-items:flex-start;
+}
+.kids-pillar-icon{
+  font-size:36px; flex-shrink:0;
+}
+.kids-pillar-name{
+  font-size:17px; font-weight:800; color:#166534; margin-bottom:4px;
+}
+.kids-pillar-arabic{
+  font-family:'Amiri',serif; font-size:20px;
+  color:#374151; margin-bottom:4px;
+}
+.kids-pillar-desc{
+  font-size:13px; color:#6b7280; line-height:1.6;
+}
+
+@media(max-width:420px){
+  .kids-surah-grid{ grid-template-columns:1fr 1fr; gap:8px; }
+  .kids-surah-card{ padding:12px 8px; }
+}
+
 /* ══ RESPONSIVE ══ */
 @media(max-width:680px){
   .p-grid{ grid-template-columns:repeat(4,1fr); }
@@ -764,7 +938,8 @@ body.focus-night .translation{ color:#aaa !important; }
     <button id="studyBtn" onclick="toggleStudy()">📖 Study</button>
     <button onclick="enterFocus()" title="Focus Mode">🎯 Focus</button>
     <button onclick="openLearn()" title="Learn Arabic">📚 Learn</button>
-    <button onclick="playFull()">▶ Play All</button>
+    <button onclick="enterKidsMode()" title="Kids Mode" >🌟 Kids</button>
+    <button onclick="playFull()">▶ Play</button>
   </div>
 </header>
 
@@ -834,14 +1009,19 @@ body.focus-night .translation{ color:#aaa !important; }
     </div>
     <div class="p-location" id="pLocation">Detecting location…</div>
 
-    <!-- Reciter -->
+    <!-- Reciter + Temp Unit -->
     <div class="p-settings" style="margin-top:8px">
-      <select id="reciterSelect" onchange="savePS()" style="width:100%">
+      <select id="reciterSelect" onchange="savePS()" style="flex:1">
         <option value="Alafasy_128kbps">🎙 Mishary Rashid Alafasy</option>
         <option value="Abdurrahmaan_As-Sudais_192kbps">🎙 Abdurrahman Al-Sudais</option>
         <option value="Saood_ash-Shuraym_128kbps">🎙 Saud Al-Shuraim</option>
         <option value="Husary_128kbps">🎙 Mahmoud Al-Husary</option>
         <option value="Abdul_Basit_Murattal_192kbps">🎙 Abdul Basit</option>
+      </select>
+      <select id="tempUnit" onchange="saveTempUnit()" style="flex:0 0 auto;min-width:0">
+        <option value="F">°F</option>
+        <option value="C">°C</option>
+        <option value="both">°F & °C</option>
       </select>
     </div>
 
@@ -1110,10 +1290,12 @@ document.getElementById("asrMethod").value=_asr;
 document.getElementById("azanSelect").value=_azan;
 azanOn=_mute!=="1";
 refreshAzanBtn();
-// Restore reciter after panel renders
+// Restore reciter + temp unit after panel renders
 setTimeout(()=>{
   const rs=document.getElementById("reciterSelect");
   if(rs) rs.value=_reciter;
+  const tu=document.getElementById("tempUnit");
+  if(tu) tu.value=localStorage.getItem("tempUnit")||"F";
 },100);
 
 function savePS(){
@@ -1122,6 +1304,11 @@ function savePS(){
   localStorage.setItem("pAzan",azanSelect.value);
   if(document.getElementById("reciterSelect"))
     localStorage.setItem("pReciter",document.getElementById("reciterSelect").value);
+}
+function saveTempUnit(){
+  const u=document.getElementById("tempUnit")?.value||"F";
+  localStorage.setItem("tempUnit",u);
+  fetchWeather(); // refresh display immediately
 }
 function togglePanel(){
   pExpanded=!pExpanded;
@@ -1233,8 +1420,14 @@ async function fetchWeather(){
     const tempF=Math.round(c.temperature_2m);
     const tempC=Math.round((c.temperature_2m-32)*5/9);
     const feelsF=Math.round(c.apparent_temperature);
-    pWeather.textContent=`${icon} ${tempF}°F / ${tempC}°C`;
-    pWeather.title=`Feels like ${feelsF}°F`;
+    const feelsC=Math.round((c.apparent_temperature-32)*5/9);
+    const unit=localStorage.getItem("tempUnit")||"F";
+    let tempStr,feelsStr;
+    if(unit==="C"){ tempStr=`${icon} ${tempC}°C`; feelsStr=`Feels like ${feelsC}°C`; }
+    else if(unit==="both"){ tempStr=`${icon} ${tempF}°F / ${tempC}°C`; feelsStr=`Feels like ${feelsF}°F / ${feelsC}°C`; }
+    else { tempStr=`${icon} ${tempF}°F`; feelsStr=`Feels like ${feelsF}°F`; }
+    pWeather.textContent=tempStr;
+    pWeather.title=feelsStr;
     pWeatherItem.style.display="flex";
   } catch(e){ console.log("Weather:",e); }
 }
@@ -1772,7 +1965,9 @@ function appendBotMsg(text,cls){
 let verses=[],chaptersData=[],quranAudio=new Audio();
 let studyMode=false,currentIndex=0,currentTafsirKey=null;
 let bookmarks=JSON.parse(localStorage.getItem("bookmarks")||"{}");
-let translitOn=false; // transliteration toggle — must be declared before render()
+let translitOn=false;
+// Kids mode globals — declared here to avoid reference errors
+let kidsVerses=[],kidsIndex=0,kidsAudio=new Audio(),kidsCurrentSurah=null;
 
 compareToggle.addEventListener("change",function(){
   tafseer2.disabled=!this.checked;
@@ -2304,6 +2499,173 @@ function renderTajweed(){
 
   </div>
 </div>
+
+
+<!-- ══════════════════════════════════════════
+     KIDS MODE FULL SCREEN
+══════════════════════════════════════════ -->
+<div id="kidsMode">
+  <div class="kids-header">
+    <div class="kids-header-top">
+      <div class="kids-title">🌟 Quran for Kids</div>
+      <button class="kids-exit-btn" onclick="exitKidsMode()">✕ Exit</button>
+    </div>
+    <div class="kids-tabs">
+      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">📖 Surahs</button>
+      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">🤲 Duas</button>
+      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">🕌 5 Pillars</button>
+    </div>
+  </div>
+
+  <div class="kids-body">
+
+    <!-- TAB 1: SHORT SURAHS -->
+    <div id="kPane1">
+      <div class="kids-surah-grid" id="kidsSurahGrid">
+        <div class="kids-surah-card" onclick="loadKidsSurah(112,'Al-Ikhlas','Sincerity',4)" id="ks112">
+          <div class="kids-surah-emoji">✨</div>
+          <div class="kids-surah-name">Al-Ikhlas</div>
+          <div class="kids-surah-meaning">Sincerity</div>
+          <div class="kids-surah-count">4 ayahs</div>
+        </div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(113,'Al-Falaq','The Daybreak',5)" id="ks113">
+          <div class="kids-surah-emoji">🌅</div>
+          <div class="kids-surah-name">Al-Falaq</div>
+          <div class="kids-surah-meaning">The Daybreak</div>
+          <div class="kids-surah-count">5 ayahs</div>
+        </div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(114,'An-Nas','Mankind',6)" id="ks114">
+          <div class="kids-surah-emoji">👥</div>
+          <div class="kids-surah-name">An-Nas</div>
+          <div class="kids-surah-meaning">Mankind</div>
+          <div class="kids-surah-count">6 ayahs</div>
+        </div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(108,'Al-Kawthar','Abundance',3)" id="ks108">
+          <div class="kids-surah-emoji">🌊</div>
+          <div class="kids-surah-name">Al-Kawthar</div>
+          <div class="kids-surah-meaning">Abundance</div>
+          <div class="kids-surah-count">3 ayahs</div>
+        </div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(1,'Al-Fatihah','The Opening',7)" id="ks1">
+          <div class="kids-surah-emoji">📖</div>
+          <div class="kids-surah-name">Al-Fatihah</div>
+          <div class="kids-surah-meaning">The Opening</div>
+          <div class="kids-surah-count">7 ayahs</div>
+        </div>
+        <div class="kids-surah-card" onclick="loadKidsSurah(110,'An-Nasr','The Help',3)" id="ks110">
+          <div class="kids-surah-emoji">🙏</div>
+          <div class="kids-surah-name">An-Nasr</div>
+          <div class="kids-surah-meaning">The Help</div>
+          <div class="kids-surah-count">3 ayahs</div>
+        </div>
+      </div>
+
+      <!-- Verse display area -->
+      <div class="kids-verse-area" id="kidsVerseArea" style="display:none">
+        <div class="kids-ayah-num" id="kidsAyahNum">1</div>
+        <div class="kids-arabic" id="kidsArabic">—</div>
+        <div class="kids-transliteration" id="kidsTranslit"></div>
+        <div class="kids-translation" id="kidsTrans"></div>
+        <div class="kids-verse-nav">
+          <button class="kids-nav-btn" onclick="kidsNavVerse(-1)">◀ Prev</button>
+          <button class="kids-play-btn" onclick="kidsPlayVerse()">▶ Listen</button>
+          <button class="kids-nav-btn" onclick="kidsNavVerse(1)">Next ▶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DUAS -->
+    <div id="kPane2" style="display:none">
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🌅 Before Eating</div>
+        <div class="kids-dua-arabic">بِسْمِ اللَّهِ</div>
+        <div class="kids-dua-translit">Bismillāh</div>
+        <div class="kids-dua-meaning">In the name of Allah — say this before every meal</div>
+      </div>
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">✅ After Eating</div>
+        <div class="kids-dua-arabic">الْحَمْدُ لِلَّهِ</div>
+        <div class="kids-dua-translit">Alḥamdulillāh</div>
+        <div class="kids-dua-meaning">All praise is for Allah — say this after every meal</div>
+      </div>
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">😴 Before Sleeping</div>
+        <div class="kids-dua-arabic">بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا</div>
+        <div class="kids-dua-translit">Bismika Allāhumma amūtu wa aḥyā</div>
+        <div class="kids-dua-meaning">In Your name, O Allah, I die and I live</div>
+      </div>
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🌄 Waking Up</div>
+        <div class="kids-dua-arabic">الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا</div>
+        <div class="kids-dua-translit">Alḥamdulillāhil-ladhī aḥyānā baʿda mā amātanā</div>
+        <div class="kids-dua-meaning">Praise be to Allah who gave us life after causing us to die</div>
+      </div>
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🚪 Leaving Home</div>
+        <div class="kids-dua-arabic">بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ</div>
+        <div class="kids-dua-translit">Bismillāhi tawakkaltu ʿalallāh</div>
+        <div class="kids-dua-meaning">In the name of Allah, I place my trust in Allah</div>
+      </div>
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🚗 Entering a Vehicle</div>
+        <div class="kids-dua-arabic">سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا</div>
+        <div class="kids-dua-translit">Subḥānal-ladhī sakhkhara lanā hādhā</div>
+        <div class="kids-dua-meaning">Glory be to Him who has made this vehicle obedient to us</div>
+      </div>
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🤲 When Sad or Worried</div>
+        <div class="kids-dua-arabic">حَسْبِيَ اللَّهُ وَنِعْمَ الْوَكِيلُ</div>
+        <div class="kids-dua-translit">Ḥasbiyallāhu wa niʿmal-wakīl</div>
+        <div class="kids-dua-meaning">Allah is enough for me, and what an excellent Trustee He is</div>
+      </div>
+    </div>
+
+    <!-- TAB 3: 5 PILLARS -->
+    <div id="kPane3" style="display:none">
+      <div class="kids-pillar-card">
+        <div class="kids-pillar-icon">☝️</div>
+        <div>
+          <div class="kids-pillar-name">1. Shahada — Declaration of Faith</div>
+          <div class="kids-pillar-arabic">لَا إِلَٰهَ إِلَّا اللَّهُ مُحَمَّدٌ رَسُولُ اللَّهِ</div>
+          <div class="kids-pillar-desc">We believe there is only one God — Allah — and that Muhammad ﷺ is His messenger. This is the most important pillar.</div>
+        </div>
+      </div>
+      <div class="kids-pillar-card">
+        <div class="kids-pillar-icon">🙏</div>
+        <div>
+          <div class="kids-pillar-name">2. Salah — Prayer</div>
+          <div class="kids-pillar-arabic">الصَّلَاة</div>
+          <div class="kids-pillar-desc">Muslims pray 5 times every day — Fajr (dawn), Dhuhr (midday), Asr (afternoon), Maghrib (sunset), and Isha (night). Prayer keeps us connected to Allah.</div>
+        </div>
+      </div>
+      <div class="kids-pillar-card">
+        <div class="kids-pillar-icon">💝</div>
+        <div>
+          <div class="kids-pillar-name">3. Zakat — Charity</div>
+          <div class="kids-pillar-arabic">الزَّكَاة</div>
+          <div class="kids-pillar-desc">Muslims who have enough money give 2.5% of their savings every year to help poor people. Sharing is a big part of Islam.</div>
+        </div>
+      </div>
+      <div class="kids-pillar-card">
+        <div class="kids-pillar-icon">🌙</div>
+        <div>
+          <div class="kids-pillar-name">4. Sawm — Fasting</div>
+          <div class="kids-pillar-arabic">الصَّوْم</div>
+          <div class="kids-pillar-desc">Every year in the month of Ramadan, Muslims do not eat or drink from sunrise to sunset. It teaches us patience and gratitude.</div>
+        </div>
+      </div>
+      <div class="kids-pillar-card">
+        <div class="kids-pillar-icon">🕋</div>
+        <div>
+          <div class="kids-pillar-name">5. Hajj — Pilgrimage</div>
+          <div class="kids-pillar-arabic">الْحَجّ</div>
+          <div class="kids-pillar-desc">If a Muslim is healthy and can afford it, they must visit Makkah at least once in their life. Millions of Muslims go together every year.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /kids-body -->
+</div><!-- /kidsMode -->
 
 </body>
 </html>
