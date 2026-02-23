@@ -1347,6 +1347,7 @@ function requestGPS(){
     const savedLabel=localStorage.getItem("pCoordsLabel");
     pLocation.textContent=savedLabel||"📍 Last known location";
     fetchPrayerTimes();
+    fetchWeather();
   }
   pLocation.textContent=(saved?"📍 Updating location…":"📍 Detecting…");
   pNextName.textContent=(saved?pNextName.textContent:"📍 Locating…");
@@ -1360,6 +1361,7 @@ function requestGPS(){
       localStorage.setItem("pCoords",JSON.stringify(pCoords));
       reverseGeocode(pCoords.lat,pCoords.lng);
       fetchPrayerTimes();
+      fetchWeather();
     },
     ()=>{
       if(!saved){
@@ -1391,6 +1393,7 @@ async function searchCity(){
     localStorage.setItem("pCoordsLabel","📍 "+label);
     cityInput.value="";
     fetchPrayerTimes();
+    fetchWeather();
   } catch(e){ pLocation.textContent="Search failed. Check connection."; }
   cityInput.disabled=false;
 }
@@ -2717,13 +2720,13 @@ function renderKids40(){
       <button class="kids-exit-btn" onclick="exitKidsMode()">✕ Exit</button>
     </div>
     <div class="kids-tabs">
-      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">Surahs</button>
-      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">Duas</button>
-      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">Pillars</button>
-      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">Seerah</button>
-      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">Hadith</button>
-      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">Adab</button>
-      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">Salah</button>
+      <button class="kids-tab active" id="ktab1" onclick="switchKidsTab(1)">&#9312; Surahs</button>
+      <button class="kids-tab" id="ktab2" onclick="switchKidsTab(2)">&#9313; Duas</button>
+      <button class="kids-tab" id="ktab3" onclick="switchKidsTab(3)">&#9314; Pillars</button>
+      <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">&#9315; Seerah</button>
+      <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">&#9316; Hadith</button>
+      <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">&#9317; Adab</button>
+      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">&#9318; Salah</button>
     </div>
   </div>
 
