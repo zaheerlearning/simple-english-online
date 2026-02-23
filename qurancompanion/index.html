@@ -2479,7 +2479,7 @@ function exitKidsMode(){
 }
 
 function switchKidsTab(n){
-  [1,2,3,4,5,6].forEach(i=>{
+  [1,2,3,4,5,6,7].forEach(i=>{
     document.getElementById("ktab"+i).classList.toggle("active",i===n);
     document.getElementById("kPane"+i).style.display=i===n?"block":"none";
   });
@@ -2549,46 +2549,46 @@ function kidsPlayVerse(){
 
 /* ── 40 Hadiths for Kids ── */
 const KIDS_40=[
-  {n:1,e:"Actions are judged by intentions.",s:"Bukhari 1"},
+  {n:1,e:"Actions are judged by intentions, and every person will get what they intended.",s:"Bukhari 1"},
   {n:2,e:"None of you truly believes until he loves for his brother what he loves for himself.",s:"Bukhari 13"},
-  {n:3,e:"The strong person is not the one who wrestles others down, but the one who controls himself when angry.",s:"Bukhari 6114"},
+  {n:3,e:"The strong person is not the one who overcomes others by wrestling, but the one who controls himself when angry.",s:"Bukhari 6114"},
   {n:4,e:"Cleanliness is half of faith.",s:"Muslim 223"},
-  {n:5,e:"Smiling at your brother is charity.",s:"Tirmidhi 1956"},
-  {n:6,e:"The merciful are shown mercy by the Most Merciful. Be merciful to those on earth and the One above the heavens will have mercy upon you.",s:"Tirmidhi 1924"},
-  {n:7,e:"Whoever believes in Allah and the Last Day should speak good or remain silent.",s:"Bukhari 6018"},
-  {n:8,e:"Do not consider any act of kindness too small, even meeting your brother with a cheerful face.",s:"Muslim 2626"},
-  {n:9,e:"The best among you are those with the best manners and character.",s:"Bukhari 3559"},
-  {n:10,e:"Pay the worker his wages before his sweat dries.",s:"Ibn Majah 2443"},
-  {n:11,e:"Seeking knowledge is an obligation upon every Muslim.",s:"Ibn Majah 224"},
-  {n:12,e:"Whoever follows a path seeking knowledge, Allah will make easy for him a path to Paradise.",s:"Muslim 2699"},
-  {n:13,e:"The best of you are those who learn the Quran and teach it.",s:"Bukhari 5027"},
-  {n:14,e:"Allah is kind and loves kindness in all matters.",s:"Bukhari 6927"},
-  {n:15,e:"Make things easy and do not make them difficult. Give good news and do not drive people away.",s:"Bukhari 69"},
-  {n:16,e:"Feed the hungry, visit the sick, and free the captive.",s:"Bukhari 5373"},
-  {n:17,e:"The most beloved deeds to Allah are those done consistently, even if small.",s:"Bukhari 6465"},
-  {n:18,e:"Paradise lies at the feet of your mother.",s:"Nasai 3104"},
-  {n:19,e:"A man's status is raised by his good character even if he has few good deeds.",s:"Tabarani"},
-  {n:20,e:"Be in this world as though you are a stranger or a traveller passing through.",s:"Bukhari 6416"},
-  {n:21,e:"Allah does not judge you by your appearance or wealth, but by your hearts and deeds.",s:"Muslim 2564"},
-  {n:22,e:"Whoever removes a hardship from a believer, Allah will remove a hardship from him on the Day of Judgement.",s:"Muslim 2699"},
-  {n:23,e:"The upper hand is better than the lower hand — the giver is better than the receiver.",s:"Bukhari 1429"},
-  {n:24,e:"Envy is not allowed except in two cases — a person given wealth who spends it righteously, and a person given knowledge who acts on it.",s:"Bukhari 73"},
-  {n:25,e:"Do not waste water even if you are washing at a flowing river.",s:"Ahmad"},
-  {n:26,e:"Every good deed is charity.",s:"Muslim 1005"},
-  {n:27,e:"A good word is charity.",s:"Bukhari 2989"},
-  {n:28,e:"Removing something harmful from the road is charity.",s:"Bukhari 2989"},
-  {n:29,e:"The world is a prison for the believer and a paradise for the disbeliever.",s:"Muslim 2956"},
-  {n:30,e:"Whoever is not thankful to people is not thankful to Allah.",s:"Tirmidhi 1954"},
-  {n:31,e:"Truthfulness leads to righteousness and righteousness leads to Paradise.",s:"Bukhari 6094"},
-  {n:32,e:"It is enough of a sin for a person to neglect those he is responsible for feeding.",s:"Abu Dawud 1692"},
-  {n:33,e:"The one who looks after a widow or a poor person is like a warrior fighting for Allah.",s:"Bukhari 5353"},
-  {n:34,e:"When a man dies, his deeds end except for three — ongoing charity, knowledge others benefit from, or a righteous child who prays for him.",s:"Muslim 1631"},
-  {n:35,e:"Two blessings which many people waste — health and free time.",s:"Bukhari 6412"},
-  {n:36,e:"Take advantage of your youth before your old age, your health before your illness.",s:"Bayhaqi"},
-  {n:37,e:"The best of you are those who are best to their families.",s:"Tirmidhi 3895"},
-  {n:38,e:"A person is on the religion of his friend, so let each of you look at who he befriends.",s:"Tirmidhi 2378"},
-  {n:39,e:"None of you should wish for death because of a hardship that has come to him.",s:"Bukhari 5671"},
-  {n:40,e:"Allah said: I am as my servant thinks of Me, so let him think of Me however he wishes.",s:"Bukhari 7405"},
+  {n:5,e:"Whoever believes in Allah and the Last Day should speak good or remain silent.",s:"Bukhari 6018"},
+  {n:6,e:"Do not consider any act of kindness too small, even meeting your brother with a cheerful face.",s:"Muslim 2626"},
+  {n:7,e:"The best among you are those with the best manners and character.",s:"Bukhari 3559"},
+  {n:8,e:"Whoever follows a path seeking knowledge, Allah will make easy for him a path to Paradise.",s:"Muslim 2699"},
+  {n:9,e:"The best of you are those who learn the Quran and teach it to others.",s:"Bukhari 5027"},
+  {n:10,e:"Allah is kind and loves kindness in all matters.",s:"Bukhari 6927"},
+  {n:11,e:"Make things easy and do not make them difficult. Give good news and do not repel people.",s:"Bukhari 69"},
+  {n:12,e:"Feed the hungry, visit the sick, and free those in captivity.",s:"Bukhari 5373"},
+  {n:13,e:"The most beloved deeds to Allah are those done consistently, even if they are small.",s:"Bukhari 6465"},
+  {n:14,e:"Be in this world as though you are a stranger or a traveller passing through.",s:"Bukhari 6416"},
+  {n:15,e:"Allah does not look at your appearance or wealth, but at your hearts and your deeds.",s:"Muslim 2564"},
+  {n:16,e:"Whoever removes a hardship from a believer in this world, Allah will remove a hardship from him on the Day of Judgement.",s:"Muslim 2699"},
+  {n:17,e:"The upper hand is better than the lower hand — the one who gives is better than the one who receives.",s:"Bukhari 1429"},
+  {n:18,e:"Every good deed is charity.",s:"Muslim 1005"},
+  {n:19,e:"A good word is charity. Removing something harmful from the road is charity.",s:"Bukhari 2989"},
+  {n:20,e:"The world is a prison for the believer and a paradise for the disbeliever.",s:"Muslim 2956"},
+  {n:21,e:"Truthfulness leads to righteousness and righteousness leads to Paradise.",s:"Bukhari 6094"},
+  {n:22,e:"The one who looks after a widow or a poor person is like a warrior who fights for the sake of Allah.",s:"Bukhari 5353"},
+  {n:23,e:"When a person dies, all their deeds end except three — ongoing charity, knowledge that benefits others, or a righteous child who prays for them.",s:"Muslim 1631"},
+  {n:24,e:"Two blessings which many people waste — good health and free time.",s:"Bukhari 6412"},
+  {n:25,e:"The most complete of the believers in faith are those with the best character.",s:"Muslim 2338"},
+  {n:26,e:"Whoever believes in Allah and the Last Day should honour his guest.",s:"Bukhari 6019"},
+  {n:27,e:"None of you should wish for death because of a hardship that has come to him.",s:"Bukhari 5671"},
+  {n:28,e:"Allah said: I am as my servant thinks of Me, so let him think of Me as he wishes.",s:"Bukhari 7405"},
+  {n:29,e:"The rights of one Muslim over another are six — greet him, accept his invitation, advise him sincerely, say yarhamukallah when he sneezes, visit him when sick, and follow his funeral.",s:"Muslim 2162"},
+  {n:30,e:"Do not envy one another, do not hate one another, and be brothers to one another as Allah has commanded.",s:"Bukhari 6064"},
+  {n:31,e:"Help your brother whether he is oppressing or being oppressed — stop him from oppressing others.",s:"Bukhari 2444"},
+  {n:32,e:"Whoever conceals the faults of his Muslim brother, Allah will conceal his faults on the Day of Judgement.",s:"Muslim 2580"},
+  {n:33,e:"A Muslim is the one from whose tongue and hand the people are safe.",s:"Bukhari 10"},
+  {n:34,e:"The best prayer after the obligatory prayers is the night prayer.",s:"Muslim 1163"},
+  {n:35,e:"Whoever prays the dawn prayer is under the protection of Allah.",s:"Muslim 657"},
+  {n:36,e:"The parable of the one who remembers Allah and the one who does not is like the living and the dead.",s:"Bukhari 6407"},
+  {n:37,e:"Every act of kindness is charity.",s:"Muslim 1009"},
+  {n:38,e:"The most beloved people to Allah are those who are most beneficial to others.",s:"Muslim — graded Sahih by scholars"},
+  {n:39,e:"Modesty is part of faith.",s:"Bukhari 24"},
+  {n:40,e:"There is a piece of flesh in the body — if it is sound, the whole body is sound. If it is corrupt, the whole body is corrupt. It is the heart.",s:"Bukhari 52"},
 ];
 
 function renderKids40(){
@@ -2680,6 +2680,7 @@ function renderKids40(){
       <button class="kids-tab" id="ktab4" onclick="switchKidsTab(4)">🌹 Seerah</button>
       <button class="kids-tab" id="ktab5" onclick="switchKidsTab(5)">📿 40 Hadiths</button>
       <button class="kids-tab" id="ktab6" onclick="switchKidsTab(6)">😊 Adab</button>
+      <button class="kids-tab" id="ktab7" onclick="switchKidsTab(7)">🙏 Salah</button>
     </div>
   </div>
 
@@ -2764,47 +2765,118 @@ function renderKids40(){
 
     <!-- TAB 2: DUAS -->
     <div id="kPane2" style="display:none">
+      <p style="font-size:12px;color:#6b7280;margin-bottom:14px;line-height:1.6">These are duas the Prophet ﷺ taught us for every part of our day. Learn one at a time!</p>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🌄 Waking Up</div>
+        <div class="kids-dua-arabic">الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ</div>
+        <div class="kids-dua-translit">Alḥamdulillāhil-ladhī aḥyānā baʿda mā amātanā wa ilayhin-nushūr</div>
+        <div class="kids-dua-meaning">Praise be to Allah who gave us life after causing us to die, and to Him is the resurrection. — Bukhari</div>
+      </div>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🛁 Before Wudu (Ablution)</div>
+        <div class="kids-dua-arabic">بِسْمِ اللَّهِ</div>
+        <div class="kids-dua-translit">Bismillāh</div>
+        <div class="kids-dua-meaning">In the name of Allah — say this before starting wudu. The Prophet ﷺ said there is no wudu for the one who does not mention Allah's name.</div>
+      </div>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">✅ After Wudu</div>
+        <div class="kids-dua-arabic">أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ</div>
+        <div class="kids-dua-translit">Ashhadu an lā ilāha illallāh wa ashhadu anna Muhammadan ʿabduhu wa rasūluh</div>
+        <div class="kids-dua-meaning">I bear witness that there is no god but Allah and that Muhammad is His servant and messenger. — Muslim</div>
+      </div>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🕌 Entering the Masjid</div>
+        <div class="kids-dua-arabic">اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</div>
+        <div class="kids-dua-translit">Allāhummaf-taḥ lī abwāba raḥmatik</div>
+        <div class="kids-dua-meaning">O Allah, open for me the gates of Your mercy. — Muslim. Enter with your right foot first.</div>
+      </div>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🚪 Leaving the Masjid</div>
+        <div class="kids-dua-arabic">اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ</div>
+        <div class="kids-dua-translit">Allāhumma innī asʾaluka min faḍlik</div>
+        <div class="kids-dua-meaning">O Allah, I ask You of Your favour. — Muslim. Leave with your left foot first.</div>
+      </div>
+
       <div class="kids-dua-card">
         <div class="kids-dua-title">🌅 Before Eating</div>
         <div class="kids-dua-arabic">بِسْمِ اللَّهِ</div>
         <div class="kids-dua-translit">Bismillāh</div>
-        <div class="kids-dua-meaning">In the name of Allah — say this before every meal</div>
+        <div class="kids-dua-meaning">In the name of Allah — say this before every meal. Eat with your right hand. The Prophet ﷺ said if you forget to say it at the start, say: Bismillāhi awwalahu wa ākhirah. — Bukhari</div>
       </div>
+
       <div class="kids-dua-card">
-        <div class="kids-dua-title">✅ After Eating</div>
-        <div class="kids-dua-arabic">الْحَمْدُ لِلَّهِ</div>
-        <div class="kids-dua-translit">Alḥamdulillāh</div>
-        <div class="kids-dua-meaning">All praise is for Allah — say this after every meal</div>
+        <div class="kids-dua-title">🍽️ After Eating</div>
+        <div class="kids-dua-arabic">الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ</div>
+        <div class="kids-dua-translit">Alḥamdulillāhil-ladhī aṭʿamanā wa saqānā wa jaʿalanā muslimīn</div>
+        <div class="kids-dua-meaning">Praise be to Allah who fed us, gave us drink, and made us Muslims. — Abu Dawud (Sahih)</div>
       </div>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🚪 Leaving Home</div>
+        <div class="kids-dua-arabic">بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ</div>
+        <div class="kids-dua-translit">Bismillāhi tawakkaltu ʿalallāh, wa lā ḥawla wa lā quwwata illā billāh</div>
+        <div class="kids-dua-meaning">In the name of Allah, I trust in Allah, there is no power except with Allah. — Tirmidhi (Sahih). The angels protect you when you say this.</div>
+      </div>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🏠 Entering Home</div>
+        <div class="kids-dua-arabic">بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا</div>
+        <div class="kids-dua-translit">Bismillāhi walajanā wa bismillāhi kharajnā wa ʿalallāhi rabbanā tawakkalnā</div>
+        <div class="kids-dua-meaning">In the name of Allah we enter, in the name of Allah we leave, and upon Allah our Lord we rely. — Abu Dawud</div>
+      </div>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🚗 Entering a Vehicle</div>
+        <div class="kids-dua-arabic">سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ</div>
+        <div class="kids-dua-translit">Subḥānal-ladhī sakhkhara lanā hādhā wa mā kunnā lahu muqrinīn, wa innā ilā rabbinā lamunqalibūn</div>
+        <div class="kids-dua-meaning">Glory be to Him who made this vehicle for us — we could not have done it ourselves — and to our Lord we will return. — Muslim</div>
+      </div>
+
       <div class="kids-dua-card">
         <div class="kids-dua-title">😴 Before Sleeping</div>
         <div class="kids-dua-arabic">بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا</div>
         <div class="kids-dua-translit">Bismika Allāhumma amūtu wa aḥyā</div>
-        <div class="kids-dua-meaning">In Your name, O Allah, I die and I live</div>
+        <div class="kids-dua-meaning">In Your name O Allah I die and I live. — Bukhari. Also recite Ayatul Kursi before sleeping — the Prophet ﷺ said it protects you all night.</div>
       </div>
+
       <div class="kids-dua-card">
-        <div class="kids-dua-title">🌄 Waking Up</div>
-        <div class="kids-dua-arabic">الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا</div>
-        <div class="kids-dua-translit">Alḥamdulillāhil-ladhī aḥyānā baʿda mā amātanā</div>
-        <div class="kids-dua-meaning">Praise be to Allah who gave us life after causing us to die</div>
+        <div class="kids-dua-title">🤲 When Worried or Anxious</div>
+        <div class="kids-dua-arabic">حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ</div>
+        <div class="kids-dua-translit">Ḥasbiyallāhu lā ilāha illā huwa ʿalayhi tawakkaltu wa huwa rabbul ʿarshil ʿaẓīm</div>
+        <div class="kids-dua-meaning">Allah is enough for me. There is no god but He. In Him I trust, and He is the Lord of the Mighty Throne. — Quran 9:129. Say this 7 times morning and evening.</div>
       </div>
+
       <div class="kids-dua-card">
-        <div class="kids-dua-title">🚪 Leaving Home</div>
-        <div class="kids-dua-arabic">بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ</div>
-        <div class="kids-dua-translit">Bismillāhi tawakkaltu ʿalallāh</div>
-        <div class="kids-dua-meaning">In the name of Allah, I place my trust in Allah</div>
+        <div class="kids-dua-title">😣 When in Difficulty</div>
+        <div class="kids-dua-arabic">لَا إِلَهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ</div>
+        <div class="kids-dua-translit">Lā ilāha illā anta subḥānaka innī kuntu minaẓ-ẓālimīn</div>
+        <div class="kids-dua-meaning">There is no god but You, glory be to You, indeed I was among the wrongdoers. — This is the dua of Prophet Yunus ﷺ from inside the whale. Allah responded and saved him.</div>
       </div>
+
       <div class="kids-dua-card">
-        <div class="kids-dua-title">🚗 Entering a Vehicle</div>
-        <div class="kids-dua-arabic">سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا</div>
-        <div class="kids-dua-translit">Subḥānal-ladhī sakhkhara lanā hādhā</div>
-        <div class="kids-dua-meaning">Glory be to Him who has made this vehicle obedient to us</div>
+        <div class="kids-dua-title">📚 Before Studying</div>
+        <div class="kids-dua-arabic">رَبِّ زِدْنِي عِلْمًا</div>
+        <div class="kids-dua-translit">Rabbi zidnī ʿilmā</div>
+        <div class="kids-dua-meaning">My Lord, increase me in knowledge. — Quran 20:114. Say this before every class, before reading, before learning anything new.</div>
       </div>
+
       <div class="kids-dua-card">
-        <div class="kids-dua-title">🤲 When Sad or Worried</div>
-        <div class="kids-dua-arabic">حَسْبِيَ اللَّهُ وَنِعْمَ الْوَكِيلُ</div>
-        <div class="kids-dua-translit">Ḥasbiyallāhu wa niʿmal-wakīl</div>
-        <div class="kids-dua-meaning">Allah is enough for me, and what an excellent Trustee He is</div>
+        <div class="kids-dua-title">🌧️ When It Rains</div>
+        <div class="kids-dua-arabic">اللَّهُمَّ صَيِّبًا نَافِعًا</div>
+        <div class="kids-dua-translit">Allāhumma ṣayyiban nāfiʿā</div>
+        <div class="kids-dua-meaning">O Allah, make it a beneficial rain. — Bukhari. This is what the Prophet ﷺ said when it rained.</div>
+      </div>
+
+      <div class="kids-dua-card">
+        <div class="kids-dua-title">🪞 Looking in the Mirror</div>
+        <div class="kids-dua-arabic">اللَّهُمَّ أَنْتَ حَسَّنْتَ خَلْقِي فَحَسِّنْ خُلُقِي</div>
+        <div class="kids-dua-translit">Allāhumma anta ḥassanta khalqī fa-ḥassin khuluqī</div>
+        <div class="kids-dua-meaning">O Allah, just as You made my appearance good, make my character good. — Ahmad (Sahih). A reminder that inner beauty matters more than outer beauty.</div>
       </div>
     </div>
 
@@ -2854,46 +2926,76 @@ function renderKids40(){
 
     <!-- TAB 4: SEERAH -->
     <div id="kPane4" style="display:none">
-      <p style="font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.7">The life of Prophet Muhammad ﷺ — these are the well-known milestones that all Muslims agree upon.</p>
+      <p style="font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.7">The life of Prophet Muhammad ﷺ — well-known milestones that all Muslims agree upon.</p>
 
       <div class="kids-pillar-card"><div class="kids-pillar-icon">🌟</div><div>
-        <div class="kids-pillar-name">Birth — approximately 570 CE</div>
-        <div class="kids-pillar-desc">The Prophet Muhammad ﷺ was born in Makkah in the Year of the Elephant — the same year Abraha tried to destroy the Kaaba with elephants but Allah protected it. His father Abdullah had passed away before his birth and his mother was Aminah bint Wahb.</div>
+        <div class="kids-pillar-name">Birth — 570 CE, Year of the Elephant</div>
+        <div class="kids-pillar-desc">The Prophet Muhammad ﷺ was born in Makkah. That same year, Abraha came with an army of elephants to destroy the Kaaba — but Allah sent birds that destroyed the army. His father Abdullah had passed away before his birth. His mother was Aminah bint Wahb.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🤱</div><div>
+        <div class="kids-pillar-name">Childhood with Halimah</div>
+        <div class="kids-pillar-desc">As was the custom in Arabia, the Prophet ﷺ was sent to the desert to be raised by a foster mother named Halimah As-Sadiyyah. The family noticed blessings in their home from the moment he arrived. He returned to his mother Aminah at age 4-5.</div>
       </div></div>
 
       <div class="kids-pillar-card"><div class="kids-pillar-icon">👶</div><div>
-        <div class="kids-pillar-name">Early Life</div>
-        <div class="kids-pillar-desc">His mother Aminah passed away when he was just 6 years old. He was then cared for by his grandfather Abdul Muttalib and later his uncle Abu Talib. He was known in Makkah as Al-Amin — The Trustworthy — because of his honesty.</div>
+        <div class="kids-pillar-name">Orphaned — Age 6</div>
+        <div class="kids-pillar-desc">His mother Aminah passed away when he was 6 years old. His grandfather Abdul Muttalib then cared for him with great love. When Abdul Muttalib passed away two years later, his uncle Abu Talib took him in and protected him throughout his life.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🤝</div><div>
+        <div class="kids-pillar-name">Al-Amin — The Trustworthy</div>
+        <div class="kids-pillar-desc">Before becoming a Prophet, he was known throughout Makkah as Al-Amin — The Trustworthy — and As-Sadiq — The Truthful. Even his enemies trusted him with their valuables. When he married Khadijah RA at age 25, she was 40 and chose him for his honesty and character.</div>
       </div></div>
 
       <div class="kids-pillar-card"><div class="kids-pillar-icon">📖</div><div>
         <div class="kids-pillar-name">First Revelation — 610 CE, Age 40</div>
-        <div class="kids-pillar-desc">While meditating in the Cave of Hira on Jabal al-Nour (Mountain of Light) near Makkah, the Angel Jibreel (Gabriel) came to him and revealed the first ayahs of the Quran: "Read in the name of your Lord who created." This was the beginning of his prophethood.</div>
+        <div class="kids-pillar-desc">While meditating in the Cave of Hira on Jabal al-Nour near Makkah, the Angel Jibreel came and revealed the first ayahs of the Quran: "Read in the name of your Lord who created." He returned home trembling and Khadijah RA comforted him. This was the beginning of his prophethood.</div>
       </div></div>
 
       <div class="kids-pillar-card"><div class="kids-pillar-icon">🕊️</div><div>
         <div class="kids-pillar-name">First Muslims</div>
-        <div class="kids-pillar-desc">The first to believe in him were his beloved wife Khadijah RA, his cousin Ali ibn Abi Talib RA, his close friend Abu Bakr As-Siddiq RA, and his freed slave Zayd ibn Harithah RA. They accepted Islam when most of Makkah rejected the message.</div>
+        <div class="kids-pillar-desc">The first to believe were his wife Khadijah RA, his cousin Ali RA (then a young boy), his close friend Abu Bakr RA, and his freed slave Zayd RA. For three years he called to Islam quietly. Then Allah commanded him to call people openly.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">😔</div><div>
+        <div class="kids-pillar-name">Year of Sorrow — 619 CE</div>
+        <div class="kids-pillar-desc">In one year, the Prophet ﷺ lost both his beloved wife Khadijah RA and his uncle Abu Talib who had protected him. This year is called the Year of Sorrow. Despite this pain, he continued his mission with patience and trust in Allah.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🌙</div><div>
+        <div class="kids-pillar-name">Al-Isra wal Miraj — Night Journey</div>
+        <div class="kids-pillar-desc">Allah took the Prophet ﷺ on a miraculous night journey from Makkah to Jerusalem, then up through the heavens to a station near Allah. During this journey the 5 daily prayers were made obligatory for Muslims — a direct gift from Allah to the believers.</div>
       </div></div>
 
       <div class="kids-pillar-card"><div class="kids-pillar-icon">🚶</div><div>
         <div class="kids-pillar-name">The Hijra — 622 CE</div>
-        <div class="kids-pillar-desc">After years of persecution in Makkah, the Prophet ﷺ and his companions migrated to Madinah. This migration — called the Hijra — was so important that Muslims use it as the starting point of the Islamic calendar. Year 1 AH begins from this migration.</div>
+        <div class="kids-pillar-desc">After years of persecution in Makkah, the Prophet ﷺ and his companions migrated to Madinah. He hid in the Cave of Thawr for three days with Abu Bakr RA while enemies searched for him. This migration is so important that Year 1 of the Islamic calendar begins from it.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🏙️</div><div>
+        <div class="kids-pillar-name">Building the Islamic Community</div>
+        <div class="kids-pillar-desc">In Madinah he built the first mosque — Masjid Quba — and then Masjid an-Nabawi. He created brotherhood between the Muhajirun (migrants from Makkah) and the Ansar (helpers of Madinah). He established a written constitution for the city — one of the earliest in history.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">⚔️</div><div>
+        <div class="kids-pillar-name">Battle of Badr — 624 CE</div>
+        <div class="kids-pillar-desc">The first major battle between 313 Muslims and an army of over 1,000 from Makkah. Despite being heavily outnumbered, the Muslims were victorious with the help of Allah. The Prophet ﷺ wept and made dua throughout the night before the battle.</div>
       </div></div>
 
       <div class="kids-pillar-card"><div class="kids-pillar-icon">🕋</div><div>
         <div class="kids-pillar-name">Conquest of Makkah — 630 CE</div>
-        <div class="kids-pillar-desc">Eight years after the Hijra, the Prophet ﷺ returned to Makkah with 10,000 companions. He entered peacefully and forgave the people of Makkah who had persecuted the Muslims for years. This was one of the greatest acts of mercy in history.</div>
+        <div class="kids-pillar-desc">Eight years after the Hijra, the Prophet ﷺ returned to Makkah with 10,000 companions. He entered peacefully and declared a general amnesty — forgiving the people who had persecuted Muslims for 20 years. He then cleansed the Kaaba of idols and restored it to the worship of Allah alone.</div>
       </div></div>
 
       <div class="kids-pillar-card"><div class="kids-pillar-icon">📜</div><div>
         <div class="kids-pillar-name">The Farewell Sermon — 632 CE</div>
-        <div class="kids-pillar-desc">On his final Hajj, the Prophet ﷺ gave a sermon to over 100,000 companions on Mount Arafah. He said: "All mankind is from Adam and Eve. An Arab has no superiority over a non-Arab, nor a non-Arab over an Arab. The best among you is the most righteous."</div>
+        <div class="kids-pillar-desc">On his final Hajj with over 100,000 companions, the Prophet ﷺ gave his last great sermon on Mount Arafah. He declared: "All mankind is from Adam. No Arab is superior to a non-Arab. The best among you is the most righteous." He asked if he had delivered the message — and 100,000 voices said yes.</div>
       </div></div>
 
       <div class="kids-pillar-card"><div class="kids-pillar-icon">🌹</div><div>
-        <div class="kids-pillar-name">Passing Away — 632 CE, Age 63</div>
-        <div class="kids-pillar-desc">The Prophet ﷺ passed away on the 12th of Rabi al-Awwal in Madinah at the age of approximately 63. He was buried in his room, which is now inside the Prophet's Mosque in Madinah. May Allah's peace and blessings be upon him.</div>
+        <div class="kids-pillar-name">Passing Away — 632 CE</div>
+        <div class="kids-pillar-desc">The Prophet ﷺ passed away in Madinah aged approximately 63. His final words included: "To the highest companion" — meaning he chose to be with Allah. He was buried in his room next to the mosque. When Abu Bakr RA announced his death he said: "Whoever worshipped Muhammad — Muhammad is dead. Whoever worships Allah — Allah is alive and never dies."</div>
       </div></div>
     </div>
 
@@ -2950,6 +3052,122 @@ function renderKids40(){
       <div class="kids-dua-card"><div class="kids-dua-title">📱 Using Your Time Well</div>
         <div class="kids-dua-meaning">The Prophet ﷺ said: "Two blessings which many people waste — health and free time." Islam encourages us to use time wisely. Read Quran, help at home, learn something new, be kind. Every good deed is recorded.</div>
       </div>
+    </div>
+
+
+    <!-- TAB 7: SALAH GUIDE -->
+    <div id="kPane7" style="display:none">
+      <p style="font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.7">A guide to daily prayers, sunnah, and special prayers. Sunnah rakats differ slightly between schools — always check with your local imam.</p>
+
+      <!-- Fard Prayers -->
+      <div style="background:#166534;color:white;border-radius:12px;padding:12px 14px;margin-bottom:10px;font-weight:800;font-size:14px">📿 The 5 Obligatory (Fard) Prayers</div>
+
+      <div style="background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:16px">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <tr style="background:#f0fdf4;font-weight:700;color:#166534">
+            <td style="padding:10px 12px">Prayer</td>
+            <td style="padding:10px 8px;text-align:center">Fard Rakats</td>
+            <td style="padding:10px 8px;text-align:center">Time</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4">
+            <td style="padding:10px 12px;font-weight:700">🌙 Fajr</td>
+            <td style="padding:10px;text-align:center;color:#166534;font-weight:800">2</td>
+            <td style="padding:10px;text-align:center;font-size:11px;color:#6b7280">Dawn to Sunrise</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4;background:#fafafa">
+            <td style="padding:10px 12px;font-weight:700">☀️ Dhuhr</td>
+            <td style="padding:10px;text-align:center;color:#166534;font-weight:800">4</td>
+            <td style="padding:10px;text-align:center;font-size:11px;color:#6b7280">Midday</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4">
+            <td style="padding:10px 12px;font-weight:700">🌤️ Asr</td>
+            <td style="padding:10px;text-align:center;color:#166534;font-weight:800">4</td>
+            <td style="padding:10px;text-align:center;font-size:11px;color:#6b7280">Afternoon</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4;background:#fafafa">
+            <td style="padding:10px 12px;font-weight:700">🌅 Maghrib</td>
+            <td style="padding:10px;text-align:center;color:#166534;font-weight:800">3</td>
+            <td style="padding:10px;text-align:center;font-size:11px;color:#6b7280">After Sunset</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4">
+            <td style="padding:10px 12px;font-weight:700">🌙 Isha</td>
+            <td style="padding:10px;text-align:center;color:#166534;font-weight:800">4</td>
+            <td style="padding:10px;text-align:center;font-size:11px;color:#6b7280">Night</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Sunnah comparison -->
+      <div style="background:#166534;color:white;border-radius:12px;padding:12px 14px;margin-bottom:10px;font-weight:800;font-size:14px">📿 Sunnah Prayers — Hanafi vs Other Schools</div>
+      <p style="font-size:11px;color:#9ca3af;margin-bottom:10px">Muakkadah = Confirmed Sunnah · Ghair Muakkadah = Optional Sunnah</p>
+
+      <div style="background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:16px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <tr style="background:#f0fdf4;font-weight:700;color:#166534">
+            <td style="padding:9px 10px">Prayer</td>
+            <td style="padding:9px 8px;text-align:center">Hanafi</td>
+            <td style="padding:9px 8px;text-align:center">Shafi'i / Maliki / Hanbali</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4">
+            <td style="padding:9px 10px;font-weight:700">🌙 Fajr</td>
+            <td style="padding:9px 8px;text-align:center;color:#166534">2 before ✓</td>
+            <td style="padding:9px 8px;text-align:center;color:#374151">2 before ✓</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4;background:#fafafa">
+            <td style="padding:9px 10px;font-weight:700">☀️ Dhuhr</td>
+            <td style="padding:9px 8px;text-align:center;color:#166534">4 before + 2 after</td>
+            <td style="padding:9px 8px;text-align:center;color:#374151">2 before + 2 after</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4">
+            <td style="padding:9px 10px;font-weight:700">🌤️ Asr</td>
+            <td style="padding:9px 8px;text-align:center;color:#166534">4 before (optional)</td>
+            <td style="padding:9px 8px;text-align:center;color:#374151">2-4 optional</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4;background:#fafafa">
+            <td style="padding:9px 10px;font-weight:700">🌅 Maghrib</td>
+            <td style="padding:9px 8px;text-align:center;color:#166534">2 after ✓</td>
+            <td style="padding:9px 8px;text-align:center;color:#374151">2 after ✓</td>
+          </tr>
+          <tr style="border-top:1px solid #f0fdf4">
+            <td style="padding:9px 10px;font-weight:700">🌙 Isha</td>
+            <td style="padding:9px 8px;text-align:center;color:#166534">4 before (opt) + 2 after ✓</td>
+            <td style="padding:9px 8px;text-align:center;color:#374151">2 after ✓</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Witr -->
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🌙</div><div>
+        <div class="kids-pillar-name">Witr Prayer</div>
+        <div class="kids-pillar-desc"><b>Hanafi:</b> Witr is Wajib (obligatory) — 3 rakats prayed together after Isha, always with qunut dua in the third rakat.<br><br><b>Shafi'i / Maliki / Hanbali:</b> Witr is Sunnah Muakkadah — can be 1, 3, 5, 7, 9, or 11 rakats. 1 rakat alone is valid.</div>
+      </div></div>
+
+      <!-- Special prayers -->
+      <div style="background:#166534;color:white;border-radius:12px;padding:12px 14px;margin-bottom:10px;font-weight:800;font-size:14px">📿 Special Prayers</div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🕌</div><div>
+        <div class="kids-pillar-name">Jumu'ah — Friday Prayer</div>
+        <div class="kids-pillar-desc">Every Friday at Dhuhr time, Muslim men are obligated to attend the Friday prayer at the masjid. It consists of 2 fard rakats after the khutbah (sermon). It replaces Dhuhr for men. Allah says in the Quran: "When the call to prayer on Friday is made, hasten to the remembrance of Allah." (62:9)</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🎉</div><div>
+        <div class="kids-pillar-name">Eid Prayer — Twice a Year</div>
+        <div class="kids-pillar-desc">Eid al-Fitr after Ramadan and Eid al-Adha during Hajj season. The Eid prayer is 2 rakats with extra takbeers (saying Allahu Akbar). It is prayed in the morning, ideally outdoors or in a large hall. It is a time of joy, gratitude, and community.</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🌙</div><div>
+        <div class="kids-pillar-name">Tahajjud — Night Prayer</div>
+        <div class="kids-pillar-desc">Prayed in the last third of the night after sleeping. Minimum 2 rakats, no maximum. The Prophet ﷺ said it is the best prayer after the obligatory prayers. Allah descends to the lowest heaven in the last third of night and asks: "Who is calling Me that I may answer them?"</div>
+      </div></div>
+
+      <div class="kids-pillar-card"><div class="kids-pillar-icon">🌅</div><div>
+        <div class="kids-pillar-name">Duha — Morning Prayer</div>
+        <div class="kids-pillar-desc">Prayed after sunrise (approximately 20 minutes after) until before midday. Minimum 2 rakats, maximum 12 rakats. The Prophet ﷺ said every joint in your body owes charity daily — 2 rakats of Duha covers all of that charity.</div>
+      </div></div>
+
+      <p style="font-size:11px;color:#9ca3af;text-align:center;padding:12px;line-height:1.6">
+        ⚠️ This is a general guide. Always follow your local imam and scholar for rulings specific to your madhab.
+      </p>
     </div>
 
   </div><!-- /kids-body -->
