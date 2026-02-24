@@ -1125,17 +1125,17 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
     <!-- Calc + Asr -->
     <div class="p-settings">
       <select id="calcMethod" onchange="savePS();fetchPrayerTimes()">
-        <option value="3">Muslim World League</option>
-        <option value="2">ISNA – North America</option>
-        <option value="5">Egyptian General Authority</option>
-        <option value="1">University of Karachi</option>
-        <option value="4">Umm Al-Qura (Makkah)</option>
-        <option value="16">Dubai</option>
-        <option value="9">Kuwait</option>
-        <option value="10">Qatar</option>
-        <option value="11">Singapore / Malaysia</option>
-        <option value="13">Diyanet İşleri – Turkey</option>
-        <option value="7">Tehran (Shia)</option>
+        <option value="1">University of Karachi — 18° (Recommended)</option>
+        <option value="3">Muslim World League — 18°</option>
+        <option value="5">Egyptian General Authority — 19.5°</option>
+        <option value="13">Diyanet İşleri – Turkey — 18°</option>
+        <option value="4">Umm Al-Qura (Makkah) — 18.5°</option>
+        <option value="16">Dubai — 18.2°</option>
+        <option value="9">Kuwait — 18°</option>
+        <option value="10">Qatar — 18°</option>
+        <option value="11">Singapore / Malaysia — 20°</option>
+        <option value="2">ISNA – North America — 15°</option>
+        <option value="7">Tehran (Shia) — 17.7°</option>
       </select>
       <select id="asrMethod" onchange="savePS();fetchPrayerTimes()">
         <option value="0">Asr: Standard (Shafi'i · Maliki · Hanbali)</option>
@@ -1420,7 +1420,7 @@ function getPrayerName(p){
 let pCoords=null, pTimeObjs=null, pExpanded=false;
 let azanOn=true, pTickTimer=null, lastAzanFired={};
 
-const _calc=localStorage.getItem("pCalc")||"3";
+const _calc=localStorage.getItem("pCalc")||"1";
 const _asr =localStorage.getItem("pAsr") ||"0";
 const _azan=localStorage.getItem("pAzan")||"makkah";
 const _mute=localStorage.getItem("pMute")||"0";
