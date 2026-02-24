@@ -466,28 +466,28 @@ main{ max-width:1000px; margin:auto; padding:15px; }
   position:absolute; inset:0; border-radius:50%;
   transition:transform .08s linear;
 }
+/* Needle is FIXED pointing straight up (to Qibla)
+   The rose rotates so that North aligns with device heading */
 .compass-needle{
   position:absolute;
-  left:50%; bottom:50%;
-  width:3px; margin-left:-1.5px;
+  top:50%; left:50%;
+  width:4px; height:46%;
+  margin-left:-2px;
   transform-origin:bottom center;
-  transition:transform .08s linear;
-}
-.needle-qibla{
-  position:absolute; bottom:0; left:50%;
-  transform:translateX(-50%);
-  width:0; height:0;
-  border-left:6px solid transparent;
-  border-right:6px solid transparent;
-  border-bottom:90px solid #4ade80;
-  filter:drop-shadow(0 0 8px rgba(74,222,128,.8));
+  top:4%; /* tip starts near top */
+  background:linear-gradient(to bottom, #4ade80 60%, transparent 100%);
+  border-radius:4px 4px 0 0;
+  filter:drop-shadow(0 0 6px rgba(74,222,128,.9));
+  z-index:5;
 }
 .needle-tail{
-  position:absolute; top:0; left:50%;
-  transform:translateX(-50%);
-  width:3px; height:40px;
-  background:rgba(255,255,255,.2);
-  border-radius:2px;
+  position:absolute;
+  top:50%; left:50%;
+  width:4px; height:20%;
+  margin-left:-2px;
+  background:rgba(255,255,255,.25);
+  border-radius:0 0 4px 4px;
+  z-index:5;
 }
 .compass-center{
   position:absolute; top:50%; left:50%;
@@ -1299,36 +1299,53 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
     <!-- Compass -->
     <div class="compass-wrap">
       <div class="compass-outer-ring"></div>
-      <!-- Cardinal labels fixed -->
-      <div class="compass-cardinal">
-        <span style="top:4px;left:50%;transform:translateX(-50%)" id="cN">N</span>
-        <span style="bottom:4px;left:50%;transform:translateX(-50%)">S</span>
-        <span style="left:4px;top:50%;transform:translateY(-50%)">W</span>
-        <span style="right:4px;top:50%;transform:translateY(-50%)">E</span>
-      </div>
-      <!-- Rose rotates with device -->
-      <svg id="compassRose" class="compass-rose" viewBox="0 0 220 220" style="position:absolute;inset:0">
-        <circle cx="110" cy="110" r="108" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-        <!-- tick marks every 30deg -->
-        <g stroke="rgba(255,255,255,0.15)" stroke-width="1.5">
-          <line x1="110" y1="4" x2="110" y2="18"/>
-          <line x1="110" y1="202" x2="110" y2="216"/>
-          <line x1="4" y1="110" x2="18" y2="110"/>
-          <line x1="202" y1="110" x2="216" y2="110"/>
+      <!-- 
+        APPROACH: Same as Athan app
+        - compassRose SVG rotates so its N always faces physical North
+        - compassNeedle div is FIXED, pre-rotated to qiblaAngle from North
+        - As user turns device, rose rotates, needle stays pointing Qibla
+      -->
+      <!-- Rose with N/S/E/W — rotates with device heading -->
+      <svg id="compassRose" class="compass-rose" viewBox="0 0 220 220" style="position:absolute;inset:0;transition:transform .08s linear">
+        <circle cx="110" cy="110" r="106" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+        <!-- N label -->
+        <text x="110" y="18" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="sans-serif">N</text>
+        <text x="110" y="210" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="12" font-family="sans-serif">S</text>
+        <text x="14" y="115" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="12" font-family="sans-serif">W</text>
+        <text x="206" y="115" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="12" font-family="sans-serif">E</text>
+        <!-- tick marks -->
+        <g stroke="rgba(255,255,255,0.2)" stroke-width="1.5">
+          <line x1="110" y1="22" x2="110" y2="34"/>
+          <line x1="110" y1="186" x2="110" y2="198"/>
+          <line x1="22" y1="110" x2="34" y2="110"/>
+          <line x1="186" y1="110" x2="198" y2="110"/>
         </g>
-        <g stroke="rgba(255,255,255,0.08)" stroke-width="1">
-          <line x1="47" y1="47" x2="57" y2="57"/>
-          <line x1="173" y1="47" x2="163" y2="57"/>
-          <line x1="47" y1="173" x2="57" y2="163"/>
-          <line x1="173" y1="173" x2="163" y2="163"/>
+        <g stroke="rgba(255,255,255,0.1)" stroke-width="1">
+          <line x1="52" y1="52" x2="60" y2="60"/>
+          <line x1="168" y1="52" x2="160" y2="60"/>
+          <line x1="52" y1="168" x2="60" y2="160"/>
+          <line x1="168" y1="168" x2="160" y2="160"/>
         </g>
       </svg>
-      <!-- Qibla needle — fixed, rotates to qibla bearing -->
-      <div id="compassNeedle" class="compass-needle" style="height:130px">
-        <div class="needle-qibla"></div>
-        <div class="needle-tail"></div>
-      </div>
-      <!-- Center -->
+      <!-- Needle FIXED at qibla bearing — set once in openQibla() -->
+      <svg id="compassNeedle" viewBox="0 0 220 220"
+           style="position:absolute;inset:0;transition:transform .08s linear">
+        <!-- Green needle tip pointing UP = toward Qibla -->
+        <polygon points="110,24 103,110 117,110"
+                 fill="#4ade80"
+                 filter="url(#glow)"/>
+        <!-- White tail -->
+        <polygon points="110,196 105,110 115,110"
+                 fill="rgba(255,255,255,0.3)"/>
+        <!-- Glow filter -->
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
+      <!-- Center dot -->
       <div class="compass-center"></div>
     </div>
 
@@ -1841,10 +1858,12 @@ function openQibla(){
   document.getElementById("qiblaDeg").textContent=bearing.toFixed(1)+"°";
   document.getElementById("qiblaDir").textContent="toward Makkah · "+getCardinal(bearing)+" from North";
 
-  // Position needle — rotates to bearing from North
+  // Needle SVG pre-rotated to qibla bearing — stays fixed as rose rotates
   const needle=document.getElementById("compassNeedle");
-  // Needle tip points toward Makkah — add 180 because triangle base is at bottom
-  needle.style.transform=`translateX(-50%) rotate(${bearing+180}deg)`;
+  needle.style.transform=`rotate(${bearing}deg)`;
+  // Rose starts at 0 (no device heading yet)
+  const rose=document.getElementById("compassRose");
+  rose.style.transform=`rotate(0deg)`;
 
   startCompass();
   initQiblaMap(lat, lng);
@@ -1967,7 +1986,7 @@ function listenCompass(){
     // Rose rotates opposite to device so cardinal labels stay correct
     if(rose) rose.style.transform=`rotate(${-heading}deg)`;
     // Needle points to qibla relative to current device heading
-    if(needle) needle.style.transform=`translateX(-50%) rotate(${qiblaAngle-heading+180}deg)`;
+    if(needle) needle.style.transform=`rotate(${qiblaAngle-heading}deg)`;
   };
   window.addEventListener("deviceorientation",compassListener,true);
 }
