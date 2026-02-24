@@ -468,7 +468,7 @@ main{ max-width:1000px; margin:auto; padding:15px; }
 }
 /* Needle is FIXED pointing straight up (to Qibla)
    The rose rotates so that North aligns with device heading */
-/* compass needle/tail handled by SVG — no div CSS needed */
+
 .compass-center{
   position:absolute; top:50%; left:50%;
   transform:translate(-50%,-50%);
@@ -1278,59 +1278,60 @@ body.kids-active>*:not(#kidsMode){ display:none !important; }
   </div>
   <div class="qibla-body">
 
-    <!-- ONE SVG — rose group rotates, needle group fixed -->
-    <div class="compass-wrap">
-      <div class="compass-outer-ring"></div>
-      <svg id="compassSVG" viewBox="0 0 240 240"
-           style="position:absolute;inset:0;width:100%;height:100%;overflow:visible">
+    <!-- Simple static Qibla arrow — always accurate, no sensor needed -->
+    <div style="position:relative;width:220px;height:220px;margin:0 auto">
+      <!-- Outer ring -->
+      <svg viewBox="0 0 220 220" style="position:absolute;inset:0;width:100%;height:100%">
+        <!-- Background circle -->
+        <circle cx="110" cy="110" r="106" fill="rgba(13,27,42,0.95)" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+        <!-- Fixed cardinal labels — N always at top -->
+        <text x="110" y="18" text-anchor="middle" fill="white" font-size="15" font-weight="bold" font-family="Arial">N</text>
+        <text x="110" y="212" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="13" font-family="Arial">S</text>
+        <text x="12" y="115" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="13" font-family="Arial">W</text>
+        <text x="208" y="115" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="13" font-family="Arial">E</text>
+        <!-- NE NW SE SW -->
+        <text x="183" y="46" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Arial">NE</text>
+        <text x="37" y="46" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Arial">NW</text>
+        <text x="183" y="186" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Arial">SE</text>
+        <text x="37" y="186" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Arial">SW</text>
+        <!-- Tick marks -->
+        <g stroke="rgba(255,255,255,0.2)" stroke-width="1.5">
+          <line x1="110" y1="24" x2="110" y2="36"/>
+          <line x1="110" y1="184" x2="110" y2="196"/>
+          <line x1="24" y1="110" x2="36" y2="110"/>
+          <line x1="184" y1="110" x2="196" y2="110"/>
+        </g>
+        <g stroke="rgba(255,255,255,0.1)" stroke-width="1">
+          <line x1="55" y1="55" x2="64" y2="64"/>
+          <line x1="165" y1="55" x2="156" y2="64"/>
+          <line x1="55" y1="165" x2="64" y2="156"/>
+          <line x1="165" y1="165" x2="156" y2="156"/>
+        </g>
+        <!-- Dashed circle showing qibla path -->
+        <circle cx="110" cy="110" r="80" fill="none" stroke="rgba(74,222,128,0.1)" stroke-width="1" stroke-dasharray="4,4"/>
+      </svg>
+
+      <!-- Qibla arrow — rotated by bearing via JS, pivot at center -->
+      <svg id="qiblaArrow" viewBox="0 0 220 220"
+           style="position:absolute;inset:0;width:100%;height:100%">
         <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          <filter id="arrowGlow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
-
-        <!-- ROSE GROUP — rotates: rotate(-heading, 120, 120) -->
-        <g id="compassRose">
-          <circle cx="120" cy="120" r="112" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-          <!-- Cardinal labels -->
-          <text x="120" y="18" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">N</text>
-          <text x="120" y="232" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="13" font-family="Arial">S</text>
-          <text x="12"  y="125" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="13" font-family="Arial">W</text>
-          <text x="228" y="125" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="13" font-family="Arial">E</text>
-          <!-- Intercardinal -->
-          <text x="194" y="50"  text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Arial">NE</text>
-          <text x="46"  y="50"  text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Arial">NW</text>
-          <text x="194" y="198" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Arial">SE</text>
-          <text x="46"  y="198" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="11" font-family="Arial">SW</text>
-          <!-- Ticks -->
-          <g stroke="rgba(255,255,255,0.2)" stroke-width="1.5">
-            <line x1="120" y1="26" x2="120" y2="40"/>
-            <line x1="120" y1="200" x2="120" y2="214"/>
-            <line x1="26"  y1="120" x2="40"  y2="120"/>
-            <line x1="200" y1="120" x2="214" y2="120"/>
-          </g>
-          <g stroke="rgba(255,255,255,0.1)" stroke-width="1">
-            <line x1="57"  y1="57"  x2="66"  y2="66"/>
-            <line x1="183" y1="57"  x2="174" y2="66"/>
-            <line x1="57"  y1="183" x2="66"  y2="174"/>
-            <line x1="183" y1="183" x2="174" y2="174"/>
-          </g>
-        </g>
-
-        <!-- NEEDLE GROUP — fixed: rotate(bearing, 120, 120) set once in openQibla() -->
-        <!-- Tip points UP toward North at 0°. rotate(45.3,120,120) → tip points NE -->
-        <g id="compassNeedle">
-          <!-- Green tip — from center upward -->
-          <polygon points="120,28 113,120 127,120"
-                   fill="#4ade80" filter="url(#glow)"/>
-          <!-- Grey tail — from center downward -->
-          <polygon points="120,210 116,120 124,120"
-                   fill="rgba(255,255,255,0.2)"/>
-          <!-- Center dot -->
-          <circle cx="120" cy="120" r="7" fill="#4ade80" filter="url(#glow)"/>
-          <circle cx="120" cy="120" r="3" fill="#0a1628"/>
-        </g>
+        <!-- Arrow tip pointing UP (North=0°). JS rotates this by bearing. -->
+        <!-- Tip -->
+        <polygon points="110,22 103,90 117,90" fill="#4ade80" filter="url(#arrowGlow)"/>
+        <!-- Shaft -->
+        <rect x="107" y="90" width="6" height="50" fill="#4ade80" rx="2" filter="url(#arrowGlow)"/>
+        <!-- Tail -->
+        <polygon points="110,198 104,140 116,140" fill="rgba(255,255,255,0.2)"/>
+        <!-- Kaaba at tip -->
+        <text x="110" y="15" text-anchor="middle" font-size="12">🕋</text>
+        <!-- Center dot -->
+        <circle cx="110" cy="110" r="6" fill="#4ade80" filter="url(#arrowGlow)"/>
+        <circle cx="110" cy="110" r="3" fill="#0a1628"/>
       </svg>
     </div>
 
@@ -1869,11 +1870,10 @@ function openQibla(){
   document.getElementById("qiblaDeg").textContent=bearing.toFixed(1)+"°";
   document.getElementById("qiblaDir").textContent="toward Makkah · "+getCardinal(bearing)+" from North";
 
-  // SVG transform with explicit pivot (120,120) — most reliable across all browsers
-  const needle=document.getElementById("compassNeedle");
-  needle.setAttribute("transform",`rotate(${bearing},120,120)`);
-  const rose=document.getElementById("compassRose");
-  rose.setAttribute("transform","rotate(0,120,120)");
+  // Rotate arrow to qibla bearing — pivot at SVG center (110,110)
+  const arrow = document.getElementById("qiblaArrow");
+  if(arrow) arrow.style.transform = `rotate(${bearing}deg)`;
+  if(arrow) arrow.style.transformOrigin = "110px 110px";
 
   startCompass();
   initQiblaMap(lat, lng);
