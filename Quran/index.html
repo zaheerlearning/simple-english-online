@@ -1843,7 +1843,8 @@ function openQibla(){
 
   // Position needle — rotates to bearing from North
   const needle=document.getElementById("compassNeedle");
-  needle.style.transform=`translateX(-50%) rotate(${bearing}deg)`;
+  // Needle tip points toward Makkah — add 180 because triangle base is at bottom
+  needle.style.transform=`translateX(-50%) rotate(${bearing+180}deg)`;
 
   startCompass();
   initQiblaMap(lat, lng);
@@ -1966,7 +1967,7 @@ function listenCompass(){
     // Rose rotates opposite to device so cardinal labels stay correct
     if(rose) rose.style.transform=`rotate(${-heading}deg)`;
     // Needle points to qibla relative to current device heading
-    if(needle) needle.style.transform=`translateX(-50%) rotate(${qiblaAngle-heading}deg)`;
+    if(needle) needle.style.transform=`translateX(-50%) rotate(${qiblaAngle-heading+180}deg)`;
   };
   window.addEventListener("deviceorientation",compassListener,true);
 }
