@@ -1,206 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VYRON | Phase 1</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: white;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 40px;
-      letter-spacing: 3px;
-    }
-
-    .search-form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      background: rgba(255,255,255,0.05);
-      padding: 20px;
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-    }
-
-    input, select {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 14px;
-    }
-
-    button {
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      background: #00c6ff;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: #00a2d8;
-    }
-
-    .search-results {
-      margin-top: 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-    }
-
-    .car-card {
-      background: rgba(255,255,255,0.08);
-      padding: 15px;
-      border-radius: 12px;
-      transition: 0.3s;
-    }
-
-    .car-card:hover {
-      transform: translateY(-5px);
-      background: rgba(255,255,255,0.15);
-    }
-
-    .price {
-      font-size: 20px;
-      font-weight: bold;
-      color: #00ffcc;
-    }
-
-  </style>
+  <title>VYRON Simple</title>
 </head>
-
 <body>
 
-<div class="container">
-  <h1>VYRON</h1>
+<h2>VYRON - Simple Car Search</h2>
 
-  <div class="search-form">
-    <select id="make">
-      <option value="">Select Make</option>
-    </select>
+<select id="make">
+  <option value="">Select Make</option>
+  <option value="Toyota">Toyota</option>
+  <option value="Honda">Honda</option>
+</select>
 
-    <select id="model">
-      <option value="">Select Model</option>
-    </select>
+<button onclick="search()">Search</button>
 
-    <input type="number" id="price-min" placeholder="Min Price">
-    <input type="number" id="price-max" placeholder="Max Price">
-
-    <input type="number" id="year-min" placeholder="Min Year">
-    <input type="number" id="year-max" placeholder="Max Year">
-
-    <input type="number" id="mileage-min" placeholder="Min Mileage">
-    <input type="number" id="mileage-max" placeholder="Max Mileage">
-
-    <button id="search-btn">Search</button>
-  </div>
-
-  <div class="search-results" id="results"></div>
-</div>
+<div id="result"></div>
 
 <script>
 
-const cars = [
-  {make:"Toyota", model:"Camry", price:18000, year:2020, mileage:40000},
-  {make:"Toyota", model:"Corolla", price:15000, year:2019, mileage:35000},
-  {make:"Honda", model:"Civic", price:17000, year:2021, mileage:25000},
-  {make:"Honda", model:"Accord", price:22000, year:2022, mileage:15000},
-  {make:"BMW", model:"X5", price:42000, year:2023, mileage:10000},
-  {make:"BMW", model:"3 Series", price:30000, year:2021, mileage:20000},
-];
+function search() {
+  const make = document.getElementById("make").value;
+  const resultDiv = document.getElementById("result");
 
-const makeSelect = document.getElementById("make");
-const modelSelect = document.getElementById("model");
-const resultsDiv = document.getElementById("results");
-
-// Populate Makes
-const makes = [...new Set(cars.map(car => car.make))];
-makes.forEach(make => {
-  let option = document.createElement("option");
-  option.value = make;
-  option.textContent = make;
-  makeSelect.appendChild(option);
-});
-
-// Populate Models based on Make
-makeSelect.addEventListener("change", function() {
-  modelSelect.innerHTML = '<option value="">Select Model</option>';
-  const selectedMake = this.value;
-  const models = cars
-    .filter(car => car.make === selectedMake)
-    .map(car => car.model);
-
-  [...new Set(models)].forEach(model => {
-    let option = document.createElement("option");
-    option.value = model;
-    option.textContent = model;
-    modelSelect.appendChild(option);
-  });
-});
-
-// Search Logic
-document.getElementById("search-btn").addEventListener("click", function() {
-
-  const filters = {
-    make: makeSelect.value,
-    model: modelSelect.value,
-    priceMin: parseInt(document.getElementById("price-min").value) || 0,
-    priceMax: parseInt(document.getElementById("price-max").value) || Infinity,
-    yearMin: parseInt(document.getElementById("year-min").value) || 0,
-    yearMax: parseInt(document.getElementById("year-max").value) || Infinity,
-    mileageMin: parseInt(document.getElementById("mileage-min").value) || 0,
-    mileageMax: parseInt(document.getElementById("mileage-max").value) || Infinity
-  };
-
-  const filtered = cars.filter(car => {
-    return (
-      (!filters.make || car.make === filters.make) &&
-      (!filters.model || car.model === filters.model) &&
-      car.price >= filters.priceMin &&
-      car.price <= filters.priceMax &&
-      car.year >= filters.yearMin &&
-      car.year <= filters.yearMax &&
-      car.mileage >= filters.mileageMin &&
-      car.mileage <= filters.mileageMax
-    );
-  });
-
-  displayResults(filtered);
-});
-
-function displayResults(list) {
-  resultsDiv.innerHTML = "";
-  if (list.length === 0) {
-    resultsDiv.innerHTML = "<p>No vehicles found.</p>";
+  if (make === "") {
+    resultDiv.innerHTML = "Please select a make.";
     return;
   }
 
-  list.forEach(car => {
-    const card = document.createElement("div");
-    card.className = "car-card";
-    card.innerHTML = `
-      <h3>${car.make} ${car.model}</h3>
-      <p>Year: ${car.year}</p>
-      <p>Mileage: ${car.mileage.toLocaleString()} miles</p>
-      <p class="price">$${car.price.toLocaleString()}</p>
-    `;
-    resultsDiv.appendChild(card);
-  });
+  if (make === "Toyota") {
+    resultDiv.innerHTML = "Available: Camry, Corolla";
+  }
+
+  if (make === "Honda") {
+    resultDiv.innerHTML = "Available: Civic, Accord";
+  }
 }
 
 </script>
