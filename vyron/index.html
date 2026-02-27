@@ -1,260 +1,57 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VYRON | Automotive Intelligence</title>
+  <title>VYRON | Phase 1</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body{
-      margin:0;
-      font-family:Segoe UI;
-      background:#0b0f19;
-      color:white;
-      padding:30px;
-    }
-    .container{max-width:1200px;margin:auto;}
-    .brand{
-      text-align:center;
-      font-size:42px;
-      font-weight:800;
-      letter-spacing:4px;
-      color:#00f5ff;
-      margin-bottom:30px;
-    }
-    .card{
-      background:#111827;
-      padding:20px;
-      border-radius:12px;
-      margin-bottom:25px;
-    }
-    input,select,button{
-      width:100%;
-      padding:10px;
-      margin-top:10px;
-      border-radius:6px;
-      border:none;
-      background:#0f172a;
-      color:white;
-    }
-    button{
-      background:#00f5ff;
-      font-weight:bold;
-      cursor:pointer;
-    }
-    button:hover{
-      background:#00d4d4;
-    }
-    .vehicle{
-      background:#0f172a;
-      padding:15px;
-      margin-top:15px;
-      border-radius:8px;
-    }
-    .vehicle img{
-      width:100%;
-      height:200px;
-      object-fit:cover;
-      border-radius:6px;
-      margin-bottom:10px;
-    }
-    .badge{
-      display:inline-block;
-      padding:4px 8px;
-      background:#00f5ff;
-      color:black;
-      border-radius:6px;
-      font-size:12px;
-      margin-left:10px;
-    }
-    .loading{
-      text-align:center;
-      margin-top:15px;
-      color:#00f5ff;
-    }
+    /* Add your basic styles here */
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>VYRON</h1>
+    <div class="search-form">
+      <label for="api-key">API Key:</label>
+      <input type="text" id="api-key" placeholder="Enter your API key">
 
-<div class="container">
+      <label for="make">Make:</label>
+      <select id="make">
+        <option value="">Select Make</option>
+      </select>
 
-  <div class="brand">VYRON</div>
+      <label for="model">Model:</label>
+      <select id="model">
+        <option value="">Select Model</option>
+      </select>
 
-  <div class="card">
-    <h3>MarketCheck API Key</h3>
-    <input type="text" id="apiKeyInput" placeholder="Enter your API key">
-    <button onclick="saveKey()">Save API Key</button>
+      <label for="price-min">Min Price:</label>
+      <input type="number" id="price-min" placeholder="Min Price">
+
+      <label for="price-max">Max Price:</label>
+      <input type="number" id="price-max" placeholder="Max Price">
+
+      <label for="year-min">Min Year:</label>
+      <input type="number" id="year-min" placeholder="Min Year">
+
+      <label for="year-max">Max Year:</label>
+      <input type="number" id="year-max" placeholder="Max Year">
+
+      <label for="mileage-min">Min Mileage:</label>
+      <input type="number" id="mileage-min" placeholder="Min Mileage">
+
+      <label for="mileage-max">Max Mileage:</label>
+      <input type="number" id="mileage-max" placeholder="Max Mileage">
+
+      <button id="search-btn">Search</button>
+    </div>
+    <div class="search-results">
+      <!-- Search results will be displayed here -->
+    </div>
   </div>
 
-  <div class="card">
-    <h3>Search Vehicles</h3>
-
-    <select id="makeSelect" onchange="loadModels()">
-      <option value="">Select Make</option>
-    </select>
-
-    <select id="modelSelect">
-      <option value="">Select Model</option>
-    </select>
-
-    <input type="number" id="minPrice" placeholder="Min Price (e.g. 5000)">
-    <input type="number" id="maxPrice" placeholder="Max Price (e.g. 20000)">
-
-    <select id="radius">
-      <option value="25">25 Miles</option>
-      <option value="50">50 Miles</option>
-      <option value="100">100 Miles</option>
-      <option value="200">200 Miles</option>
-    </select>
-
-    <button onclick="searchVehicles()">Search</button>
-
-    <div id="loading" class="loading" style="display:none;">Loading vehicles...</div>
-
-    <div id="results"></div>
-
-  </div>
-
-</div>
-
-<script>
-
-window.onload = function(){
-  const saved = localStorage.getItem("vyron_api");
-  if(saved) document.getElementById("apiKeyInput").value = saved;
-};
-
-function saveKey(){
-  const key = document.getElementById("apiKeyInput").value.trim();
-  if(!key){
-    alert("Enter valid API key.");
-    return;
-  }
-  localStorage.setItem("vyron_api", key);
-  alert("API key saved.");
-  loadMakes();
-}
-
-async function loadMakes(){
-  const key = localStorage.getItem("vyron_api");
-  if(!key) return;
-
-  try{
-    const res = await fetch(`https://api.marketcheck.com/v2/search/car/active?api_key=${key}&rows=0&facets=make`);
-    if(!res.ok) throw new Error("API error loading makes");
-
-    const data = await res.json();
-    const makeSelect = document.getElementById("makeSelect");
-    makeSelect.innerHTML = '<option value="">Select Make</option>';
-
-    if(data.facets && data.facets.make){
-      data.facets.make.forEach(m=>{
-        makeSelect.innerHTML += `<option value="${m.value}">${m.value}</option>`;
-      });
-    }
-
-  }catch(err){
-    console.error(err);
-    alert("Error loading makes. Check console.");
-  }
-}
-
-async function loadModels(){
-  const key = localStorage.getItem("vyron_api");
-  const make = document.getElementById("makeSelect").value;
-  const modelSelect = document.getElementById("modelSelect");
-
-  modelSelect.innerHTML = '<option value="">Select Model</option>';
-  if(!make || !key) return;
-
-  try{
-    const res = await fetch(`https://api.marketcheck.com/v2/search/car/active?api_key=${key}&rows=0&facets=model&make=${encodeURIComponent(make)}`);
-    if(!res.ok) throw new Error("API error loading models");
-
-    const data = await res.json();
-
-    if(data.facets && data.facets.model){
-      data.facets.model.forEach(m=>{
-        modelSelect.innerHTML += `<option value="${m.value}">${m.value}</option>`;
-      });
-    }
-
-  }catch(err){
-    console.error(err);
-    alert("Error loading models. Check console.");
-  }
-}
-
-async function searchVehicles(){
-  const key = localStorage.getItem("vyron_api");
-  if(!key){
-    alert("Enter API key first.");
-    return;
-  }
-
-  const make = document.getElementById("makeSelect").value;
-  const model = document.getElementById("modelSelect").value;
-  const minPrice = document.getElementById("minPrice").value || 0;
-  const maxPrice = document.getElementById("maxPrice").value || 999999;
-  const radius = document.getElementById("radius").value;
-
-  let url = `https://api.marketcheck.com/v2/search/car/active?api_key=${key}&rows=15&price_range=${minPrice}-${maxPrice}&radius=${radius}`;
-
-  if(make) url += `&make=${encodeURIComponent(make)}`;
-  if(model) url += `&model=${encodeURIComponent(model)}`;
-
-  document.getElementById("loading").style.display = "block";
-  document.getElementById("results").innerHTML = "";
-
-  try{
-    const res = await fetch(url);
-    if(!res.ok) throw new Error("API error searching vehicles");
-
-    const data = await res.json();
-    document.getElementById("loading").style.display = "none";
-
-    if(!data.listings || data.listings.length === 0){
-      document.getElementById("results").innerHTML = "No vehicles found.";
-      return;
-    }
-
-    const prices = data.listings.map(v=>v.price || 0);
-    const avg = prices.reduce((a,b)=>a+b,0)/prices.length;
-
-    data.listings.forEach(car=>{
-
-      const year = car.build?.year || car.year || "";
-      const mk = car.build?.make || car.make || "";
-      const mdl = car.build?.model || car.model || "";
-      const price = car.price ?? "N/A";
-      const miles = car.miles ?? "N/A";
-      const image = car.media?.photo_links?.[0] || "";
-
-      let badge = "";
-      if(price !== "N/A"){
-        if(price < avg * 0.9){
-          badge = '<span class="badge">Good Deal</span>';
-        }
-      }
-
-      document.getElementById("results").innerHTML += `
-        <div class="vehicle">
-          ${image ? `<img src="${image}">` : ""}
-          <strong>${year} ${mk} ${mdl}</strong> ${badge}
-          <br>Price: $${price}
-          <br>Miles: ${miles}
-          <br>City: ${car.city ?? "N/A"}
-          <br>Dealer: ${car.dealer?.name ?? "N/A"}
-        </div>
-      `;
-    });
-
-  }catch(err){
-    document.getElementById("loading").style.display = "none";
-    console.error(err);
-    alert("Search failed. Check console for details.");
-  }
-}
-
-</script>
-
+  <script>
+    // Add your JavaScript code here
+  </script>
 </body>
 </html>
