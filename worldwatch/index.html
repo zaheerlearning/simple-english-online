@@ -407,15 +407,13 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
 
     <div class="lock-label">CLMAGIC — REQUIRED TO UNLOCK</div>
     <div class="lock-row">
-      <input id="lockKeyInp" type="password" class="lock-inp" placeholder="sk-ant-api03-..." onkeydown="if(event.key==='Enter')tryUnlock()">
+      <input id="lockKeyInp" type="password" class="lock-inp" placeholder="Enter your CLMAGIC key..." onkeydown="if(event.key==='Enter')tryUnlock()">
       <button class="lock-btn" onclick="tryUnlock()">UNLOCK →</button>
     </div>
     <div class="lock-err" id="lockErr"></div>
 
     <div class="lock-note">
-      Get a free API key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
-      Your key is stored locally in your browser — never sent to any server except Anthropic.<br>
-      Finnhub key optional — enables live stock data.
+      Your key is stored locally in your browser only.
     </div>
   </div>
 </div>
@@ -443,11 +441,11 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
 
 <div class="api-bar">
   <span class="api-lbl">◈ CLMAGIC</span>
-  <input type="password" class="api-inp" id="apiInp" placeholder="sk-ant-api03-..."/>
+  <input type="password" class="api-inp" id="apiInp" placeholder="••••••••••••"/>
   <button class="api-btn" onclick="saveKey()">SAVE</button>
   <span class="api-st" id="apiSt">Not set</span>
   <span class="api-lbl" style="margin-left:10px">◈ FINMAGIC</span>
-  <input type="password" class="api-inp" id="fhInp" placeholder="finnhub.io/register (free)"/>
+  <input type="password" class="api-inp" id="fhInp" placeholder="••••••••••••"/>
   <button class="api-btn" onclick="saveFH()">SAVE</button>
   <span class="api-st" id="fhSt">Not set</span>
 </div>
@@ -819,7 +817,7 @@ function tryUnlock() {
   const v = document.getElementById('lockKeyInp').value.trim();
   const err = document.getElementById('lockErr');
   if (!v) { err.textContent = '⚠ Please enter your Claude API key.'; return; }
-  if (!v.startsWith('sk-ant-')) { err.textContent = '⚠ Key should start with sk-ant-...'; return; }
+  if (!v.startsWith('sk-ant-')) { err.textContent = '⚠ Invalid key format. Please check and try again.'; return; }
   err.textContent = '';
   document.getElementById('wwUnlockAnim').classList.add('show');
   AK = v;
