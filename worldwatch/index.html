@@ -457,8 +457,9 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   <button onclick="showTab('markets',this)">🌏 Global Markets</button>
   <button onclick="showTab('news',this)">📰 News Feed</button>
   <button onclick="showTab('analysts',this)">▶ YouTube Analysts</button>
+  <button onclick="showTab('creators',this)">🌟 Creators</button>
   <button onclick="showTab('analysis',this)">🧠 AI Analysis</button>
-  <button onclick="showTab('m3u',this)">📋 M3U Player</button>
+  <button onclick="showTab('m3u',this)">🪄 Magic Player</button>
 </nav>
 
 <div class="main">
@@ -673,8 +674,21 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   <div class="yt-grid" id="ytGrid"></div>
 </div>
 
+<div id="tab-creators" class="tab-panel">
+  <div class="info-box">🌟 <strong>India & Pakistan Creators</strong> — News analysts, talk shows, food & lifestyle. Opens YouTube in new tab.</div>
+  <div class="stocks-tb" id="cr-filt">
+    <button class="fb active" onclick="filtCR('all',this)">All</button>
+    <button class="fb" onclick="filtCR('news',this)">📰 News</button>
+    <button class="fb" onclick="filtCR('analyst',this)">🎙 Analysts</button>
+    <button class="fb" onclick="filtCR('food',this)">🍽 Food</button>
+    <button class="fb" onclick="filtCR('lifestyle',this)">🎥 Lifestyle</button>
+    <button class="fb" onclick="filtCR('india',this)">🇮🇳 India</button>
+    <button class="fb" onclick="filtCR('pakistan',this)">🇵🇰 Pakistan</button>
+  </div>
+  <div class="yt-grid" id="crGrid"></div>
+</div>
+
 <div id="tab-analysis" class="tab-panel">
-  <div class="info-box">ℹ For informational purposes only. Not financial advice.</div>
   <div class="ai-sec">
     <div class="ai-sec-t">📈 Investment &amp; Market Analysis</div>
     <div class="ai-sec-s">Ask Claude about stocks, sectors, halal investing</div>
@@ -707,13 +721,13 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   </div>
 </div>
 
-<!-- M3U PLAYER TAB -->
+<!-- MAGIC PLAYER TAB -->
 <div id="tab-m3u" class="tab-panel">
 
   <!-- ── COLLAPSIBLE LOAD PANEL ── -->
   <div class="m3u-load-panel" id="m3uLoadPanel">
     <div class="m3u-load-header" onclick="toggleM3ULoader()">
-      <span>📋 <strong>Playlist Loader</strong></span>
+      <span>🪄 <strong>Magic Player</strong></span>
       <span id="m3uLoaderChevron" style="font-size:11px;transition:transform .2s;">▲</span>
     </div>
     <div id="m3uLoaderBody">
@@ -1464,7 +1478,58 @@ var YTA=[
    d:'Deep explainers on geopolitics, history and Indian affairs. Research-heavy, neutral tone.'},
 ];
 
-function ytLangBadge(l){
+// ── INDIA & PAKISTAN CREATORS ────────────────────────────────────────────────
+const CRA = [
+  // ── NEWS CHANNELS ──
+  {n:'Neo News HD',        e:'🇵🇰',tg:['news','pakistan'],  s:'3.2M', u:'https://www.youtube.com/@NeoNewsHD',
+   d:'Pakistani news channel covering politics, current affairs and breaking news 24/7.'},
+  {n:'News18 Urdu',        e:'🇮🇳',tg:['news','india'],     s:'4.1M', u:'https://www.youtube.com/@News18Urdu',
+   d:'Urdu-language news from India\'s News18 network. Politics, society and current affairs.'},
+  {n:'The Wire',           e:'🇮🇳',tg:['news','analyst','india'], s:'2.3M', u:'https://www.youtube.com/@TheWireNews',
+   d:'Independent Indian journalism. In-depth investigative reporting, politics and civil liberties.'},
+
+  // ── ANALYSTS & TALK SHOWS ──
+  {n:'Mario Nawfal',       e:'🌐',tg:['analyst'],           s:'850K', u:'https://www.youtube.com/@MarioNawfal',
+   d:'Global tech, AI and geopolitics talk show host. Round Table discussions with major guests worldwide.'},
+  {n:'Talk Show Central',  e:'🎙️',tg:['analyst','pakistan'],s:'1.2M', u:'https://www.youtube.com/@TalkShowCentral',
+   d:'Pakistani political talk shows and current affairs debates. Aggregates top anchors and discussions.'},
+  {n:'Sabir Shakir',       e:'🇵🇰',tg:['analyst','pakistan'],s:'2.8M', u:'https://www.youtube.com/@SabirShakirOfficial',
+   d:'Former ARY News anchor. Independent political commentary on Pakistan affairs from the UK.'},
+  {n:'Zeeshan Usmani',     e:'🇵🇰',tg:['analyst','pakistan'],s:'620K', u:'https://www.youtube.com/@ZeeshanUsmani',
+   d:'Pakistan foreign policy, data science and geopolitics. Evidence-based analysis.'},
+  {n:'Zia Tabarak',        e:'🇵🇰',tg:['analyst','pakistan'],s:'480K', u:'https://www.youtube.com/@ZiaTabarak',
+   d:'Pakistan political analysis and commentary. In-depth coverage of domestic and regional affairs.'},
+  {n:'Deepak Chaturvedi',  e:'🇮🇳',tg:['analyst','india'],  s:'540K', u:'https://www.youtube.com/@DeepakChaturvedi',
+   d:'Indian journalist covering politics, geopolitics and current affairs with in-depth analysis.'},
+
+  // ── FOOD ──
+  {n:'Food Fusion',        e:'🍳',tg:['food','pakistan'],   s:'4.1M', u:'https://www.youtube.com/@FoodFusion',
+   d:'Pakistan\'s most popular cooking channel. Restaurant-style recipes made easy for home cooks.'},
+  {n:'Street Food PK',     e:'🍢',tg:['food','pakistan','lifestyle'], s:'2.5M', u:'https://www.youtube.com/@StreetFoodPK',
+   d:'Authentic Pakistani street food tours. From Karachi\'s Burns Road to Lahore\'s Food Street.'},
+
+  // ── LIFESTYLE / TRAVEL ──
+  {n:'Wild Lens by Abrar', e:'🎥',tg:['lifestyle','pakistan'],s:'1.8M', u:'https://www.youtube.com/@WildLensbyAbrar',
+   d:'Pakistan travel, nature and adventure. Stunning cinematography exploring remote landscapes and culture.'},
+];
+
+function filtCR(f,btn){
+  document.querySelectorAll('#cr-filt .fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const list = f==='all' ? CRA : CRA.filter(c=>c.tg.indexOf(f)>-1);
+  document.getElementById('crGrid').innerHTML = list.map(c=>{
+    const tags = c.tg.map(t=>'<span class="yt-tag">'+t+'</span>').join('');
+    return '<a class="yt-card" href="'+c.u+'" target="_blank" rel="noopener">'
+      +'<div class="yt-thumb">'+c.e+'<div class="yt-play">▶</div></div>'
+      +'<div class="yt-body">'
+      +'<div class="yt-name">'+c.n+'</div>'
+      +'<div class="yt-desc">'+c.d+'</div>'
+      +'<div class="yt-meta"><span class="yt-subs">'+c.s+' subs</span>'+tags+'</div>'
+      +'</div></a>';
+  }).join('');
+}
+filtCR('all', document.querySelector('#cr-filt .fb'));
+(l){
   if(l==='english') return '<span class="yt-lang yl-en">🇬🇧 English</span>';
   if(l==='urdu') return '<span class="yt-lang yl-ur">🇵🇰 Urdu</span>';
   return '<span class="yt-lang yl-hi">🇮🇳 Hindi</span>';
