@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -363,7 +364,8 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
 @media(max-width:600px){.gm-com-grid{grid-template-columns:1fr 1fr;}.gm-crypto-grid{grid-template-columns:1fr 1fr;}}
 
 /* ── LOCK SCREEN ── */
-#wwLockScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;}
+#wwLockScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:0;}
+#wwLockScreen.visible{display:flex;}
 #wwLockScreen.hidden{display:none;}
 .lock-box{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:40px 44px;max-width:480px;width:90%;text-align:center;}
 .lock-logo{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:.08em;margin-bottom:4px;}
@@ -396,11 +398,19 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
     <div class="lock-logo">WORLD<span>WATCH</span></div>
     <div class="lock-sub">GLOBAL NEWS &amp; INVESTMENT MONITOR</div>
 
-    <div class="lock-features">
-      <div class="lock-feat">📡 News Channels<span>HLS streams worldwide</span></div>
+    <!-- Welcome back mode (shown when re-locking) -->
+    <div id="lockWelcomeBack" style="display:none;text-align:center;margin:18px 0 10px;">
+      <div style="font-size:32px;margin-bottom:8px;">👋</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.15em;color:var(--cyan);">WELCOME BACK</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:4px;">Enter your key to continue</div>
+    </div>
+
+    <!-- Feature grid (shown on first visit) -->
+    <div id="lockFeatures" class="lock-features">
+      <div class="lock-feat">📡 World News<span>Live streams worldwide</span></div>
       <div class="lock-feat">🌐 News Sites<span>Top 50 global sources</span></div>
       <div class="lock-feat">📈 Stocks &amp; Markets<span>Real-time via Finnhub</span></div>
-      <div class="lock-feat">🧠 AI Analysis<span>Claude-powered insights</span></div>
+      <div class="lock-feat">🧠 AI Analysis<span>Smart powered insights</span></div>
       <div class="lock-feat">🌏 Global Markets<span>Indices, FX &amp; crypto</span></div>
       <div class="lock-feat">⭐ Favorites<span>Save your channels</span></div>
     </div>
@@ -412,8 +422,13 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
     </div>
     <div class="lock-err" id="lockErr"></div>
 
+    <div class="lock-label" style="margin-top:14px;opacity:0.6;">FINMAGIC — OPTIONAL (enables live stock data)</div>
+    <div class="lock-row">
+      <input id="lockFhInp" type="password" class="lock-inp" placeholder="Enter your FINMAGIC key..." onkeydown="if(event.key==='Enter')tryUnlock()">
+    </div>
+
     <div class="lock-note">
-      Your key is stored locally in your browser only.
+      Your keys are stored locally in your browser only.
     </div>
   </div>
 </div>
@@ -460,13 +475,14 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   <button onclick="showTab('creators',this)">🌟 Creators</button>
   <button onclick="showTab('analysis',this)">🧠 AI Analysis</button>
   <button onclick="showTab('m3u',this)">🪄 Magic Player</button>
+  <button onclick="lockApp()" style="margin-left:auto;color:var(--dim);border-bottom:2px solid transparent;" title="Lock WorldWatch">🔒</button>
 </nav>
 
 <div class="main">
 
 <!-- STREAMS -->
 <div id="tab-streams" class="tab-panel active">
-  <div class="info-box">📡 <strong>Direct HLS streams.</strong> Tap card to load. If error shows, tap <strong>Watch Live →</strong> to open official site. Best performance when served via Simple HTTP Server app.</div>
+  <div class="info-box">📡 <strong>Live News Channels.</strong> All streams link to official broadcaster sources. WorldWatch does not host or distribute any content. If a stream fails, tap <strong>Watch Live →</strong> to visit the broadcaster's official website directly.</div>
   <div class="sub-hdr">Americas &amp; Europe</div>
   <div class="sg" id="rGrid"></div>
   <div class="sub-hdr">Asia Pacific &amp; Africa</div>
@@ -682,6 +698,7 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
     <button class="fb" onclick="filtCR('analyst',this)">🎙 Analysts</button>
     <button class="fb" onclick="filtCR('food',this)">🍽 Food</button>
     <button class="fb" onclick="filtCR('lifestyle',this)">🎥 Lifestyle</button>
+    <button class="fb" onclick="filtCR('sports',this)">🏏 Sports</button>
     <button class="fb" onclick="filtCR('india',this)">🇮🇳 India</button>
     <button class="fb" onclick="filtCR('pakistan',this)">🇵🇰 Pakistan</button>
   </div>
@@ -827,15 +844,40 @@ function unlockUI() {
   }, 400);
 }
 
+function lockApp() {
+  AK = '';
+  const ls = document.getElementById('wwLockScreen');
+  ls.classList.remove('hidden');
+  ls.classList.add('visible');
+  // Show welcome back mode since key is still in localStorage
+  const saved = localStorage.getItem('ww19AK') || localStorage.getItem('wwAK') || '';
+  const wbEl = document.getElementById('lockWelcomeBack');
+  const featEl = document.getElementById('lockFeatures');
+  if (saved && saved.length >= 20) {
+    if (wbEl) wbEl.style.display = 'block';
+    if (featEl) featEl.style.display = 'none';
+    document.getElementById('lockKeyInp').value = '';
+  } else {
+    if (wbEl) wbEl.style.display = 'none';
+    if (featEl) featEl.style.display = 'grid';
+  }
+  document.getElementById('lockErr').textContent = '';
+}
+
 function tryUnlock() {
   const v = document.getElementById('lockKeyInp').value.trim();
+  const fv = document.getElementById('lockFhInp').value.trim();
   const err = document.getElementById('lockErr');
   if (!v) { err.textContent = '⚠ Please enter your key.'; return; }
   if (v.length < 20) { err.textContent = '⚠ Key too short. Please check and try again.'; return; }
   err.textContent = '';
-  document.getElementById('wwUnlockAnim').classList.add('show');
   AK = v;
   localStorage.setItem('ww19AK', v);
+  if (fv && fv.length > 5) {
+    FHK = fv;
+    localStorage.setItem('ww19FHK', fv);
+  }
+  document.getElementById('wwUnlockAnim').classList.add('show');
   setTimeout(() => unlockUI(), 700);
 }
 
@@ -1293,7 +1335,7 @@ function updateTicker(){
 async function initTicker(){
   if(!FHK){
     const ti=document.getElementById('tickerInner');
-    ti.innerHTML='WorldWatch — Global News &amp; Investment Monitor <span class="dot">◆</span> Add API keys to enable live data <span class="dot">◆</span> WorldWatch — Global News &amp; Investment Monitor <span class="dot">◆</span> Add API keys to enable live data <span class="dot">◆</span>';
+    ti.innerHTML='WorldWatch — Global News &amp; Investment Monitor <span class="dot">◆</span> Add your Magic Key to enable live data <span class="dot">◆</span> WorldWatch — Global News &amp; Investment Monitor <span class="dot">◆</span> Add your Magic Key to enable live data <span class="dot">◆</span>';
     return;
   }
   window.gmTickerCache={};
@@ -1511,6 +1553,34 @@ const CRA = [
   // ── LIFESTYLE / TRAVEL ──
   {n:'Wild Lens by Abrar', e:'🎥',tg:['lifestyle','pakistan'],s:'1.8M', u:'https://www.youtube.com/@WildLensbyAbrar',
    d:'Pakistan travel, nature and adventure. Stunning cinematography exploring remote landscapes and culture.'},
+
+  // ── SPORTS ──
+  {n:'BBN Sports',          e:'🏏',tg:['sports','pakistan'], s:'980K', u:'https://www.youtube.com/@BBNSports',
+   d:'Pakistan and South Asia sports coverage. Cricket analysis, match highlights and sports news.'},
+  {n:'Caught Behind',       e:'🏏',tg:['sports','india','pakistan'], s:'750K', u:'https://www.youtube.com/@CaughtBehind',
+   d:'Cricket analysis, behind-the-scenes and expert commentary. Covers PSL, IPL and international cricket.'},
+  {n:'Sports Central DRM',  e:'🏆',tg:['sports','pakistan'], s:'2.1M', u:'https://www.youtube.com/@SportsCentralDRM',
+   d:'DRM\'s flagship sports channel. Cricket, football and major sports events for South Asian audiences.'},
+
+  // ── INDIA NEWS / ANALYSTS ──
+  {n:'The Deshbhakt',       e:'🇮🇳',tg:['analyst','india'],  s:'2.4M', u:'https://www.youtube.com/@TheDeshbhakt',
+   d:'Satirical political commentary on Indian affairs by Akash Banerjee. Sharp, progressive perspective.'},
+  {n:'Ajit Anjum',          e:'🇮🇳',tg:['analyst','news','india'], s:'3.1M', u:'https://www.youtube.com/@AjitAnjum',
+   d:'Senior Indian journalist. Ground-level investigative reporting and political analysis.'},
+  {n:'Paurush Sharma',      e:'🇮🇳',tg:['analyst','india'],  s:'410K', u:'https://www.youtube.com/@PaurushSharma',
+   d:'Indian political and social commentary. Analysis of current affairs and governance issues.'},
+  {n:'Punya Prasun Bajpai', e:'🇮🇳',tg:['analyst','news','india'], s:'1.9M', u:'https://www.youtube.com/@PunyaPrasunBajpai',
+   d:'Veteran Indian journalist. Hard-hitting political analysis, in-depth interviews and investigative reporting.'},
+  {n:'The Credible History', e:'📜',tg:['analyst','india'],  s:'680K', u:'https://www.youtube.com/@TheCredibleHistory',
+   d:'Deep dives into South Asian history, geopolitics and civilisational narratives with rigorous sourcing.'},
+  {n:'Mani Shankar Aiyar',  e:'🇮🇳',tg:['analyst','india'],  s:'290K', u:'https://www.youtube.com/@ManiShankarAiyar',
+   d:'Senior Indian diplomat and politician. Long-form discussions on India-Pakistan relations and foreign policy.'},
+
+  // ── PAKISTAN NEWS ──
+  {n:'Pak TV',              e:'🇵🇰',tg:['news','pakistan'],  s:'1.4M', u:'https://www.youtube.com/@PakTVOfficial',
+   d:'Pakistan current affairs and breaking news. Politics, society and international coverage.'},
+  {n:'Dr Moeed Pirzada',    e:'🇵🇰',tg:['analyst','pakistan'], s:'1.1M', u:'https://www.youtube.com/@MoeedPirzada',
+   d:'British-Pakistani journalist. Geopolitics, Pakistan foreign policy and international affairs analysis.'},
 ];
 
 function filtCR(f,btn){
@@ -2325,9 +2395,10 @@ window.addEventListener('load', fixNavTop);
 window.addEventListener('resize', fixNavTop);
 window.addEventListener('DOMContentLoaded', function(){
   if(AK && AK.length >= 20){
-    unlockUI();
+    unlockUI(); // valid key saved — go straight to dashboard, no flash
+  } else {
+    document.getElementById('wwLockScreen').classList.add('visible'); // show lock screen only now
   }
-  // else lock screen stays visible — user must enter key
 });
 
 </script>
