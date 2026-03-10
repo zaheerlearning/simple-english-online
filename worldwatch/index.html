@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -787,6 +786,8 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
     <button class="fb" onclick="filtCR('sports',this)">🏏 Sports</button>
     <button class="fb" onclick="filtCR('india',this)">🇮🇳 India</button>
     <button class="fb" onclick="filtCR('pakistan',this)">🇵🇰 Pakistan</button>
+    <button class="fb" onclick="filtCR('arab',this)">🌍 Arab/Turk</button>
+    <button class="fb" onclick="filtCR('cricket',this)">🏏 Cricket</button>
   </div>
   <div class="yt-grid" id="crGrid"></div>
 </div>
@@ -1668,6 +1669,46 @@ const CRA = [
    d:'Pakistan current affairs and breaking news. Politics, society and international coverage.'},
   {n:'Dr Moeed Pirzada',    e:'🇵🇰',tg:['analyst','pakistan'], s:'1.1M', u:'https://www.youtube.com/@MoeedPirzada',
    d:'British-Pakistani journalist. Geopolitics, Pakistan foreign policy and international affairs analysis.'},
+  {n:'GNN News',            e:'🇵🇰',tg:['news','pakistan'],  s:'3.5M', u:'https://www.youtube.com/@GNNNewsOfficial',
+   d:'Global News Network Pakistan. Breaking news, political talk shows and live coverage round the clock.'},
+  {n:'Hamid Mir Exclusive', e:'🇵🇰',tg:['analyst','news','pakistan'], s:'2.2M', u:'https://www.youtube.com/@HamidMirExclusive',
+   d:'Senior Pakistani journalist and anchor. Hard-hitting political interviews, exclusives and current affairs analysis.'},
+
+  // ── INDIA ANALYSTS ──
+  {n:'Janta Ka Reporter',   e:'🇮🇳',tg:['analyst','news','india'], s:'4.2M', u:'https://www.youtube.com/@JantaKaReporter',
+   d:'Independent Indian news channel. Ground-level political reporting, whistleblowing journalism and public interest stories.'},
+  {n:'Imran Riaz Khan',      e:'🇵🇰',tg:['analyst','news','pakistan'], s:'6.1M', u:'https://www.youtube.com/@ImranRiazKhanOfficial',
+   d:'Pakistan's most-watched independent journalist. Bold political commentary, exclusives and fearless coverage of Pakistani affairs.'},
+  {n:'Abhisar Sharma',      e:'🇮🇳',tg:['analyst','news','india'], s:'3.8M', u:'https://www.youtube.com/@AbhisarSharma',
+   d:'Veteran Indian journalist. Fearless independent political commentary, interviews and investigative reporting.'},
+  {n:'Kay Kay D',           e:'🇮🇳',tg:['analyst','india'],  s:'1.6M', u:'https://www.youtube.com/@KayKayD',
+   d:'Indian political analysis and current affairs. Sharp commentary on governance, politics and social issues.'},
+  {n:'Ravish Kumar Official',e:'🇮🇳',tg:['analyst','news','india'], s:'8.2M', u:'https://www.youtube.com/@RavishKumarOfficial',
+   d:'Award-winning senior Indian journalist. Prime Time host, independent voice on democracy and public interest journalism.'},
+  {n:'Harsh Bhogale',       e:'🏏',tg:['sports','cricket','india'], s:'1.1M', u:'https://www.youtube.com/@HarshBhogale',
+   d:'India's most iconic cricket commentator. Match analysis, player interviews, iconic moments and commentary craft.'},
+
+  // ── INDIAN FOOD ──
+  {n:'Kabita's Kitchen',   e:'🇮🇳',tg:['food','india'],    s:'12M',  u:'https://www.youtube.com/@KabitasKitchen',
+   d:'Simple Indian home cooking. Vegetarian and non-veg recipes from across India, easy for everyday cooking.'},
+  {n:'Ranveer Brar',        e:'🇮🇳',tg:['food','india'],    s:'7.8M', u:'https://www.youtube.com/@RanveerBrar',
+   d:'Celebrity Chef Ranveer Brar. Restaurant-level Indian cuisine, food history and culinary stories.'},
+  {n:'Hebbars Kitchen',     e:'🇮🇳',tg:['food','india'],    s:'9.2M', u:'https://www.youtube.com/@hebbarskitchen',
+   d:'South Indian cooking and veg recipes. Quick, easy and authentic Indian recipes for all occasions.'},
+
+  // ── ARAB & TURKISH FOOD ──
+  {n:'Manal Al Alem',       e:'🇸🇦',tg:['food','arab'],     s:'5.3M', u:'https://www.youtube.com/@ManalAlalem',
+   d:'Middle East's top cooking show. Arabic cuisine, Gulf recipes and international dishes by celebrity chef Manal.'},
+  {n:'Sadia's Kitchen',    e:'🌙',tg:['food','arab','pakistan'], s:'2.1M', u:'https://www.youtube.com/@SadiasKitchen',
+   d:'Pakistani and Arabic fusion cooking. Authentic recipes with easy instructions for home cooks worldwide.'},
+  {n:'Refika's Kitchen',   e:'🇹🇷',tg:['food','arab','lifestyle'], s:'1.9M', u:'https://www.youtube.com/@RefikasKitchen',
+   d:'Turkish cuisine by chef Refika Birgül. Authentic Turkish recipes, Mediterranean flavours and vibrant food culture.'},
+  {n:'Turkish Recipes',     e:'🇹🇷',tg:['food','arab'],     s:'890K', u:'https://www.youtube.com/@turkishrecipes',
+   d:'Authentic Turkish home cooking. From kebabs and mezes to baklava — real recipes from Turkish kitchens.'},
+  {n:'Cooking with Laila',  e:'🌍',tg:['food','arab'],      s:'1.4M', u:'https://www.youtube.com/@CookingWithLaila',
+   d:'Arabic and Mediterranean cooking. Lebanese, Moroccan and Gulf recipes — traditional and modern fusion.'},
+  {n:'Mediterranean Living',e:'🫒',tg:['food','arab','lifestyle'], s:'760K', u:'https://www.youtube.com/@MediterraneanLiving',
+   d:'Mediterranean diet recipes, lifestyle and culture. Greek, Italian and Levantine food with a healthy focus.'},
 ];
 
 function filtCR(f,btn){
@@ -2544,33 +2585,51 @@ initWorldClock();
 // ── NEWS HEADLINE TICKER ─────────────────────────────────────────────────────
 const NEWS_RSS_SOURCES = [
   'https://feeds.bbci.co.uk/news/world/rss.xml',
-  'https://feeds.skynews.com/feeds/rss/world.xml',
   'https://rss.dw.com/rss/en-top',
+  'https://feeds.skynews.com/feeds/rss/world.xml',
 ];
 
-async function fetchNewsHeadlines() {
+const NEWS_FALLBACK = [
+  'WorldWatch — Live Global News & Markets Monitor',
+  'Track stocks, forex, crypto and global indices in real time',
+  'Live cricket scores updated every 2 minutes',
+  'AI-powered market analysis available in the Analysis tab',
+  'Stream any IPTV playlist using the Magic Player',
+];
+
+function setTickerHeadlines(headlines) {
   const el = document.getElementById('newsTickerInner');
-  if (!el) return;
-  try {
-    const proxy = 'https://corsproxy.io/?';
-    const src = NEWS_RSS_SOURCES[Math.floor(Math.random() * NEWS_RSS_SOURCES.length)];
-    const resp = await fetch(proxy + encodeURIComponent(src));
-    if (!resp.ok) return;
-    const txt = await resp.text();
-    const xml = new DOMParser().parseFromString(txt, 'text/xml');
-    const items = Array.from(xml.querySelectorAll('item')).slice(0, 14);
-    if (!items.length) return;
-    const headlines = items
-      .map(i => (i.querySelector('title')?.textContent || '').replace(/<!\[CDATA\[|\]\]>/g,'').trim())
-      .filter(h => h.length > 8);
-    if (!headlines.length) return;
-    const html = [...headlines, ...headlines]
-      .map(h => `${h}<span class="ndot">◆</span>`)
-      .join(' ');
-    el.innerHTML = html;
-    const speed = Math.max(80, headlines.join('').length * 0.2);
-    el.style.animation = `newstick ${speed}s linear infinite`;
-  } catch(e) { /* fail silently */ }
+  if (!el || !headlines.length) return;
+  const html = [...headlines, ...headlines].map(h => h + '<span class="ndot">◆</span>').join(' ');
+  el.innerHTML = html;
+  const speed = Math.max(80, headlines.join('').length * 0.2);
+  el.style.animation = 'newstick ' + speed + 's linear infinite';
+}
+
+setTickerHeadlines(NEWS_FALLBACK);
+
+async function fetchNewsHeadlines() {
+  const src = NEWS_RSS_SOURCES[Math.floor(Math.random() * NEWS_RSS_SOURCES.length)];
+  const apis = [
+    'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(src) + '&count=15',
+    'https://api.allorigins.win/get?url=' + encodeURIComponent(src),
+    'https://corsproxy.io/?' + encodeURIComponent(src),
+  ];
+  for (const api of apis) {
+    try {
+      const resp = await fetch(api, { signal: AbortSignal.timeout(7000) });
+      if (!resp.ok) continue;
+      const data = await resp.json();
+      let headlines = [];
+      if (data.items) {
+        headlines = data.items.map(i => (i.title||'').replace(/<[^>]+>/g,'').trim()).filter(h=>h.length>8).slice(0,15);
+      } else if (data.contents) {
+        const xml = new DOMParser().parseFromString(data.contents, 'text/xml');
+        headlines = Array.from(xml.querySelectorAll('item title')).map(t=>t.textContent.replace(/<!\[CDATA\[|\]\]>/g,'').trim()).filter(h=>h.length>8).slice(0,15);
+      }
+      if (headlines.length) { setTickerHeadlines(headlines); return; }
+    } catch(e) {}
+  }
 }
 
 fetchNewsHeadlines();
