@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WorldWatch — News & Markets</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" id="pwaManifest">
 <meta name="theme-color" content="#00c8ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2798,6 +2798,56 @@ setCricKeyUI();
 // ── PWA SERVICE WORKER — registered via sw.js on GitHub Pages only ──────────
 // To enable: upload sw.js to your GitHub repo root alongside this file.
 </script>
-<script src="pwa-register.js"></script>
+<script>
+// ── PWA: Inline manifest + Service Worker ───────────────────────────────────
+(function(){
+  // Build manifest dynamically so it works on any path
+  const base = window.location.pathname.replace(/\/[^\/]*$/, '/');
+  const manifest = {
+    name: "WorldWatch",
+    short_name: "WorldWatch",
+    description: "Global News & Investment Monitor",
+    start_url: window.location.href.split('?')[0] + "?pwa=1",
+    scope: base,
+    display: "standalone",
+    background_color: "#071830",
+    theme_color: "#00c8ff",
+    orientation: "any",
+    icons: [
+      { src: base + "icon-192x192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+      { src: base + "icon-512x512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+  const url = URL.createObjectURL(blob);
+  document.getElementById('pwaManifest').href = url;
+
+  // Inline Service Worker via blob
+  if('serviceWorker' in navigator){
+    const swCode = `
+const CACHE = 'worldwatch-v1';
+const OFFLINE = ['${window.location.href.split('?')[0]}'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE).catch(()=>{})));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  const url = e.request.url;
+  if(url.includes('api.') || url.includes('.m3u8') || url.includes('stream') || url.includes('live')) return;
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+});
+`;
+    const swBlob = new Blob([swCode], {type:'application/javascript'});
+    const swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl, {scope: base})
+      .then(() => console.log('WorldWatch SW ready'))
+      .catch(e => console.warn('SW:', e));
+  }
+})();
+</script>
 </body>
 </html>
