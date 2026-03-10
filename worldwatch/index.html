@@ -512,7 +512,7 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   </div>
 </header>
 
-<div class="api-bar">
+<div class="api-bar" id="apiBar" style="display:none">
   <span class="api-lbl">◈ CLMAGIC</span>
   <input type="password" class="api-inp" id="apiInp" placeholder="••••••••••••"/>
   <button class="api-btn" onclick="saveKey()">SAVE</button>
@@ -521,6 +521,7 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   <input type="password" class="api-inp" id="fhInp" placeholder="••••••••••••"/>
   <button class="api-btn" onclick="saveFH()">SAVE</button>
   <span class="api-st" id="fhSt">Not set</span>
+  <button onclick="document.getElementById('apiBar').style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:0 4px" title="Hide keys bar">✕</button>
 </div>
 
 <nav>
@@ -534,7 +535,7 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   <button onclick="showTab('creators',this)">🌟 Creators</button>
   <button onclick="showTab('analysis',this)">🧠 AI Analysis</button>
   <button onclick="showTab('m3u',this)">🪄 Magic Player</button>
-  <button onclick="lockApp()" style="margin-left:auto;color:var(--dim);border-bottom:2px solid transparent;" title="Lock WorldWatch">🔒</button>
+  <button onclick="toggleKeysBar()" style="margin-left:auto;color:var(--dim);border-bottom:2px solid transparent;" title="Show/Hide Keys · Long-press to Lock" oncontextmenu="event.preventDefault();lockApp()">🔑</button>
 </nav>
 
 <div class="main">
@@ -916,6 +917,13 @@ function unlockUI() {
   document.getElementById('wwUnlockAnim').classList.remove('show');
   if(AK){ document.getElementById('apiInp').value=AK; setApiSt(true); }
   if(FHK){ document.getElementById('fhInp').value=FHK; setFhSt(true); }
+  // Show keys bar only if CLMAGIC not set yet
+  const bar = document.getElementById('apiBar');
+  if(!AK || AK.length < 20) {
+    bar.style.display = 'flex';
+  } else {
+    bar.style.display = 'none';
+  }
   setTimeout(function(){
     fixNavTop();
     if(typeof initTicker==='function') initTicker();
@@ -929,6 +937,11 @@ function unlockUI() {
       }
     }
   }, 400);
+}
+
+function toggleKeysBar() {
+  const bar = document.getElementById('apiBar');
+  bar.style.display = (bar.style.display === 'none' || bar.style.display === '') ? 'flex' : 'none';
 }
 
 function lockApp() {
@@ -972,6 +985,8 @@ function saveKey(){
   const v=document.getElementById('apiInp').value.trim();
   if(!v)return;
   AK=v;localStorage.setItem('ww19AK',v);setApiSt(true);
+  // Auto-hide bar after both keys saved
+  if(FHK) { setTimeout(()=>{ document.getElementById('apiBar').style.display='none'; }, 800); }
 }
 function saveFH(){
   const v=document.getElementById('fhInp').value.trim();
@@ -1614,7 +1629,7 @@ const CRA = [
   {n:'Neo News HD',        e:'🇵🇰',tg:['news','pakistan'],  s:'3.2M', u:'https://www.youtube.com/@NeoNewsHD',
    d:'Pakistani news channel covering politics, current affairs and breaking news 24/7.'},
   {n:'News18 Urdu',        e:'🇮🇳',tg:['news','india'],     s:'4.1M', u:'https://www.youtube.com/@News18Urdu',
-   d:'Urdu-language news from India\'s News18 network. Politics, society and current affairs.'},
+   d:'Urdu-language news from India\’s News18 network. Politics, society and current affairs.'},
   {n:'The Wire',           e:'🇮🇳',tg:['news','analyst','india'], s:'2.3M', u:'https://www.youtube.com/@TheWireNews',
    d:'Independent Indian journalism. In-depth investigative reporting, politics and civil liberties.'},
 
@@ -1634,9 +1649,9 @@ const CRA = [
 
   // ── FOOD ──
   {n:'Food Fusion',        e:'🍳',tg:['food','pakistan'],   s:'4.1M', u:'https://www.youtube.com/@FoodFusion',
-   d:'Pakistan\'s most popular cooking channel. Restaurant-style recipes made easy for home cooks.'},
+   d:'Pakistan\’s most popular cooking channel. Restaurant-style recipes made easy for home cooks.'},
   {n:'Street Food PK',     e:'🍢',tg:['food','pakistan','lifestyle'], s:'2.5M', u:'https://www.youtube.com/@StreetFoodPK',
-   d:'Authentic Pakistani street food tours. From Karachi\'s Burns Road to Lahore\'s Food Street.'},
+   d:'Authentic Pakistani street food tours. From Karachi\’s Burns Road to Lahore\'s Food Street.'},
 
   // ── LIFESTYLE / TRAVEL ──
   {n:'Wild Lens by Abrar', e:'🎥',tg:['lifestyle','pakistan'],s:'1.8M', u:'https://www.youtube.com/@WildLensbyAbrar',
@@ -1648,7 +1663,7 @@ const CRA = [
   {n:'Caught Behind',       e:'🏏',tg:['sports','india','pakistan'], s:'750K', u:'https://www.youtube.com/@CaughtBehind',
    d:'Cricket analysis, behind-the-scenes and expert commentary. Covers PSL, IPL and international cricket.'},
   {n:'Sports Central DRM',  e:'🏆',tg:['sports','pakistan'], s:'2.1M', u:'https://www.youtube.com/@SportsCentralDRM',
-   d:'DRM\'s flagship sports channel. Cricket, football and major sports events for South Asian audiences.'},
+   d:'DRM\’s flagship sports channel. Cricket, football and major sports events for South Asian audiences.'},
 
   // ── INDIA NEWS / ANALYSTS ──
   {n:'The Deshbhakt',       e:'🇮🇳',tg:['analyst','india'],  s:'2.4M', u:'https://www.youtube.com/@TheDeshbhakt',
@@ -1678,7 +1693,7 @@ const CRA = [
   {n:'Janta Ka Reporter',   e:'🇮🇳',tg:['analyst','news','india'], s:'4.2M', u:'https://www.youtube.com/@JantaKaReporter',
    d:'Independent Indian news channel. Ground-level political reporting, whistleblowing journalism and public interest stories.'},
   {n:'Imran Riaz Khan',      e:'🇵🇰',tg:['analyst','news','pakistan'], s:'6.1M', u:'https://www.youtube.com/@ImranRiazKhanOfficial',
-   d:'Pakistan's most-watched independent journalist. Bold political commentary, exclusives and fearless coverage of Pakistani affairs.'},
+   d:'Pakistan’s most-watched independent journalist. Bold political commentary, exclusives and fearless coverage of Pakistani affairs.'},
   {n:'Abhisar Sharma',      e:'🇮🇳',tg:['analyst','news','india'], s:'3.8M', u:'https://www.youtube.com/@AbhisarSharma',
    d:'Veteran Indian journalist. Fearless independent political commentary, interviews and investigative reporting.'},
   {n:'Kay Kay D',           e:'🇮🇳',tg:['analyst','india'],  s:'1.6M', u:'https://www.youtube.com/@KayKayD',
@@ -1686,10 +1701,10 @@ const CRA = [
   {n:'Ravish Kumar Official',e:'🇮🇳',tg:['analyst','news','india'], s:'8.2M', u:'https://www.youtube.com/@RavishKumarOfficial',
    d:'Award-winning senior Indian journalist. Prime Time host, independent voice on democracy and public interest journalism.'},
   {n:'Harsh Bhogale',       e:'🏏',tg:['sports','cricket','india'], s:'1.1M', u:'https://www.youtube.com/@HarshBhogale',
-   d:'India's most iconic cricket commentator. Match analysis, player interviews, iconic moments and commentary craft.'},
+   d:'India’s most iconic cricket commentator. Match analysis, player interviews, iconic moments and commentary craft.'},
 
   // ── INDIAN FOOD ──
-  {n:'Kabita's Kitchen',   e:'🇮🇳',tg:['food','india'],    s:'12M',  u:'https://www.youtube.com/@KabitasKitchen',
+  {n:'Kabita’s Kitchen',   e:'🇮🇳',tg:['food','india'],    s:'12M',  u:'https://www.youtube.com/@KabitasKitchen',
    d:'Simple Indian home cooking. Vegetarian and non-veg recipes from across India, easy for everyday cooking.'},
   {n:'Ranveer Brar',        e:'🇮🇳',tg:['food','india'],    s:'7.8M', u:'https://www.youtube.com/@RanveerBrar',
    d:'Celebrity Chef Ranveer Brar. Restaurant-level Indian cuisine, food history and culinary stories.'},
@@ -1698,10 +1713,10 @@ const CRA = [
 
   // ── ARAB & TURKISH FOOD ──
   {n:'Manal Al Alem',       e:'🇸🇦',tg:['food','arab'],     s:'5.3M', u:'https://www.youtube.com/@ManalAlalem',
-   d:'Middle East's top cooking show. Arabic cuisine, Gulf recipes and international dishes by celebrity chef Manal.'},
-  {n:'Sadia's Kitchen',    e:'🌙',tg:['food','arab','pakistan'], s:'2.1M', u:'https://www.youtube.com/@SadiasKitchen',
+   d:'Middle East’s top cooking show. Arabic cuisine, Gulf recipes and international dishes by celebrity chef Manal.'},
+  {n:'Sadia’s Kitchen',    e:'🌙',tg:['food','arab','pakistan'], s:'2.1M', u:'https://www.youtube.com/@SadiasKitchen',
    d:'Pakistani and Arabic fusion cooking. Authentic recipes with easy instructions for home cooks worldwide.'},
-  {n:'Refika's Kitchen',   e:'🇹🇷',tg:['food','arab','lifestyle'], s:'1.9M', u:'https://www.youtube.com/@RefikasKitchen',
+  {n:'Refika’s Kitchen',   e:'🇹🇷',tg:['food','arab','lifestyle'], s:'1.9M', u:'https://www.youtube.com/@RefikasKitchen',
    d:'Turkish cuisine by chef Refika Birgül. Authentic Turkish recipes, Mediterranean flavours and vibrant food culture.'},
   {n:'Turkish Recipes',     e:'🇹🇷',tg:['food','arab'],     s:'890K', u:'https://www.youtube.com/@turkishrecipes',
    d:'Authentic Turkish home cooking. From kebabs and mezes to baklava — real recipes from Turkish kitchens.'},
@@ -2034,7 +2049,7 @@ async function loadFX() {
     ];
 
     // For % change on PKR/SAR/AED use ext prev day from open.er-api (it includes prev_close)
-    var extPrev = extData && extData.rates; // open.er-api doesn't provide yesterday separately — use yest for majors only
+    var extPrev = extData && extData.rates; // open.er-api doesn’t provide yesterday separately — use yest for majors only
 
     FX_MAP.forEach(function(fx) {
       var rateEl = document.getElementById('fx-'  + fx.pair);
