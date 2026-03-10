@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,7 +42,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 .cric-type.other{background:#333;color:#aaa;}
 .cric-watch{font-size:10px;color:var(--cyan);margin-top:8px;border-top:1px solid var(--border);padding-top:6px;}
 .clock-ticker-label{display:inline-block;background:#00c8ff;color:#071830;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.15em;padding:2px 10px;margin-right:10px;vertical-align:middle;}
-.clock-ticker-inner{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0f4ff;animation:clocktick 80s linear infinite;}
+.clock-ticker-inner{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0f4ff;animation:clocktick 50s linear infinite;white-space:nowrap;}
 .clock-ticker-inner .cdot{color:#00c8ff;margin:0 10px;}
 .news-ticker-wrap{background:#071424;border-bottom:1px solid #1a0a0a;overflow:hidden;white-space:nowrap;padding:4px 0;}
 .news-ticker-label{display:inline-block;background:#e63946;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.15em;padding:2px 10px;margin-right:10px;vertical-align:middle;}
@@ -2487,72 +2488,98 @@ window.addEventListener('DOMContentLoaded', function(){
   }
 });
 
-// ── WORLD CLOCK ─────────────────────────────────────────────────────────────
+// ── WORLD CLOCK TICKER ───────────────────────────────────────────────────────
 const CLOCK_CITIES = [
+  { label: '📍 LOCAL',      tz: null                  },
   { label: '🗽 NEW YORK',   tz: 'America/New_York'    },
-  { label: '🇬🇧 LONDON',    tz: 'Europe/London'        },
-  { label: '🇩🇪 BERLIN',    tz: 'Europe/Berlin'        },
-  { label: '🇸🇦 RIYADH',    tz: 'Asia/Riyadh'          },
-  { label: '🇦🇪 DUBAI',     tz: 'Asia/Dubai'           },
-  { label: '🇵🇰 KARACHI',   tz: 'Asia/Karachi'         },
-  { label: '🇮🇳 DELHI',     tz: 'Asia/Kolkata'         },
-  { label: '🇸🇬 SINGAPORE', tz: 'Asia/Singapore'       },
-  { label: '🇨🇳 BEIJING',   tz: 'Asia/Shanghai'        },
-  { label: '🇯🇵 TOKYO',     tz: 'Asia/Tokyo'           },
-  { label: '🇦🇺 SYDNEY',    tz: 'Australia/Sydney'     },
-  { label: '🇨🇦 TORONTO',   tz: 'America/Toronto'      },
-  { label: '🇲🇽 MEXICO',    tz: 'America/Mexico_City'  },
-  { label: '🇧🇷 SAO PAULO', tz: 'America/Sao_Paulo'    },
+  { label: '🇧🇷 BRASILIA',  tz: 'America/Sao_Paulo'   },
+  { label: '🇬🇧 LONDON',    tz: 'Europe/London'       },
+  { label: '🇩🇪 BERLIN',    tz: 'Europe/Berlin'       },
+  { label: '🇹🇷 ISTANBUL',  tz: 'Europe/Istanbul'     },
+  { label: '🇸🇦 RIYADH',    tz: 'Asia/Riyadh'         },
+  { label: '🇦🇪 DUBAI',     tz: 'Asia/Dubai'          },
+  { label: '🇵🇰 KARACHI',   tz: 'Asia/Karachi'        },
+  { label: '🇮🇳 NEW DELHI', tz: 'Asia/Kolkata'        },
+  { label: '🇧🇩 DHAKA',     tz: 'Asia/Dhaka'          },
+  { label: '🇸🇬 SINGAPORE', tz: 'Asia/Singapore'      },
+  { label: '🇨🇳 BEIJING',   tz: 'Asia/Shanghai'       },
+  { label: '🇯🇵 TOKYO',     tz: 'Asia/Tokyo'          },
+  { label: '🇦🇺 CANBERRA',  tz: 'Australia/Sydney'    },
+  { label: '🇳🇿 WELLINGTON',tz: 'Pacific/Auckland'    },
 ];
 
-function fmtClockTime(tz) {
-  return new Date().toLocaleTimeString('en-US', {
-    timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-  });
+function fmtTZ(tz) {
+  const opts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+  if (tz) opts.timeZone = tz;
+  return new Date().toLocaleTimeString('en-US', opts);
 }
-function fmtClockDate(tz) {
-  return new Date().toLocaleDateString('en-US', {
-    timeZone: tz, weekday: 'short', month: 'short', day: 'numeric'
-  });
+
+function buildClockHTML() {
+  // Build two copies with unique IDs (a/b) for seamless infinite scroll
+  const makeSegment = (pfx) => CLOCK_CITIES.map((c, i) =>
+    `<span style="color:#3a7090;font-size:10px;letter-spacing:.06em;margin-right:4px;">${c.label}</span>` +
+    `<span id="clt${pfx}${i}" style="color:#e0f4ff;font-weight:600;margin-right:2px;">${fmtTZ(c.tz)}</span>` +
+    `<span class="cdot">◆</span>`
+  ).join('');
+  return makeSegment('a') + makeSegment('b');
 }
 
 function initWorldClock() {
-  // Build city elements once
-  const container = document.getElementById('clockCities');
-  if (!container) return;
-  container.innerHTML = CLOCK_CITIES.map((c, i) =>
-    `<div style="display:inline-flex;align-items:center;gap:6px;padding:2px 12px;border-right:1px solid #0a3060;flex-shrink:0;">
-      <span style="color:#4a7090;font-size:10px;letter-spacing:0.08em;">${c.label}</span>
-      <span id="clk${i}" style="color:#e0f4ff;font-weight:600;"></span>
-    </div>`
-  ).join('');
-
-  function tick() {
-    // Local time
-    const now = new Date();
-    const localTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-    const localDate = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    const ltEl = document.getElementById('clkLocalTime');
-    const ldEl = document.getElementById('clkLocalDate');
-    if (ltEl) ltEl.textContent = localTime;
-    if (ldEl) ldEl.textContent = localDate;
-
-    // City times
+  const el = document.getElementById('clockTickerInner');
+  if (!el) return;
+  el.innerHTML = buildClockHTML(); // build once, never rebuild
+  setInterval(() => {
     CLOCK_CITIES.forEach((c, i) => {
-      const el = document.getElementById('clk' + i);
-      if (el) el.textContent = fmtClockTime(c.tz);
+      const t = fmtTZ(c.tz);
+      const ea = document.getElementById('clta' + i);
+      const eb = document.getElementById('cltb' + i);
+      if (ea) ea.textContent = t;
+      if (eb) eb.textContent = t;
     });
-  }
-
-  tick();
-  setInterval(tick, 1000);
+  }, 1000);
 }
 
 initWorldClock();
 
+// ── NEWS HEADLINE TICKER ─────────────────────────────────────────────────────
+const NEWS_RSS_SOURCES = [
+  'https://feeds.bbci.co.uk/news/world/rss.xml',
+  'https://feeds.skynews.com/feeds/rss/world.xml',
+  'https://rss.dw.com/rss/en-top',
+];
+
+async function fetchNewsHeadlines() {
+  const el = document.getElementById('newsTickerInner');
+  if (!el) return;
+  try {
+    const proxy = 'https://corsproxy.io/?';
+    const src = NEWS_RSS_SOURCES[Math.floor(Math.random() * NEWS_RSS_SOURCES.length)];
+    const resp = await fetch(proxy + encodeURIComponent(src));
+    if (!resp.ok) return;
+    const txt = await resp.text();
+    const xml = new DOMParser().parseFromString(txt, 'text/xml');
+    const items = Array.from(xml.querySelectorAll('item')).slice(0, 14);
+    if (!items.length) return;
+    const headlines = items
+      .map(i => (i.querySelector('title')?.textContent || '').replace(/<!\[CDATA\[|\]\]>/g,'').trim())
+      .filter(h => h.length > 8);
+    if (!headlines.length) return;
+    const html = [...headlines, ...headlines]
+      .map(h => `${h}<span class="ndot">◆</span>`)
+      .join(' ');
+    el.innerHTML = html;
+    const speed = Math.max(80, headlines.join('').length * 0.2);
+    el.style.animation = `newstick ${speed}s linear infinite`;
+  } catch(e) { /* fail silently */ }
+}
+
+fetchNewsHeadlines();
+setInterval(fetchNewsHeadlines, 10 * 60 * 1000);
+
 // ── CRICKET SCORES ───────────────────────────────────────────────────────────
 let CRIC_KEY = localStorage.getItem('wwCricKey') || '';
 let cricAllMatches = [];
+
 let cricFilter = 'all';
 
 function saveCricKey() {
@@ -2694,14 +2721,9 @@ async function loadCricket() {
 
 setCricKeyUI();
 
-// ── SERVICE WORKER (PWA) ─────────────────────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(r => console.log('WorldWatch SW ready'))
-      .catch(e => console.log('SW failed:', e));
-  });
-}
+// ── PWA SERVICE WORKER — registered via sw.js on GitHub Pages only ──────────
+// To enable: upload sw.js to your GitHub repo root alongside this file.
 </script>
+<script src="pwa-register.js"></script>
 </body>
 </html>
