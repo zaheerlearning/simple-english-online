@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,8 +23,30 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 .ticker-label{display:inline-block;background:var(--cyan);color:var(--navy);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.2em;padding:2px 14px;margin-right:14px;vertical-align:middle;}
 .ticker-inner{display:inline-block;animation:tickermove 160s linear infinite;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e0f4ff;}
 .ticker-inner .dot{color:var(--cyan);margin:0 16px;}
-#worldClockBar::-webkit-scrollbar{display:none;}
 @keyframes tickermove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes clocktick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes newstick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.cric-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px;cursor:pointer;transition:border-color .2s,transform .15s;text-decoration:none;display:block;position:relative;overflow:hidden;}
+.cric-card:hover{border-color:var(--cyan);transform:translateY(-2px);}
+.cric-card.live-now{border-color:#00ff88;box-shadow:0 0 12px rgba(0,255,136,0.15);}
+.cric-live-dot{display:inline-block;width:7px;height:7px;background:#00ff88;border-radius:50%;margin-right:6px;animation:blink 1.2s infinite;}
+.cric-series{font-size:9px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.cric-teams{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.05em;color:var(--ink);margin-bottom:6px;line-height:1.2;}
+.cric-score{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cyan);margin-bottom:4px;min-height:18px;}
+.cric-status{font-size:11px;color:var(--dim);line-height:1.4;}
+.cric-type{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;letter-spacing:.1em;padding:2px 7px;border-radius:2px;}
+.cric-type.test{background:#8b4513;color:#fff;}
+.cric-type.odi{background:#1a5276;color:#fff;}
+.cric-type.t20{background:#145a32;color:#fff;}
+.cric-type.other{background:#333;color:#aaa;}
+.cric-watch{font-size:10px;color:var(--cyan);margin-top:8px;border-top:1px solid var(--border);padding-top:6px;}
+.clock-ticker-label{display:inline-block;background:#00c8ff;color:#071830;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.15em;padding:2px 10px;margin-right:10px;vertical-align:middle;}
+.clock-ticker-inner{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0f4ff;animation:clocktick 80s linear infinite;}
+.clock-ticker-inner .cdot{color:#00c8ff;margin:0 10px;}
+.news-ticker-wrap{background:#071424;border-bottom:1px solid #1a0a0a;overflow:hidden;white-space:nowrap;padding:4px 0;}
+.news-ticker-label{display:inline-block;background:#e63946;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.15em;padding:2px 10px;margin-right:10px;vertical-align:middle;}
+.news-ticker-inner{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0f4ff;}
+.news-ticker-inner .ndot{color:#e63946;margin:0 14px;}
 header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:30px;z-index:999;}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:0.08em;padding:10px 0;}
 .logo .ac{color:var(--cyan);}
@@ -464,14 +485,16 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.1em;">UNLOCKING WORLDWATCH...</div>
 </div>
 
-<!-- ── WORLD CLOCK BAR ── -->
-<div id="worldClockBar" style="background:#040f1e;border-bottom:1px solid #0a2a4a;padding:5px 12px;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:11px;">
-  <div id="clockLocal" style="display:inline-flex;align-items:center;gap:6px;padding:2px 14px 2px 0;border-right:1px solid #0a3060;margin-right:12px;flex-shrink:0;">
-    <span style="color:#00c8ff;font-weight:700;letter-spacing:0.1em;">📍 LOCAL</span>
-    <span id="clkLocalTime" style="color:#e0f4ff;font-weight:600;"></span>
-    <span id="clkLocalDate" style="color:#4a7090;font-size:10px;"></span>
-  </div>
-  <div id="clockCities" style="display:inline-flex;gap:0;align-items:center;"></div>
+<!-- ── CLOCK TICKER ── -->
+<div class="clock-ticker-wrap">
+  <span class="clock-ticker-label">🕐 TIME</span>
+  <span class="clock-ticker-inner" id="clockTickerInner">Loading...</span>
+</div>
+
+<!-- ── NEWS HEADLINE TICKER ── -->
+<div class="news-ticker-wrap">
+  <span class="news-ticker-label">📰 NEWS</span>
+  <span class="news-ticker-inner" id="newsTickerInner">Fetching headlines... <span class="ndot">◆</span> Stay informed with WorldWatch <span class="ndot">◆</span> Fetching headlines... <span class="ndot">◆</span> Stay informed with WorldWatch <span class="ndot">◆</span></span>
 </div>
 
 <div class="ticker-wrap">
@@ -504,6 +527,7 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
   <button class="active" onclick="showTab('streams',this)">📡 Live Channels</button>
   <button onclick="showTab('newssites',this)">🌐 News Sites</button>
   <button onclick="showTab('stocks',this)">📈 Stocks &amp; Markets</button>
+  <button onclick="showTab('cricket',this)">🏏 Cricket</button>
   <button onclick="showTab('markets',this)">🌏 Global Markets</button>
   <button onclick="showTab('news',this)">📰 News Feed</button>
   <button onclick="showTab('analysts',this)">▶ YouTube Analysts</button>
@@ -545,6 +569,32 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
 </div>
 
 <!-- STOCKS -->
+<!-- ── CRICKET TAB ── -->
+<div id="tab-cricket" class="tab-panel">
+  <div class="info-box">🏏 <strong>International Men's Cricket — Live Scores</strong> — Powered by CricketData.org. Add your CRICMAGIC key in settings to enable. Tap any match card to watch live.</div>
+
+  <!-- API Key input -->
+  <div id="cricKeyBar" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;flex-wrap:wrap;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.1em;">◈ CRICMAGIC</span>
+    <input type="password" id="cricKeyInp" placeholder="••••••••••••" style="background:var(--bg3);border:1px solid var(--border);color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 10px;border-radius:3px;width:200px;">
+    <button onclick="saveCricKey()" style="background:var(--panel);border:1px solid var(--border);color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:5px 12px;border-radius:3px;cursor:pointer;letter-spacing:.08em;">SAVE</button>
+    <span id="cricKeySt" style="font-size:11px;color:var(--dim);">Not set — get free key at cricketdata.org</span>
+    <button onclick="loadCricket()" style="background:var(--cyan);border:none;color:#071830;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:5px 14px;border-radius:3px;cursor:pointer;font-weight:700;letter-spacing:.08em;margin-left:auto;">🔄 REFRESH</button>
+  </div>
+
+  <!-- Filter buttons -->
+  <div class="stocks-tb" id="cricFilt" style="margin-bottom:10px;">
+    <button class="fb active" onclick="filtCric('all',this)">All Live</button>
+    <button class="fb" onclick="filtCric('test',this)">🎩 Test</button>
+    <button class="fb" onclick="filtCric('odi',this)">🏆 ODI</button>
+    <button class="fb" onclick="filtCric('t20',this)">⚡ T20</button>
+  </div>
+
+  <!-- Match cards grid -->
+  <div id="cricGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
+  <div id="cricMsg" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim);padding:30px;text-align:center;"></div>
+</div>
+
 <div id="tab-stocks" class="tab-panel">
   <div class="stocks-tb">
     <button class="fb active" onclick="filterStk('all',this)">All</button>
@@ -935,6 +985,7 @@ function showTab(id,btn){
   document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
   if(id==='stocks'&&FHK&&!stkFetched)fetchAll();
   if(id==='markets')initMarkets();
+  if(id==='cricket')loadCricket();
 }
 
 
@@ -2498,6 +2549,150 @@ function initWorldClock() {
 }
 
 initWorldClock();
+
+// ── CRICKET SCORES ───────────────────────────────────────────────────────────
+let CRIC_KEY = localStorage.getItem('wwCricKey') || '';
+let cricAllMatches = [];
+let cricFilter = 'all';
+
+function saveCricKey() {
+  const v = document.getElementById('cricKeyInp').value.trim();
+  if (!v) return;
+  CRIC_KEY = v;
+  localStorage.setItem('wwCricKey', v);
+  document.getElementById('cricKeySt').textContent = '✓ Key saved';
+  document.getElementById('cricKeySt').style.color = '#00ff88';
+  loadCricket();
+}
+
+function setCricKeyUI() {
+  const inp = document.getElementById('cricKeyInp');
+  const st = document.getElementById('cricKeySt');
+  if (!inp || !st) return;
+  if (CRIC_KEY) {
+    inp.value = CRIC_KEY;
+    st.textContent = '✓ Active';
+    st.style.color = '#00ff88';
+  }
+}
+
+function matchType(m) {
+  const name = (m.matchType || m.series || '').toLowerCase();
+  if (name.includes('test')) return 'test';
+  if (name.includes('odi') || name.includes('one day')) return 'odi';
+  if (name.includes('t20') || name.includes('twenty')) return 't20';
+  return 'other';
+}
+
+function cricWatchLink(m) {
+  // Try to generate a useful watch/info link
+  const q = encodeURIComponent((m.teams || []).join(' vs ') + ' live cricket');
+  return `https://www.google.com/search?q=${q}`;
+}
+
+function renderCricCard(m) {
+  const isLive = m.matchStarted && !m.matchEnded;
+  const type = matchType(m);
+  const typeLabels = { test: '🎩 TEST', odi: '🏆 ODI', t20: '⚡ T20', other: '◈ INTL' };
+  const teams = (m.teams || ['TBA', 'TBA']);
+  const team1 = teams[0] || 'TBA';
+  const team2 = teams[1] || 'TBA';
+  const scores = m.score || [];
+  const scoreHTML = scores.length
+    ? scores.map(s => `<div>${s.inning}: <strong>${s.r}/${s.w}</strong> (${s.o} ov)</div>`).join('')
+    : '<div style="color:var(--dim)">Match not yet started</div>';
+
+  return `<a class="cric-card ${isLive ? 'live-now' : ''}" href="${cricWatchLink(m)}" target="_blank" rel="noopener">
+    <div class="cric-type ${type}">${typeLabels[type]}</div>
+    <div class="cric-series">${m.series || m.name || 'International Cricket'}</div>
+    <div class="cric-teams">
+      ${isLive ? '<span class="cric-live-dot"></span>' : ''}${team1}<br><span style="color:var(--dim);font-size:13px;">vs</span> ${team2}
+    </div>
+    <div class="cric-score">${scoreHTML}</div>
+    <div class="cric-status">${m.status || (isLive ? 'In Progress' : 'Scheduled')}</div>
+    <div class="cric-watch">▶ Watch / Follow Live →</div>
+  </a>`;
+}
+
+function filtCric(f, btn) {
+  cricFilter = f;
+  document.querySelectorAll('#cricFilt .fb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCricMatches();
+}
+
+function renderCricMatches() {
+  const grid = document.getElementById('cricGrid');
+  const msg = document.getElementById('cricMsg');
+  if (!grid) return;
+
+  // Filter men's international only — exclude women's and domestic
+  let matches = cricAllMatches.filter(m => {
+    const name = (m.name || m.series || '').toLowerCase();
+    if (name.includes("women") || name.includes("w vs w") || name.includes("girls")) return false;
+    return true;
+  });
+
+  if (cricFilter !== 'all') {
+    matches = matches.filter(m => matchType(m) === cricFilter);
+  }
+
+  if (matches.length === 0) {
+    grid.innerHTML = '';
+    msg.textContent = cricFilter === 'all'
+      ? 'No live international men\'s matches right now. Check back during match hours.'
+      : `No live ${cricFilter.toUpperCase()} matches right now.`;
+    return;
+  }
+  msg.textContent = '';
+  grid.innerHTML = matches.map(renderCricCard).join('');
+}
+
+async function loadCricket() {
+  const grid = document.getElementById('cricGrid');
+  const msg = document.getElementById('cricMsg');
+  if (!grid || !msg) return;
+
+  if (!CRIC_KEY) {
+    msg.innerHTML = '🏏 Get a free API key at <a href="https://cricketdata.org" target="_blank" style="color:var(--cyan)">cricketdata.org</a> — 100 calls/day free. Enter it above to enable live scores.';
+    return;
+  }
+
+  msg.textContent = '🏏 Loading live cricket scores...';
+  grid.innerHTML = '';
+
+  try {
+    const url = `https://api.cricapi.com/v1/currentMatches?apikey=${CRIC_KEY}&offset=0`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.status !== 'success') {
+      msg.textContent = '⚠ API error: ' + (data.reason || data.status || 'Unknown error');
+      return;
+    }
+
+    cricAllMatches = (data.data || []).filter(m => {
+      // Men's international only — exclude IPL, BBL, etc domestic leagues unless international
+      const name = (m.name || m.series || '').toLowerCase();
+      const isWomens = name.includes('women') || name.includes(' w ') || name.includes("women's");
+      return !isWomens;
+    });
+
+    if (cricAllMatches.length === 0) {
+      msg.textContent = '🏏 No international men\'s matches currently live. Check back soon.';
+      return;
+    }
+
+    renderCricMatches();
+    // Auto-refresh every 2 minutes when tab is active
+    setTimeout(loadCricket, 2 * 60 * 1000);
+  } catch(e) {
+    msg.textContent = '⚠ Could not load cricket scores. Check your key or try again.';
+    console.error('Cricket API error:', e);
+  }
+}
+
+setCricKeyUI();
 
 // ── SERVICE WORKER (PWA) ─────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
