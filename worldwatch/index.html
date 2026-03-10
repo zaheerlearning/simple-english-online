@@ -830,8 +830,8 @@ function unlockUI() {
 function tryUnlock() {
   const v = document.getElementById('lockKeyInp').value.trim();
   const err = document.getElementById('lockErr');
-  if (!v) { err.textContent = '⚠ Please enter your Claude API key.'; return; }
-  if (!v.startsWith('sk-ant-')) { err.textContent = '⚠ Invalid key format. Please check and try again.'; return; }
+  if (!v) { err.textContent = '⚠ Please enter your key.'; return; }
+  if (v.length < 20) { err.textContent = '⚠ Key too short. Please check and try again.'; return; }
   err.textContent = '';
   document.getElementById('wwUnlockAnim').classList.add('show');
   AK = v;
@@ -1529,7 +1529,7 @@ function filtCR(f,btn){
   }).join('');
 }
 filtCR('all', document.querySelector('#cr-filt .fb'));
-(l){
+function ytLangBadge(l){
   if(l==='english') return '<span class="yt-lang yl-en">🇬🇧 English</span>';
   if(l==='urdu') return '<span class="yt-lang yl-ur">🇵🇰 Urdu</span>';
   return '<span class="yt-lang yl-hi">🇮🇳 Hindi</span>';
@@ -2324,7 +2324,7 @@ function fixNavTop(){
 window.addEventListener('load', fixNavTop);
 window.addEventListener('resize', fixNavTop);
 window.addEventListener('DOMContentLoaded', function(){
-  if(AK && AK.startsWith('sk-ant-')){
+  if(AK && AK.length >= 20){
     unlockUI();
   }
   // else lock screen stays visible — user must enter key
