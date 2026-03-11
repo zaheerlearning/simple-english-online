@@ -1,1 +1,2824 @@
+<!DOCTYPE html>
+<!-- WorldWatch v19.8 - 2026-03-10 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorldWatch — News & Markets</title>
+<link rel="manifest" href="/worldwatch/manifest.json">
+<script>
+// Force correct manifest — overrides any cached wrong path
+(function(){
+  var el = document.querySelector('link[rel="manifest"]');
+  if(el) el.href = '/worldwatch/manifest.json';
+})();
+</script>
+<meta name="theme-color" content="#00c8ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WorldWatch">
+<link rel="apple-touch-icon" href="icon-192x192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
+<style>
+:root{--bg:#050d1a;--bg2:#091428;--bg3:#0d1f3c;--panel:#0b1a32;--border:#1a3356;--border2:#244370;--blue:#0a6ebd;--blue2:#1a8fe0;--blue3:#3db3ff;--cyan:#00d4ff;--navy:#051020;--ink:#e8f4ff;--ink2:#b8d4f0;--ink3:#7fa8cc;--dim:#4a7099;--red:#e03030;--red2:#ff4444;--amber:#e08020;--amber2:#ffaa00;--green:#00c864;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:#050d1a;}body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:13px;overflow-x:hidden;}
+.ticker-wrap{background:linear-gradient(90deg,#071830,#0d2a50,#071830);border-bottom:2px solid var(--cyan);overflow:hidden;white-space:nowrap;padding:7px 0;position:sticky;top:0;z-index:1000;}
+.ticker-label{display:inline-block;background:var(--cyan);color:var(--navy);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.2em;padding:2px 14px;margin-right:14px;vertical-align:middle;}
+.ticker-inner{display:inline-block;animation:tickermove 160s linear infinite;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e0f4ff;}
+.ticker-inner .dot{color:var(--cyan);margin:0 16px;}
+@keyframes tickermove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes clocktick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes newstick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.cric-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px;cursor:pointer;transition:border-color .2s,transform .15s;text-decoration:none;display:block;position:relative;overflow:hidden;}
+.cric-card:hover{border-color:var(--cyan);transform:translateY(-2px);}
+.cric-card.live-now{border-color:#00ff88;box-shadow:0 0 12px rgba(0,255,136,0.15);}
+.cric-live-dot{display:inline-block;width:7px;height:7px;background:#00ff88;border-radius:50%;margin-right:6px;animation:blink 1.2s infinite;}
+.cric-series{font-size:9px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.cric-teams{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.05em;color:var(--ink);margin-bottom:6px;line-height:1.2;}
+.cric-score{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cyan);margin-bottom:4px;min-height:18px;}
+.cric-status{font-size:11px;color:var(--dim);line-height:1.4;}
+.cric-type{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;letter-spacing:.1em;padding:2px 7px;border-radius:2px;}
+.cric-type.test{background:#8b4513;color:#fff;}
+.cric-type.odi{background:#1a5276;color:#fff;}
+.cric-type.t20{background:#145a32;color:#fff;}
+.cric-type.other{background:#333;color:#aaa;}
+.cric-watch{font-size:10px;color:var(--cyan);margin-top:8px;border-top:1px solid var(--border);padding-top:6px;}
+.clock-ticker-label{display:inline-block;background:#00c8ff;color:#071830;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.15em;padding:2px 10px;margin-right:10px;vertical-align:middle;}
+.clock-ticker-inner{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0f4ff;animation:clocktick 50s linear infinite;white-space:nowrap;}
+.clock-ticker-inner .cdot{color:#00c8ff;margin:0 10px;}
+.news-ticker-wrap{background:#071424;border-bottom:1px solid #1a0a0a;overflow:hidden;white-space:nowrap;padding:4px 0;}
+.news-ticker-label{display:inline-block;background:#e63946;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.15em;padding:2px 10px;margin-right:10px;vertical-align:middle;}
+.news-ticker-inner{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0f4ff;}
+.news-ticker-inner .ndot{color:#e63946;margin:0 14px;}
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:30px;z-index:999;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:0.08em;padding:10px 0;}
+.logo .ac{color:var(--cyan);}
+.logo-sub{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:0.2em;}
+.live-badge{background:var(--blue);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;padding:4px 10px;border-radius:2px;}
+#clock{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cyan);}
+.api-bar{background:var(--bg3);border-bottom:1px solid var(--border);padding:6px 20px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.api-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);letter-spacing:0.12em;white-space:nowrap;}
+.api-inp{background:var(--bg2);border:1px solid var(--border2);border-radius:3px;color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 9px;width:210px;outline:none;}
+.api-inp:focus{border-color:var(--cyan);}
+.api-btn{background:var(--blue);border:none;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 12px;border-radius:2px;cursor:pointer;}
+.api-st{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);}
+.api-st.ok{color:var(--green);}
+nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;padding:0 20px;overflow-x:auto;position:sticky;top:92px;z-index:998;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+nav::-webkit-scrollbar{display:none;}
+nav::-webkit-scrollbar{height:0;}
+nav button{background:none;border:none;border-bottom:2px solid transparent;color:var(--dim);font-size:12px;padding:10px 14px;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+nav button:hover{color:var(--ink2);}
+nav button.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+.main{padding:18px 20px;max-width:1800px;margin:0 auto;}
+.tab-panel{display:none;animation:fu 0.3s ease;}
+.tab-panel.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.sub-hdr{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:var(--dim);margin:18px 0 10px;display:flex;align-items:center;gap:10px;}
+.sub-hdr::after{content:'';flex:1;height:1px;background:var(--border);}
+.info-box{background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-left:3px solid var(--cyan);border-radius:4px;padding:9px 13px;margin-bottom:14px;font-size:12px;color:var(--ink3);line-height:1.7;}
+
+/* STREAMS */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:20px;}
+.sc{background:var(--panel);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+.sc:hover{border-color:var(--border2);transform:translateY(-2px);}
+.sc.reliable{border-top:3px solid var(--green);}
+.sc.state{border-top:3px solid var(--amber2);}
+.svw{width:100%;aspect-ratio:16/9;background:#000;position:relative;overflow:hidden;}
+.svw video,.svw iframe{width:100%;height:100%;display:block;border:none;}
+.sov{position:absolute;inset:0;background:linear-gradient(135deg,var(--bg3),var(--bg2));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;z-index:2;transition:opacity 0.3s;}
+.sov.hidden{opacity:0;pointer-events:none;}
+.pflag{font-size:30px;}
+.pr{width:46px;height:46px;border-radius:50%;border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:15px;padding-left:3px;}
+.sov:hover .pr{background:var(--cyan);color:var(--navy);}
+.son{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);}
+.sst{position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.75);border:1px solid;border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;z-index:3;display:none;}
+.sst.loading{border-color:var(--amber2);color:var(--amber2);display:block;}
+.sst.live{border-color:var(--green);color:var(--green);display:block;}
+.sst.error{border-color:var(--red2);color:var(--red2);display:block;}
+.sc.lc .svw{display:none;}
+/* Channel control bar */
+.sch-ctls{display:flex;align-items:center;gap:4px;padding:5px 8px;background:rgba(0,0,0,0.35);border-top:1px solid var(--border);}
+.sch-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--dim);border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;text-decoration:none;line-height:1.4;transition:all 0.15s;}
+.sch-btn:hover{background:rgba(0,180,255,0.15);border-color:var(--cyan);color:var(--cyan);}
+.sch-btn:last-child{margin-left:auto;}
+/* Fullscreen: fill screen when card is fullscreen target */
+.sc:-webkit-full-screen,.sc:-moz-full-screen,.sc:fullscreen{display:flex;flex-direction:column;background:#000;width:100%;height:100%;}
+.sc:-webkit-full-screen .svw,.sc:-moz-full-screen .svw,.sc:fullscreen .svw{flex:1;aspect-ratio:unset;}
+.sc:-webkit-full-screen .sch-ctls,.sc:fullscreen .sch-ctls{flex-shrink:0;}
+/* Video native fullscreen helper */
+video::-webkit-media-controls-fullscreen-button{display:block;}
+.lci{display:flex;align-items:center;gap:12px;padding:16px 13px;text-decoration:none;background:rgba(0,180,255,0.03);border-bottom:1px solid var(--border);min-height:155px;}
+.lci:hover{background:rgba(0,180,255,0.08);}
+.lcf{font-size:34px;}
+.lcn{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--cyan);letter-spacing:1px;margin-bottom:2px;}
+.lcr{font-size:10px;color:var(--ink3);margin-bottom:8px;}
+.lcc{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--blue3);border:1px solid var(--border2);border-radius:3px;padding:3px 9px;}
+.lci:hover .lcc{background:var(--blue);color:#fff;}
+.sm{padding:8px 11px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);}
+.sn{font-size:11px;font-weight:600;}
+.sr{font-size:9px;color:var(--dim);margin-top:1px;}
+.bc{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.1em;padding:2px 6px;border-radius:2px;text-transform:uppercase;}
+.bc-ok{background:rgba(0,200,100,0.1);color:var(--green);border:1px solid rgba(0,200,100,0.3);}
+.bc-neu{background:rgba(10,110,189,0.12);color:var(--blue3);border:1px solid rgba(10,110,189,0.3);}
+.bc-st{background:rgba(224,128,32,0.1);color:var(--amber2);border:1px solid rgba(224,128,32,0.3);}
+
+/* NEWS SITES */
+.ns-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.ns-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:13px 10px;text-decoration:none;color:inherit;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;transition:border-color 0.2s,transform 0.2s;}
+.ns-card:hover{border-color:var(--blue2);transform:translateY(-2px);}
+.ns-flag{font-size:24px;}
+.ns-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:0.05em;}
+.ns-country{font-size:9px;color:var(--dim);}
+.ns-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:0.1em;padding:2px 5px;border-radius:2px;text-transform:uppercase;}
+.nt-wire{background:rgba(0,212,255,0.08);color:var(--cyan);border:1px solid rgba(0,212,255,0.25);}
+.nt-pub{background:rgba(0,200,100,0.08);color:var(--green);border:1px solid rgba(0,200,100,0.25);}
+.nt-comm{background:rgba(61,179,255,0.08);color:var(--blue3);border:1px solid rgba(61,179,255,0.2);}
+.nt-state{background:rgba(224,128,32,0.08);color:var(--amber2);border:1px solid rgba(224,128,32,0.25);}
+.rgn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.rb{background:var(--bg3);border:1px solid var(--border);color:var(--dim);font-size:11px;padding:4px 12px;border-radius:20px;cursor:pointer;}
+.rb:hover,.rb.active{background:var(--blue);border-color:var(--blue2);color:#fff;}
+
+/* STOCKS */
+.stocks-tb{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px;padding:9px 12px;background:var(--panel);border:1px solid var(--border);border-radius:6px;}
+.fb{background:var(--bg3);border:1px solid var(--border);color:var(--dim);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;}
+.fb:hover,.fb.active{background:var(--blue);border-color:var(--blue2);color:#fff;}
+.ht{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:11px;}
+.ht input{display:none;}
+.hs{width:34px;height:19px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;position:relative;cursor:pointer;transition:background 0.2s;}
+.hs::after{content:'';width:13px;height:13px;background:var(--dim);border-radius:50%;position:absolute;top:2px;left:2px;transition:all 0.2s;}
+#ht:checked+.hs{background:rgba(0,200,100,0.2);border-color:var(--green);}
+#ht:checked+.hs::after{background:var(--green);left:17px;}
+.rfbtn{background:var(--bg3);border:1px solid var(--border2);color:var(--blue3);font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 11px;border-radius:3px;cursor:pointer;}
+.rfbtn:hover{background:var(--blue);color:#fff;}
+.stock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:11px;margin-bottom:20px;}
+.stk{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:13px;transition:border-color 0.2s,transform 0.2s;}
+.stk:hover{border-color:var(--border2);transform:translateY(-2px);}
+.stk.hidden{display:none!important;}
+.stk-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:7px;}
+.stk-ticker{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:0.08em;line-height:1;}
+.stk-name{font-size:9px;color:var(--dim);margin-top:2px;line-height:1.4;}
+.hbadge{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.1em;padding:2px 5px;border-radius:2px;text-transform:uppercase;}
+.hb-h{background:rgba(0,200,100,0.12);color:var(--green);border:1px solid rgba(0,200,100,0.35);}
+.hb-r{background:rgba(255,170,0,0.1);color:var(--amber2);border:1px solid rgba(255,170,0,0.3);}
+.hb-x{background:rgba(224,48,48,0.1);color:var(--red2);border:1px solid rgba(224,48,48,0.3);}
+.sprice{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:500;margin-bottom:2px;}
+.sprice.up{color:var(--green);}
+.sprice.down{color:var(--red2);}
+.sprice.flat{color:var(--dim);}
+.schg{font-size:10px;margin-bottom:8px;}
+.schg.up{color:var(--green);}
+.schg.down{color:var(--red2);}
+.schg.flat{color:var(--dim);}
+.secpill{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:0.1em;padding:2px 5px;border-radius:2px;margin-bottom:7px;text-transform:uppercase;}
+.sp-Tech{background:rgba(61,179,255,0.08);color:var(--blue3);border:1px solid rgba(61,179,255,0.2);}
+.sp-Energy{background:rgba(255,170,0,0.08);color:var(--amber2);border:1px solid rgba(255,170,0,0.2);}
+.sp-Gold{background:rgba(255,215,0,0.08);color:#ffd700;border:1px solid rgba(255,215,0,0.2);}
+.sp-Health{background:rgba(200,100,255,0.08);color:#cc88ff;border:1px solid rgba(200,100,255,0.2);}
+.sp-Industrial{background:rgba(150,200,255,0.08);color:#96c8ff;border:1px solid rgba(150,200,255,0.2);}
+.sp-Consumer{background:rgba(255,120,50,0.08);color:#ff8844;border:1px solid rgba(255,120,50,0.2);}
+.sp-Telecom{background:rgba(100,255,200,0.08);color:#64ffc8;border:1px solid rgba(100,255,200,0.2);}
+.sp-REIT{background:rgba(180,140,255,0.08);color:#b48cff;border:1px solid rgba(180,140,255,0.2);}
+.sp-ETF{background:rgba(0,212,255,0.08);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);}
+.rrow{display:flex;align-items:center;gap:5px;margin-bottom:8px;flex-wrap:wrap;}
+.rbadge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;padding:3px 9px;border-radius:3px;text-transform:uppercase;}
+.rb-buy{background:rgba(0,200,100,0.15);color:var(--green);border:1px solid rgba(0,200,100,0.4);}
+.rb-hold{background:rgba(61,179,255,0.12);color:var(--blue3);border:1px solid rgba(61,179,255,0.3);}
+.rb-sell{background:rgba(224,48,48,0.12);color:var(--red2);border:1px solid rgba(224,48,48,0.3);}
+.rb-na{background:var(--bg3);color:var(--dim);border:1px solid var(--border);}
+.fhr{font-size:8px;color:var(--dim);font-family:'IBM Plex Mono',monospace;}
+.periods{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:9px;}
+.pc{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:4px 3px;text-align:center;cursor:pointer;}
+.pc:hover{border-color:var(--blue3);}
+.pc.act{background:rgba(61,179,255,0.15);border-color:var(--blue3);}
+.pl{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--dim);display:block;margin-bottom:1px;}
+.pv{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;display:block;}
+.pv.up{color:var(--green);}
+.pv.down{color:var(--red2);}
+.pv.na{color:var(--dim);}
+.ai-btn{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--blue3);font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.07em;padding:5px;border-radius:3px;cursor:pointer;}
+.ai-btn:hover{background:var(--blue);color:#fff;}
+.ai-panel{margin-top:7px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:11px;display:none;font-size:11px;color:var(--ink3);line-height:1.75;}
+.ai-panel.vis{display:block;}
+.ai-panel h3{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--cyan);margin:7px 0 3px;}
+.ai-panel h3:first-child{margin-top:0;}
+.ai-panel p,.ai-panel ul{margin-bottom:5px;}
+.ai-panel ul{margin-left:12px;}
+.ai-panel strong{color:var(--ink);}
+
+/* AI TAB */
+.ai-sec{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px;}
+.ai-sec-t{font-family:'Bebas Neue',sans-serif;font-size:17px;margin-bottom:2px;}
+.ai-sec-s{font-size:11px;color:var(--dim);margin-bottom:10px;}
+.qbtns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+.qb{background:var(--bg3);border:1px solid var(--border2);color:var(--ink3);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;}
+.qb:hover{background:var(--blue);color:#fff;}
+.ai-row{display:flex;gap:8px;}
+textarea.ai-ta{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:9px 11px;resize:vertical;min-height:72px;outline:none;line-height:1.6;}
+textarea.ai-ta:focus{border-color:var(--cyan);}
+.ai-run{background:var(--blue);border:none;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:9px 14px;border-radius:4px;cursor:pointer;align-self:flex-end;white-space:nowrap;}
+.ai-run:hover:not(:disabled){background:var(--blue2);}
+.ai-run:disabled{opacity:0.4;cursor:not-allowed;}
+.ai-resp{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:14px;margin-top:10px;font-size:12px;line-height:1.8;color:var(--ink2);display:none;position:relative;}
+.ai-resp.vis{display:block;}
+.ai-resp-badge{position:absolute;top:-10px;left:12px;background:var(--cyan);color:var(--navy);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.15em;padding:2px 9px;border-radius:2px;}
+.ai-resp h3{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--cyan);margin:9px 0 3px;}
+.ai-resp h3:first-child{margin-top:0;}
+.ai-resp p,.ai-resp ul{margin-bottom:6px;}
+.ai-resp ul{margin-left:13px;}
+.ai-resp strong{color:var(--ink);}
+.spin{width:12px;height:12px;border:2px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:sp 0.8s linear infinite;display:inline-block;}
+@keyframes sp{to{transform:rotate(360deg);}}
+
+/* NEWS FEED */
+.nl{display:flex;flex-direction:column;gap:2px;}
+.ni{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:9px 11px;display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:start;text-decoration:none;color:inherit;}
+.ni:hover{background:var(--bg3);}
+.rp{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:0.1em;padding:2px 5px;border-radius:2px;text-transform:uppercase;white-space:nowrap;}
+.rp-eu{background:rgba(10,110,189,0.1);color:var(--blue3);border:1px solid rgba(10,110,189,0.25);}
+.rp-us{background:rgba(0,150,200,0.1);color:#00c8e0;border:1px solid rgba(0,150,200,0.25);}
+.rp-as{background:rgba(0,200,100,0.1);color:var(--green);border:1px solid rgba(0,200,100,0.25);}
+.rp-me{background:rgba(255,170,0,0.1);color:var(--amber2);border:1px solid rgba(255,170,0,0.25);}
+.rp-af{background:rgba(200,100,50,0.1);color:#ff8844;border:1px solid rgba(200,100,50,0.25);}
+.rp-gl{background:var(--bg3);color:var(--dim);border:1px solid var(--border);}
+.nh{font-size:12px;color:var(--ink);line-height:1.5;}
+.ns{font-size:9px;color:var(--dim);margin-top:2px;}
+.nl-row{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;font-size:10px;color:var(--dim);letter-spacing:0.1em;margin-top:24px;font-family:'IBM Plex Mono',monospace;line-height:2;}
+@media(max-width:600px){
+  .sg,.stock-grid{grid-template-columns:1fr 1fr;}
+  .ns-grid{grid-template-columns:repeat(3,1fr);}
+  header{flex-direction:column;align-items:flex-start;padding:8px 14px;}
+  header>div:last-child{align-self:flex-end;margin-top:-24px;}
+  .logo{font-size:22px;}
+  .main{padding:10px 10px;}
+  nav{top:72px;padding:0 10px;}
+  nav button{font-size:11px;padding:8px 10px;}
+  .api-bar{padding:6px 10px;gap:5px;}
+  .api-inp{width:80px;}
+  .lock-box{padding:24px 18px;}
+  .lock-logo{font-size:32px;}
+  .lock-features{grid-template-columns:1fr 1fr;gap:6px;}
+  .lock-feat{padding:6px 8px;font-size:10px;}
+  .lock-row{flex-direction:column;}
+  .lock-btn{width:100%;padding:12px;}
+  .lock-inp{font-size:12px;}
+}
+@media(max-width:400px){.sg,.stock-grid{grid-template-columns:1fr;}.ns-grid{grid-template-columns:repeat(2,1fr);}}
+.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+.yt-card{background:var(--panel);border:1px solid var(--border);border-radius:6px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:border-color .2s,transform .2s;}
+.yt-card:hover{border-color:#ff4444;transform:translateY(-2px);}
+.yt-thumb{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a0505,#2a0808);display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;}
+.yt-play{position:absolute;width:48px;height:48px;background:rgba(255,0,0,.85);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;padding-left:4px;transition:transform .2s;}
+.yt-card:hover .yt-play{transform:scale(1.15);background:#ff0000;}
+.yt-body{padding:11px 12px;flex:1;display:flex;flex-direction:column;gap:4px;}
+.yt-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.05em;color:var(--ink);}
+.yt-desc{font-size:11px;color:var(--ink3);line-height:1.6;flex:1;}
+.yt-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:4px;}
+.yt-lang{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.08em;padding:2px 5px;border-radius:2px;text-transform:uppercase;}
+.yl-en{background:rgba(61,179,255,.1);color:var(--blue3);border:1px solid rgba(61,179,255,.25);}
+.yl-ur{background:rgba(0,200,100,.1);color:#00c864;border:1px solid rgba(0,200,100,.25);}
+.yl-hi{background:rgba(255,170,0,.1);color:#ffaa00;border:1px solid rgba(255,170,0,.25);}
+.yt-subs{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);}
+.yt-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 4px;border-radius:2px;background:var(--bg3);color:var(--dim);border:1px solid var(--border);}
+.yt-ok{font-size:9px;color:#00c864;}
+.yt-warn{font-size:9px;color:#ffaa00;}
+@media(max-width:600px){.yt-grid{grid-template-columns:1fr 1fr;}}
+/* M3U Player */
+.m3u-load-panel{background:var(--panel);border:1px solid var(--border);border-radius:4px;margin-bottom:14px;overflow:hidden;}
+.m3u-load-header{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;cursor:pointer;font-size:12px;color:var(--ink);user-select:none;}
+.m3u-load-header:hover{background:var(--bg3);}
+#m3uLoaderBody{padding:12px 14px 14px;border-top:1px solid var(--border);}
+.m3u-layout{display:flex;gap:12px;}
+.m3u-list-col{width:320px;min-width:240px;flex-shrink:0;transition:width .25s;}
+.m3u-player-col{flex:1;min-width:0;}
+.m3u-player-wrap{background:#000;border:1px solid var(--border);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;}
+.m3u-player-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--border);}
+.m3u-now-playing{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.m3u-player-wrap video{width:100%;background:#000;display:block;aspect-ratio:16/9;}
+.m3u-list{height:420px;overflow-y:auto;background:var(--panel);border:1px solid var(--border);border-radius:4px;}
+.m3u-ch{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
+.m3u-ch:hover{background:var(--bg3);}
+.m3u-ch.active{background:var(--blue);color:#fff;}
+.m3u-ch.active .m3u-ch-grp{color:rgba(255,255,255,.65);}
+.m3u-ch-logo{width:28px;height:28px;object-fit:contain;border-radius:3px;background:#111;flex-shrink:0;}
+.m3u-ch-logo-placeholder{width:28px;height:28px;background:var(--bg3);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.m3u-ch-info{flex:1;min-width:0;}
+.m3u-ch-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.m3u-ch-grp{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.05em;}
+#m3uControls{display:flex;flex-direction:column;}
+.m3u-fav-btn{background:none;border:none;cursor:pointer;font-size:14px;color:var(--dim);padding:2px 4px;border-radius:3px;line-height:1;flex-shrink:0;transition:transform .15s;}
+.m3u-fav-btn:hover{transform:scale(1.25);}
+.m3u-fav-btn.active{color:#f5a623;}
+/* Expanded state — player goes full width, list goes below */
+.m3u-layout.expanded{flex-direction:column;}
+.m3u-layout.expanded .m3u-list-col{width:100%;}
+.m3u-layout.expanded .m3u-list{height:240px;}
+.m3u-layout.expanded .m3u-player-wrap video{aspect-ratio:16/9;max-height:65vh;}
+@media(max-width:700px){.m3u-layout{flex-direction:column;}.m3u-list-col{width:100%;}.m3u-list{height:220px;}}
+/* ── GLOBAL MARKETS ── */
+.gm-region{margin-bottom:22px;}
+.gm-region-hdr{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;padding:0 0 8px 0;border-bottom:1px solid var(--border);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.gm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.gm-card{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;transition:border-color .2s;}
+.gm-card:hover{border-color:var(--blue3);}
+.gm-card.up{border-left:2px solid var(--green);}
+.gm-card.down{border-left:2px solid var(--red2);}
+.gm-card.flat{border-left:2px solid var(--border);}
+.gm-name{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;}
+.gm-full{font-size:10px;color:var(--ink3);margin-bottom:1px;}
+.gm-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.03em;color:var(--ink);}
+.gm-chg{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+.gm-chg.up{color:var(--green);}
+.gm-chg.down{color:var(--red2);}
+.gm-chg.flat{color:var(--dim);}
+.gm-meta{display:flex;gap:8px;margin-top:2px;}
+.gm-oc{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);}
+.gm-news{margin-top:6px;padding-top:6px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:3px;}
+.gm-nl{font-size:9px;color:var(--ink3);line-height:1.45;cursor:pointer;transition:color .15s;}
+.gm-nl:hover{color:var(--cyan);}
+.gm-nl a{color:inherit;text-decoration:none;}
+.gm-src{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--dim);margin-top:1px;}
+.gm-loading{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);animation:blink 1.2s infinite;}
+@keyframes blink{0%,100%{opacity:.4;}50%{opacity:1;}}
+.gm-sparkline{margin:3px 0;}
+.gm-fx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:22px;}
+.gm-fx{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:9px 11px;display:flex;flex-direction:column;gap:2px;}
+.gm-fx-pair{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--dim);}
+.gm-fx-rate{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--ink);}
+.gm-fx-chg{font-family:'IBM Plex Mono',monospace;font-size:10px;}
+.gm-strip{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:10px 14px;margin-bottom:16px;display:flex;flex-direction:column;gap:4px;}
+.gm-strip-hdr{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase;margin-bottom:4px;}
+.gm-strip-item{font-size:11px;color:var(--ink3);line-height:1.5;padding:3px 0;border-bottom:1px solid var(--border);}
+.gm-strip-item:last-child{border-bottom:none;}
+.gm-strip-item a{color:inherit;text-decoration:none;}
+.gm-strip-item a:hover{color:var(--cyan);}
+.gm-strip-src{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--dim);margin-left:6px;}
+.gm-refresh-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.gm-lupd{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);}
+.gm-rfbtn{background:transparent;border:1px solid var(--border);color:var(--dim);font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 10px;border-radius:3px;cursor:pointer;letter-spacing:.08em;}
+.gm-rfbtn:hover{border-color:var(--cyan);color:var(--cyan);}
+@media(max-width:600px){.gm-grid{grid-template-columns:1fr 1fr;}.gm-fx-grid{grid-template-columns:1fr 1fr 1fr;}}
+
+/* ── Commodities ── */
+.gm-com-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:8px;}
+.gm-com-card{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;position:relative;transition:border-color .2s;}
+.gm-com-card:hover{border-color:var(--blue3);}
+.gm-com-card.up{border-left:2px solid var(--green);}
+.gm-com-card.down{border-left:2px solid var(--red2);}
+.gm-com-icon{font-size:18px;line-height:1;}
+.gm-com-name{font-size:11px;font-weight:700;color:var(--text);margin-top:2px;}
+.gm-com-unit{font-size:9px;color:var(--dim);font-family:'IBM Plex Mono',monospace;letter-spacing:.05em;}
+.gm-com-val{font-size:15px;font-weight:700;color:var(--text);font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+.gm-com-chg{font-size:10px;font-family:'IBM Plex Mono',monospace;}
+.gm-com-chg.up{color:var(--green);}
+.gm-com-chg.down{color:var(--red2);}
+.gm-com-chg.flat{color:var(--dim);}
+.gm-com-note{font-size:10px;color:var(--dim);padding:6px 0 0 0;font-style:italic;}
+
+/* ── Halal Badges ── */
+.gm-halal-badge{display:inline-block;font-size:8px;font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;padding:2px 5px;border-radius:3px;margin-top:4px;cursor:default;font-weight:700;}
+.gm-halal-badge.halal{background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);}
+.gm-halal-badge.mixed{background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.25);}
+.gm-halal-badge.avoid{background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.25);}
+
+/* ── Crypto ── */
+.gm-crypto-note{background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.18);border-radius:5px;padding:8px 12px;font-size:11px;color:var(--dim);line-height:1.5;margin-bottom:10px;}
+.gm-crypto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
+.gm-crypto-card{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;transition:border-color .2s;}
+.gm-crypto-card:hover{border-color:var(--blue3);}
+.gm-crypto-icon{font-size:20px;line-height:1;}
+.gm-crypto-name{font-size:11px;font-weight:700;color:var(--text);}
+.gm-crypto-sym{font-size:9px;color:var(--dim);font-family:'IBM Plex Mono',monospace;}
+.gm-crypto-val{font-size:14px;font-weight:700;color:var(--text);font-family:'IBM Plex Mono',monospace;margin-top:3px;}
+@media(max-width:600px){.gm-com-grid{grid-template-columns:1fr 1fr;}.gm-crypto-grid{grid-template-columns:1fr 1fr;}}
+
+/* ── TABLET ── */
+@media(min-width:601px) and (max-width:1024px){
+  .main{padding:14px 16px;}
+  .sg,.stock-grid{grid-template-columns:repeat(3,1fr);}
+  .ns-grid{grid-template-columns:repeat(4,1fr);}
+  .yt-grid{grid-template-columns:repeat(2,1fr);}
+  .lock-box{padding:32px 36px;max-width:520px;}
+  .m3u-list-col{width:260px;}
+}
+
+/* ── LARGE DESKTOP ── */
+@media(min-width:1400px){
+  .sg,.stock-grid{grid-template-columns:repeat(6,1fr);}
+  .ns-grid{grid-template-columns:repeat(8,1fr);}
+  .yt-grid{grid-template-columns:repeat(4,1fr);}
+}
+
+/* ── LOCK SCREEN ── */
+#wwLockScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:#050d1a;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;}
+#wwLockScreen.visible{display:flex;}
+#wwLockScreen.hidden{display:none;}
+.lock-box{background:#0b1a32;border:1px solid #1a3356;border-radius:8px;padding:40px 44px;max-width:480px;width:90%;text-align:center;color:#e8f4ff;}
+.lock-logo{font-family:'Bebas Neue',Arial,sans-serif;font-size:42px;letter-spacing:.08em;margin-bottom:4px;}
+.lock-logo span{color:var(--blue);}
+.lock-sub{font-size:12px;color:var(--dim);margin-bottom:28px;font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;}
+.lock-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--dim);text-align:left;margin-bottom:6px;}
+.lock-row{display:flex;gap:8px;margin-bottom:8px;}
+.lock-inp{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--ink);padding:10px 12px;font-size:13px;border-radius:4px;outline:none;font-family:'IBM Plex Mono',monospace;}
+.lock-inp:focus{border-color:var(--blue);}
+.lock-btn{background:var(--blue);color:#fff;border:none;padding:10px 20px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;border-radius:4px;cursor:pointer;white-space:nowrap;}
+.lock-btn:hover{opacity:.88;}
+.lock-err{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red2);margin-top:4px;min-height:16px;}
+.lock-note{font-size:10px;color:var(--dim);margin-top:20px;line-height:1.7;}
+.lock-note a{color:var(--blue3);text-decoration:none;}
+.lock-note a:hover{text-decoration:underline;}
+.lock-features{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0;text-align:left;}
+.lock-feat{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-size:11px;color:var(--ink3);}
+.lock-feat span{display:block;font-size:9px;color:var(--dim);font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+#wwUnlockAnim{position:fixed;inset:0;background:var(--bg);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+#wwUnlockAnim.show{display:flex;}
+.unlock-ring{width:60px;height:60px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- ── LOCK SCREEN ── -->
+<div id="wwLockScreen">
+  <div class="lock-box">
+    <div class="lock-logo">WORLD<span>WATCH</span></div>
+    <div class="lock-sub">GLOBAL NEWS &amp; INVESTMENT MONITOR</div>
+
+    <!-- Welcome back mode (shown when re-locking) -->
+    <div id="lockWelcomeBack" style="display:none;text-align:center;margin:18px 0 10px;">
+      <div style="font-size:32px;margin-bottom:8px;">👋</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.15em;color:var(--cyan);">WELCOME BACK</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:4px;">Enter your key to continue</div>
+    </div>
+
+    <!-- Feature grid (shown on first visit) -->
+    <div id="lockFeatures" class="lock-features">
+      <div class="lock-feat">📡 World News<span>Live streams worldwide</span></div>
+      <div class="lock-feat">🌐 News Sites<span>Top 50 global sources</span></div>
+      <div class="lock-feat">📈 Stocks &amp; Markets<span>Real-time via Finnhub</span></div>
+      <div class="lock-feat">🧠 AI Analysis<span>Smart powered insights</span></div>
+      <div class="lock-feat">🌏 Global Markets<span>Indices, FX &amp; crypto</span></div>
+      <div class="lock-feat">⭐ Favorites<span>Save your channels</span></div>
+    </div>
+
+    <div class="lock-label">CLMAGIC — REQUIRED TO UNLOCK</div>
+    <div class="lock-row">
+      <input id="lockKeyInp" type="password" class="lock-inp" placeholder="••••••••••••••••••••" onkeydown="if(event.key==='Enter')tryUnlock()">
+      <button class="lock-btn" onclick="tryUnlock()">UNLOCK →</button>
+    </div>
+    <div class="lock-err" id="lockErr"></div>
+
+    <div class="lock-label" style="margin-top:14px;opacity:0.6;">FINMAGIC — OPTIONAL (enables live stock data)</div>
+    <div class="lock-row">
+      <input id="lockFhInp" type="password" class="lock-inp" placeholder="••••••••••••••••••••" onkeydown="if(event.key==='Enter')tryUnlock()">
+    </div>
+
+    <div class="lock-note">
+      Your keys are stored locally in your browser only.
+    </div>
+  </div>
+</div>
+
+<!-- ── UNLOCK ANIMATION ── -->
+<div id="wwUnlockAnim">
+  <div class="unlock-ring"></div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.1em;">UNLOCKING WORLDWATCH...</div>
+</div>
+
+<!-- ── CLOCK TICKER ── -->
+<div class="clock-ticker-wrap">
+  <span class="clock-ticker-label">🕐 TIME</span>
+  <span class="clock-ticker-inner" id="clockTickerInner">Loading...</span>
+</div>
+
+<!-- ── NEWS HEADLINE TICKER ── -->
+<div class="news-ticker-wrap">
+  <span class="news-ticker-label">📰 NEWS</span>
+  <span class="news-ticker-inner" id="newsTickerInner">Fetching headlines... <span class="ndot">◆</span> Stay informed with WorldWatch <span class="ndot">◆</span> Fetching headlines... <span class="ndot">◆</span> Stay informed with WorldWatch <span class="ndot">◆</span></span>
+</div>
+
+<div class="ticker-wrap">
+  <span class="ticker-label">◆ LIVE</span>
+  <span class="ticker-inner" id="tickerInner">
+    Markets loading... <span class="dot">◆</span> S&P 500 loading... <span class="dot">◆</span> Gold loading... <span class="dot">◆</span> NVDA loading... <span class="dot">◆</span> Oil loading... <span class="dot">◆</span> AAPL loading... <span class="dot">◆</span> Markets loading... <span class="dot">◆</span> S&P 500 loading... <span class="dot">◆</span>
+  </span>
+</div>
+
+<header>
+  <div><div class="logo">WORLD<span class="ac">WATCH</span></div><div class="logo-sub">Global News &amp; Investment Monitor</div></div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <div class="live-badge">● LIVE</div>
+    <div id="clock">00:00:00 UTC</div>
+  </div>
+</header>
+
+<div class="api-bar" id="apiBar" style="display:none">
+  <span class="api-lbl">◈ CLMAGIC</span>
+  <input type="password" class="api-inp" id="apiInp" placeholder="••••••••••••"/>
+  <button class="api-btn" onclick="saveKey()">SAVE</button>
+  <span class="api-st" id="apiSt">Not set</span>
+  <span class="api-lbl" style="margin-left:10px">◈ FINMAGIC</span>
+  <input type="password" class="api-inp" id="fhInp" placeholder="••••••••••••"/>
+  <button class="api-btn" onclick="saveFH()">SAVE</button>
+  <span class="api-st" id="fhSt">Not set</span>
+  <button onclick="document.getElementById('apiBar').style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:0 4px" title="Hide keys bar">✕</button>
+</div>
+
+<nav>
+  <button class="active" onclick="showTab('streams',this)">📡 Live Channels</button>
+  <button onclick="showTab('newssites',this)">🌐 News Sites</button>
+  <button onclick="showTab('stocks',this)">📈 Stocks &amp; Markets</button>
+  <button onclick="showTab('cricket',this)">🏏 Cricket</button>
+  <button onclick="showTab('markets',this)">🌏 Global Markets</button>
+  <button onclick="showTab('news',this)">📰 News Feed</button>
+  <button onclick="showTab('analysts',this)">▶ YouTube Analysts</button>
+  <button onclick="showTab('creators',this)">🌟 Creators</button>
+  <button onclick="showTab('analysis',this)">🧠 AI Analysis</button>
+  <button onclick="showTab('m3u',this)">🪄 Magic Player</button>
+  <button onclick="toggleKeysBar()" style="margin-left:auto;color:var(--dim);border-bottom:2px solid transparent;" title="Show/Hide Keys · Long-press to Lock" oncontextmenu="event.preventDefault();lockApp()">🔑</button>
+</nav>
+
+<div class="main">
+
+<!-- STREAMS -->
+<div id="tab-streams" class="tab-panel active">
+  <div class="info-box">📡 <strong>Live News Channels.</strong> All streams link to official broadcaster sources. WorldWatch does not host or distribute any content. If a stream fails, tap <strong>Watch Live →</strong> to visit the broadcaster's official website directly.</div>
+  <div class="sub-hdr">Americas &amp; Europe</div>
+  <div class="sg" id="rGrid"></div>
+  <div class="sub-hdr">Asia Pacific &amp; Africa</div>
+  <div class="sg" id="aGrid"></div>
+  <div class="sub-hdr">Middle East · South Asia · Other Perspectives</div>
+  <div class="sg" id="mGrid"></div>
+  <div class="sub-hdr">Hindi &amp; Urdu News</div>
+  <div class="sg" id="huGrid"></div>
+  <div class="sub-hdr">Lifestyle · Cooking · Nature · Kids</div>
+  <div class="sg" id="lfGrid"></div>
+</div>
+
+<!-- NEWS SITES -->
+<div id="tab-newssites" class="tab-panel">
+  <div class="info-box">🌐 <strong>Top 50 global news sites.</strong> Direct links open in new tab. Filter by region.</div>
+  <div class="rgn-row">
+    <button class="rb active" onclick="filterNS('all',this)">All (50)</button>
+    <button class="rb" onclick="filterNS('americas',this)">🌎 Americas</button>
+    <button class="rb" onclick="filterNS('europe',this)">🌍 Europe</button>
+    <button class="rb" onclick="filterNS('middleeast',this)">🕌 Middle East</button>
+    <button class="rb" onclick="filterNS('asia',this)">🌏 Asia Pacific</button>
+    <button class="rb" onclick="filterNS('africa',this)">🌍 Africa</button>
+  </div>
+  <div class="ns-grid" id="nsGrid"></div>
+</div>
+
+<!-- STOCKS -->
+<!-- ── CRICKET TAB ── -->
+<div id="tab-cricket" class="tab-panel">
+  <div class="info-box">🏏 <strong>International Men's Cricket — Live Scores</strong> — Powered by CricketData.org. Add your CRICMAGIC key in settings to enable. Tap any match card to watch live.</div>
+
+  <!-- API Key input -->
+  <div id="cricKeyBar" style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;flex-wrap:wrap;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.1em;">◈ CRICMAGIC</span>
+    <input type="password" id="cricKeyInp" placeholder="••••••••••••" style="background:var(--bg3);border:1px solid var(--border);color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 10px;border-radius:3px;width:200px;">
+    <button onclick="saveCricKey()" style="background:var(--panel);border:1px solid var(--border);color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:5px 12px;border-radius:3px;cursor:pointer;letter-spacing:.08em;">SAVE</button>
+    <span id="cricKeySt" style="font-size:11px;color:var(--dim);">Not set — get free key at cricketdata.org</span>
+    <button onclick="loadCricket()" style="background:var(--cyan);border:none;color:#071830;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:5px 14px;border-radius:3px;cursor:pointer;font-weight:700;letter-spacing:.08em;margin-left:auto;">🔄 REFRESH</button>
+  </div>
+
+  <!-- Filter buttons -->
+  <div class="stocks-tb" id="cricFilt" style="margin-bottom:10px;">
+    <button class="fb active" onclick="filtCric('all',this)">All Live</button>
+    <button class="fb" onclick="filtCric('test',this)">🎩 Test</button>
+    <button class="fb" onclick="filtCric('odi',this)">🏆 ODI</button>
+    <button class="fb" onclick="filtCric('t20',this)">⚡ T20</button>
+  </div>
+
+  <!-- Match cards grid -->
+  <div id="cricGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
+  <div id="cricMsg" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim);padding:30px;text-align:center;"></div>
+</div>
+
+<div id="tab-stocks" class="tab-panel">
+  <div class="stocks-tb">
+    <button class="fb active" onclick="filterStk('all',this)">All</button>
+    <button class="fb" onclick="filterStk('Tech',this)">Tech</button>
+    <button class="fb" onclick="filterStk('Energy',this)">Energy</button>
+    <button class="fb" onclick="filterStk('Gold',this)">Gold</button>
+    <button class="fb" onclick="filterStk('Health',this)">Health</button>
+    <button class="fb" onclick="filterStk('Industrial',this)">Industrial</button>
+    <button class="fb" onclick="filterStk('Consumer',this)">Consumer</button>
+    <button class="fb" onclick="filterStk('Telecom',this)">Telecom</button>
+    <button class="fb" onclick="filterStk('REIT',this)">REIT</button>
+    <button class="fb" onclick="filterStk('ETF',this)">Islamic ETFs</button>
+    <div class="ht"><input type="checkbox" id="ht" onchange="applyF()"/><label for="ht" class="hs"></label><span style="color:var(--ink2)">☪ Halal Only</span></div>
+    <button class="rfbtn" onclick="fetchAll()">⟳ REFRESH</button>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);" id="lupd"></span>
+  </div>
+  <div class="stock-grid" id="sGrid"></div>
+  <div class="info-box">☪ <strong>AAOIFI Halal Screening:</strong> HALAL ✓ passes screens. REVIEW ⚠ borderline — consult scholar. Ratings from Finnhub analyst consensus + Claude AI. Not financial advice.</div>
+</div>
+
+<!-- NEWS FEED -->
+<div id="tab-markets" class="tab-panel">
+
+  <!-- Global headlines strip -->
+  <div class="gm-strip" id="gmStrip">
+    <div class="gm-strip-hdr">🌐 Global Market Headlines — Live</div>
+    <div id="gmHeadlines"><span class="gm-loading">Loading headlines...</span></div>
+  </div>
+
+  <!-- Refresh row -->
+  <div class="gm-refresh-row">
+    <button class="gm-rfbtn" onclick="gmLoaded=false;initMarkets()">⟳ REFRESH MARKETS</button>
+    <span class="gm-lupd" id="gmLupd"></span>
+  </div>
+
+  <!-- CURRENCIES -->
+  <div class="gm-region">
+    <div class="gm-region-hdr">💱 Currencies &amp; Forex</div>
+    <div class="gm-fx-grid" id="gmFX">
+      <div class="gm-fx"><div class="gm-fx-pair">USD/PKR</div><div class="gm-fx-rate" id="fx-USDPKR">—</div><div class="gm-fx-chg flat" id="fxc-USDPKR">--</div><div class="gm-halal-badge halal" title="Spot forex permissible. Use Islamic swap-free account.">✓ HALAL</div></div>
+      <div class="gm-fx"><div class="gm-fx-pair">USD/INR</div><div class="gm-fx-rate" id="fx-USDINR">—</div><div class="gm-fx-chg flat" id="fxc-USDINR">--</div><div class="gm-halal-badge halal" title="Spot forex permissible. Use Islamic swap-free account.">✓ HALAL</div></div>
+      <div class="gm-fx"><div class="gm-fx-pair">USD/SAR</div><div class="gm-fx-rate" id="fx-USDSAR">—</div><div class="gm-fx-chg flat" id="fxc-USDSAR">--</div><div class="gm-halal-badge halal" title="Saudi Riyal — permissible currency exchange.">✓ HALAL</div></div>
+      <div class="gm-fx"><div class="gm-fx-pair">USD/AED</div><div class="gm-fx-rate" id="fx-USDAED">—</div><div class="gm-fx-chg flat" id="fxc-USDAED">--</div><div class="gm-halal-badge halal" title="UAE Dirham — permissible currency exchange.">✓ HALAL</div></div>
+      <div class="gm-fx"><div class="gm-fx-pair">GBP/USD</div><div class="gm-fx-rate" id="fx-GBPUSD">—</div><div class="gm-fx-chg flat" id="fxc-GBPUSD">--</div><div class="gm-halal-badge halal" title="Spot forex permissible. Avoid rollover/swap interest.">✓ HALAL</div></div>
+      <div class="gm-fx"><div class="gm-fx-pair">EUR/USD</div><div class="gm-fx-rate" id="fx-EURUSD">—</div><div class="gm-fx-chg flat" id="fxc-EURUSD">--</div><div class="gm-halal-badge halal" title="Spot forex permissible. Avoid rollover/swap interest.">✓ HALAL</div></div>
+      <div class="gm-fx"><div class="gm-fx-pair">USD/JPY</div><div class="gm-fx-rate" id="fx-USDJPY">—</div><div class="gm-fx-chg flat" id="fxc-USDJPY">--</div><div class="gm-halal-badge halal" title="Spot forex permissible. Use Islamic swap-free account.">✓ HALAL</div></div>
+      <div class="gm-fx"><div class="gm-fx-pair">USD/CNY</div><div class="gm-fx-rate" id="fx-USDCNY">—</div><div class="gm-fx-chg flat" id="fxc-USDCNY">--</div><div class="gm-halal-badge halal" title="Spot forex permissible. Use Islamic swap-free account.">✓ HALAL</div></div>
+      <div class="gm-fx"><div class="gm-fx-pair">XAU/USD</div><div class="gm-fx-rate" id="fx-XAUUSD">—</div><div class="gm-fx-chg flat" id="fxc-XAUUSD">Gold</div><div class="gm-halal-badge halal" title="Gold — universally halal physical commodity.">✓ HALAL</div></div>
+    </div>
+  </div>
+
+  <!-- AMERICAS -->
+  <div class="gm-region">
+    <div class="gm-region-hdr">🌎 Americas</div>
+    <div class="gm-grid" id="gm-americas"></div>
+  </div>
+
+  <!-- EUROPE -->
+  <div class="gm-region">
+    <div class="gm-region-hdr">🌍 Europe</div>
+    <div class="gm-grid" id="gm-europe"></div>
+  </div>
+
+  <!-- MIDDLE EAST & AFRICA -->
+  <div class="gm-region">
+    <div class="gm-region-hdr">🕌 Middle East &amp; Africa</div>
+    <div class="gm-grid" id="gm-mideast"></div>
+  </div>
+
+  <!-- SOUTH ASIA -->
+  <div class="gm-region">
+    <div class="gm-region-hdr">🇵🇰 South Asia</div>
+    <div class="gm-grid" id="gm-southasia"></div>
+  </div>
+
+  <!-- ASIA PACIFIC -->
+  <div class="gm-region">
+    <div class="gm-region-hdr">🌏 Asia Pacific</div>
+    <div class="gm-grid" id="gm-asiapac"></div>
+  </div>
+
+  <!-- COMMODITIES -->
+  <div class="gm-region">
+    <div class="gm-region-hdr">🛢️ Commodities</div>
+    <div class="gm-com-grid" id="gm-commodities">
+      <!-- Energy -->
+      <div class="gm-com-card" id="comc-NYMEX:CL1!" data-sym="NYMEX:CL1!">
+        <div class="gm-com-icon">⛽</div>
+        <div class="gm-com-name">WTI Crude</div>
+        <div class="gm-com-unit">USD / bbl</div>
+        <div class="gm-com-val" id="comv-NYMEX:CL1!">--</div>
+        <div class="gm-com-chg flat" id="comch-NYMEX:CL1!">fetching...</div>
+        <div class="gm-halal-badge halal" title="Halal — physical commodity; futures may need review">✓ HALAL</div>
+      </div>
+      <div class="gm-com-card" id="comc-NYMEX:NG1!" data-sym="NYMEX:NG1!">
+        <div class="gm-com-icon">🔥</div>
+        <div class="gm-com-name">Natural Gas</div>
+        <div class="gm-com-unit">USD / MMBtu</div>
+        <div class="gm-com-val" id="comv-NYMEX:NG1!">--</div>
+        <div class="gm-com-chg flat" id="comch-NYMEX:NG1!">fetching...</div>
+        <div class="gm-halal-badge halal" title="Halal — energy commodity">✓ HALAL</div>
+      </div>
+      <!-- Precious Metals -->
+      <div class="gm-com-card" id="comc-OANDA:XAU_USD" data-sym="OANDA:XAU_USD">
+        <div class="gm-com-icon">🥇</div>
+        <div class="gm-com-name">Gold</div>
+        <div class="gm-com-unit">USD / oz</div>
+        <div class="gm-com-val" id="comv-OANDA:XAU_USD">--</div>
+        <div class="gm-com-chg flat" id="comch-OANDA:XAU_USD">fetching...</div>
+        <div class="gm-halal-badge halal" title="Halal — universally permitted precious metal">✓ HALAL</div>
+      </div>
+      <div class="gm-com-card" id="comc-OANDA:XAG_USD" data-sym="OANDA:XAG_USD">
+        <div class="gm-com-icon">🥈</div>
+        <div class="gm-com-name">Silver</div>
+        <div class="gm-com-unit">USD / oz</div>
+        <div class="gm-com-val" id="comv-OANDA:XAG_USD">--</div>
+        <div class="gm-com-chg flat" id="comch-OANDA:XAG_USD">fetching...</div>
+        <div class="gm-halal-badge halal" title="Halal — universally permitted precious metal">✓ HALAL</div>
+      </div>
+      <!-- Industrial -->
+      <div class="gm-com-card" id="comc-COMEX:HG1!" data-sym="COMEX:HG1!">
+        <div class="gm-com-icon">🏭</div>
+        <div class="gm-com-name">Copper</div>
+        <div class="gm-com-unit">USD / lb</div>
+        <div class="gm-com-val" id="comv-COMEX:HG1!">--</div>
+        <div class="gm-com-chg flat" id="comch-COMEX:HG1!">fetching...</div>
+        <div class="gm-halal-badge halal" title="Halal — industrial metal">✓ HALAL</div>
+      </div>
+      <div class="gm-com-card" id="comc-COMEX:SI1!" data-sym="COMEX:SI1!">
+        <div class="gm-com-icon">⚙️</div>
+        <div class="gm-com-name">Platinum</div>
+        <div class="gm-com-unit">USD / oz</div>
+        <div class="gm-com-val" id="comv-COMEX:SI1!">--</div>
+        <div class="gm-com-chg flat" id="comch-COMEX:SI1!">fetching...</div>
+        <div class="gm-halal-badge halal" title="Halal — precious metal">✓ HALAL</div>
+      </div>
+    </div>
+    <div class="gm-com-note">💡 Commodity spot prices via Finnhub. Futures contracts may require additional scholarly review for halal compliance.</div>
+  </div>
+
+  <!-- CRYPTO -->
+  <div class="gm-region">
+    <div class="gm-region-hdr">🪙 Cryptocurrency <span style="font-size:10px;font-weight:400;color:var(--dim);margin-left:6px;">via Coinbase · Real-time</span></div>
+    <div class="gm-crypto-note">🌙 <strong>Islamic Finance Note:</strong> Scholars are divided on crypto. Many permit BTC/ETH as a medium of exchange or store of value. Speculation (gharar) is discouraged. Avoid interest-bearing DeFi products. Hover badges for details. Consult a qualified scholar.</div>
+    <div class="gm-crypto-grid" id="gm-crypto">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+</div>
+
+<div id="tab-news" class="tab-panel">
+  <div class="nl-row">
+    <button class="fb active" onclick="filterNews('all',this)">All</button>
+    <button class="fb" onclick="filterNews('us',this)">Americas</button>
+    <button class="fb" onclick="filterNews('eu',this)">Europe</button>
+    <button class="fb" onclick="filterNews('as',this)">Asia</button>
+    <button class="fb" onclick="filterNews('me',this)">Middle East</button>
+    <button class="fb" onclick="filterNews('af',this)">Africa</button>
+    <button class="fb" onclick="filterNews('gl',this)">Global</button>
+  </div>
+  <div class="nl" id="newsList"></div>
+</div>
+
+<!-- AI ANALYSIS -->
+<div id="tab-analysts" class="tab-panel">
+  <div class="info-box">▶ <strong>Independent analysts & geopolitics channels</strong> — curated for neutral, research-based coverage. English, Urdu and Hindi. Opens YouTube in new tab.</div>
+  <div class="stocks-tb" id="yt-filt">
+    <button class="fb active" onclick="filtYT('all',this)">All</button>
+    <button class="fb" onclick="filtYT('english',this)">🇬🇧 English</button>
+    <button class="fb" onclick="filtYT('urdu',this)">🇵🇰 Urdu</button>
+    <button class="fb" onclick="filtYT('hindi',this)">🇮🇳 Hindi</button>
+    <button class="fb" onclick="filtYT('geo',this)">Geopolitics</button>
+    <button class="fb" onclick="filtYT('finance',this)">Finance</button>
+    <button class="fb" onclick="filtYT('southasia',this)">South Asia</button>
+    <button class="fb" onclick="filtYT('mideast',this)">Middle East</button>
+  </div>
+  <div class="yt-grid" id="ytGrid"></div>
+</div>
+
+<div id="tab-creators" class="tab-panel">
+  <div class="info-box">🌟 <strong>India & Pakistan Creators</strong> — News analysts, talk shows, food & lifestyle. Opens YouTube in new tab.</div>
+  <div class="stocks-tb" id="cr-filt">
+    <button class="fb active" onclick="filtCR('all',this)">All</button>
+    <button class="fb" onclick="filtCR('news',this)">📰 News</button>
+    <button class="fb" onclick="filtCR('analyst',this)">🎙 Analysts</button>
+    <button class="fb" onclick="filtCR('food',this)">🍽 Food</button>
+    <button class="fb" onclick="filtCR('lifestyle',this)">🎥 Lifestyle</button>
+    <button class="fb" onclick="filtCR('sports',this)">🏏 Sports</button>
+    <button class="fb" onclick="filtCR('india',this)">🇮🇳 India</button>
+    <button class="fb" onclick="filtCR('pakistan',this)">🇵🇰 Pakistan</button>
+    <button class="fb" onclick="filtCR('arab',this)">🌍 Arab/Turk</button>
+    <button class="fb" onclick="filtCR('cricket',this)">🏏 Cricket</button>
+  </div>
+  <div class="yt-grid" id="crGrid"></div>
+</div>
+
+<div id="tab-analysis" class="tab-panel">
+  <div class="ai-sec">
+    <div class="ai-sec-t">📈 Investment &amp; Market Analysis</div>
+    <div class="ai-sec-s">Ask Claude about stocks, sectors, halal investing</div>
+    <div class="qbtns">
+      <button class="qb" onclick="setQ('aiTa',this)">Best halal stocks 2026?</button>
+      <button class="qb" onclick="setQ('aiTa',this)">Compare gold vs tech long-term</button>
+      <button class="qb" onclick="setQ('aiTa',this)">How interest rates affect equities</button>
+      <button class="qb" onclick="setQ('aiTa',this)">Top halal ETFs globally</button>
+    </div>
+    <div class="ai-row">
+      <textarea class="ai-ta" id="aiTa" placeholder="Ask about market analysis, investment strategies..."></textarea>
+      <button class="ai-run" id="aiRunBtn" onclick="runAI('aiTa','aiResp','aiRespC','aiRunBtn','MKT')">▶ ANALYSE</button>
+    </div>
+    <div class="ai-resp" id="aiResp"><span class="ai-resp-badge">CLAUDE</span><div id="aiRespC"></div></div>
+  </div>
+  <div class="ai-sec">
+    <div class="ai-sec-t">☪ Halal Finance</div>
+    <div class="ai-sec-s">AAOIFI screening, Islamic finance, purification</div>
+    <div class="qbtns">
+      <button class="qb" onclick="setQ('hTa',this)">Explain AAOIFI screening criteria</button>
+      <button class="qb" onclick="setQ('hTa',this)">Is NVDA halal under AAOIFI?</button>
+      <button class="qb" onclick="setQ('hTa',this)">How to calculate purification?</button>
+      <button class="qb" onclick="setQ('hTa',this)">Can Muslims invest in gold ETFs?</button>
+    </div>
+    <div class="ai-row">
+      <textarea class="ai-ta" id="hTa" placeholder="Ask about halal screening, Islamic finance..."></textarea>
+      <button class="ai-run" id="hRunBtn" onclick="runAI('hTa','hResp','hRespC','hRunBtn','HALAL')">▶ ASK</button>
+    </div>
+    <div class="ai-resp" id="hResp"><span class="ai-resp-badge">HALAL FINANCE</span><div id="hRespC"></div></div>
+  </div>
+</div>
+
+<!-- MAGIC PLAYER TAB -->
+<div id="tab-m3u" class="tab-panel">
+
+  <!-- ── COLLAPSIBLE LOAD PANEL ── -->
+  <div class="m3u-load-panel" id="m3uLoadPanel">
+    <div class="m3u-load-header" onclick="toggleM3ULoader()">
+      <span>🪄 <strong>Magic Player</strong></span>
+      <span id="m3uLoaderChevron" style="font-size:11px;transition:transform .2s;">▲</span>
+    </div>
+    <div id="m3uLoaderBody">
+
+      <!-- Saved Playlists -->
+      <div id="m3uSavedWrap" style="display:none;margin-bottom:12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--dim);margin-bottom:6px;">💾 SAVED PLAYLISTS</div>
+        <div id="m3uSavedList" style="display:flex;flex-direction:column;gap:5px;"></div>
+      </div>
+
+      <!-- Input row -->
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+        <div style="flex:1;min-width:220px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--dim);margin-bottom:5px;">PASTE M3U URL</div>
+          <div style="display:flex;gap:6px;">
+            <input id="m3uUrlInput" type="text" placeholder="https://example.com/playlist.m3u8"
+              style="flex:1;background:var(--bg);border:1px solid var(--border);color:var(--ink);padding:8px 10px;font-size:12px;border-radius:3px;outline:none;font-family:'IBM Plex Mono',monospace;">
+            <button onclick="loadM3UFromUrl()" style="background:var(--blue);color:#fff;border:none;padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;border-radius:3px;cursor:pointer;">LOAD</button>
+          </div>
+        </div>
+        <label style="background:var(--panel);border:1px solid var(--border);color:var(--ink);padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;border-radius:3px;cursor:pointer;white-space:nowrap;align-self:flex-end;">
+          📁 FILE
+          <input id="m3uFileInput" type="file" accept=".m3u,.m3u8,.txt" style="display:none;" onchange="loadM3UFromFile(this)">
+        </label>
+        <button onclick="clearM3U()" title="Clear player — keeps saved URLs & favorites" style="background:var(--panel);border:1px solid var(--border);color:var(--dim);padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;border-radius:3px;cursor:pointer;align-self:flex-end;">✕ CLEAR</button>
+      </div>
+
+      <!-- Status -->
+      <div id="m3uStatus" style="display:none;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);margin-top:10px;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:3px;"></div>
+    </div>
+  </div>
+
+  <!-- ── SEARCH & FILTER ── -->
+  <div id="m3uControls" style="display:none;margin-bottom:12px;flex-direction:column;gap:8px;">
+    <input id="m3uSearch" type="text" placeholder="🔍  Search channels..."
+      oninput="filterM3U()"
+      style="width:100%;box-sizing:border-box;background:var(--panel);border:1px solid var(--border);color:var(--ink);padding:7px 10px;font-size:12px;border-radius:3px;outline:none;">
+    <div id="m3uGroupBtns" style="display:flex;flex-wrap:nowrap;gap:5px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;"></div>
+  </div>
+
+  <!-- ── TWO-PANE LAYOUT ── -->
+  <div id="m3uLayout" style="display:none;gap:12px;" class="m3u-layout">
+
+    <!-- Channel list -->
+    <div class="m3u-list-col" id="m3uListCol">
+      <div id="m3uList" class="m3u-list"></div>
+    </div>
+
+    <!-- Player -->
+    <div class="m3u-player-col" id="m3uPlayerCol">
+      <div class="m3u-player-wrap" id="m3uPlayerWrap">
+        <!-- Player toolbar -->
+        <div class="m3u-player-toolbar">
+          <div id="m3uNowPlaying" class="m3u-now-playing">Select a channel to begin</div>
+          <div style="display:flex;gap:6px;flex-shrink:0;">
+            <button id="m3uExpandBtn" onclick="toggleM3UExpand()" title="Expand / Collapse player"
+              style="background:none;border:1px solid var(--border);color:var(--ink3);padding:3px 8px;border-radius:3px;cursor:pointer;font-size:11px;">⛶ EXPAND</button>
+          </div>
+        </div>
+        <video id="m3uVideo" controls autoplay playsinline style="width:100%;background:#000;display:block;"></video>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<footer>WorldWatch — Global News &amp; Investment Monitor &nbsp;|&nbsp; Stocks via Finnhub &nbsp;|&nbsp; AI by Claude &nbsp;|&nbsp; Keys stored locally &nbsp;|&nbsp; Not financial advice</footer>
+
+<script>
+// CLOCK
+setInterval(()=>{const n=new Date();document.getElementById('clock').textContent=String(n.getUTCHours()).padStart(2,'0')+':'+String(n.getUTCMinutes()).padStart(2,'0')+':'+String(n.getUTCSeconds()).padStart(2,'0')+' UTC';},1000);
+
+// KEYS & LOCK
+let AK=localStorage.getItem('ww19AK')||localStorage.getItem('wwAK')||'',FHK=localStorage.getItem('ww19FHK')||localStorage.getItem('wwFHK')||'';
+
+function setApiSt(ok){const e=document.getElementById('apiSt');e.textContent=ok?'✓ Active':'Not set';e.className='api-st'+(ok?' ok':'');}
+function setFhSt(ok){const e=document.getElementById('fhSt');e.textContent=ok?'✓ Active':'Not set';e.className='api-st'+(ok?' ok':'');}
+
+function unlockUI() {
+  var ls = document.getElementById('wwLockScreen');
+  ls.style.display = 'none';
+  ls.classList.add('hidden');
+  document.getElementById('wwUnlockAnim').classList.remove('show');
+  if(AK){ document.getElementById('apiInp').value=AK; setApiSt(true); }
+  if(FHK){ document.getElementById('fhInp').value=FHK; setFhSt(true); }
+  // Show keys bar only if CLMAGIC not set yet
+  const bar = document.getElementById('apiBar');
+  if(!AK || !AK.startsWith('sk-ant-') || AK.length < 40) {
+    bar.style.display = 'flex';
+  } else {
+    bar.style.display = 'none';
+  }
+  setTimeout(function(){
+    fixNavTop();
+    if(typeof initTicker==='function') initTicker();
+    if(typeof m3uLoadStorage==='function'){
+      m3uLoadStorage();
+      if(typeof renderSavedPlaylists==='function') renderSavedPlaylists();
+      if(m3uSavedURLs&&m3uSavedURLs.length&&typeof fetchAndApplyUrl==='function'){
+        const last=m3uSavedURLs[0];
+        document.getElementById('m3uUrlInput').value=last.url;
+        fetchAndApplyUrl(last.url);
+      }
+    }
+  }, 400);
+}
+
+function toggleKeysBar() {
+  const bar = document.getElementById('apiBar');
+  bar.style.display = (bar.style.display === 'none' || bar.style.display === '') ? 'flex' : 'none';
+}
+
+function lockApp() {
+  AK = '';
+  const ls = document.getElementById('wwLockScreen');
+  ls.classList.remove('hidden');
+  ls.classList.add('visible');
+  // Show welcome back mode since key is still in localStorage
+  const saved = localStorage.getItem('ww19AK') || localStorage.getItem('wwAK') || '';
+  const wbEl = document.getElementById('lockWelcomeBack');
+  const featEl = document.getElementById('lockFeatures');
+  if (saved && saved.startsWith('sk-ant-') && saved.length >= 40) {
+    if (wbEl) wbEl.style.display = 'block';
+    if (featEl) featEl.style.display = 'none';
+    document.getElementById('lockKeyInp').value = '';
+  } else {
+    if (wbEl) wbEl.style.display = 'none';
+    if (featEl) featEl.style.display = 'grid';
+  }
+  document.getElementById('lockErr').textContent = '';
+}
+
+function tryUnlock() {
+  const v = document.getElementById('lockKeyInp').value.trim();
+  const fv = document.getElementById('lockFhInp').value.trim();
+  const err = document.getElementById('lockErr');
+  if (!v) { err.textContent = '⚠ Please enter your key.'; return; }
+  if (!v.startsWith('sk-ant-') || v.length < 40) { err.textContent = '⚠ Invalid key. Please check and try again.'; return; }
+  err.textContent = '';
+  AK = v;
+  localStorage.setItem('ww19AK', v);
+  if (fv && fv.length > 5) {
+    FHK = fv;
+    localStorage.setItem('ww19FHK', fv);
+  }
+  document.getElementById('wwUnlockAnim').classList.add('show');
+  setTimeout(() => unlockUI(), 700);
+}
+
+function saveKey(){
+  const v=document.getElementById('apiInp').value.trim();
+  if(!v)return;
+  AK=v;localStorage.setItem('ww19AK',v);setApiSt(true);
+  // Auto-hide bar after both keys saved
+  if(FHK) { setTimeout(()=>{ document.getElementById('apiBar').style.display='none'; }, 800); }
+}
+function saveFH(){
+  const v=document.getElementById('fhInp').value.trim();
+  if(!v)return;
+  FHK=v;localStorage.setItem('ww19FHK',v);setFhSt(true);fetchAll();initTicker();
+}
+
+// TABS
+let stkFetched=false;
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+  if(id==='stocks'&&FHK&&!stkFetched)fetchAll();
+  if(id==='markets')initMarkets();
+  if(id==='cricket')loadCricket();
+}
+
+
+// ── CHANNELS ────────────────────────────────────────────────────────────────
+// bias key: 'ok'=independent/public  'neu'=commercial neutral  'state'=govt-funded  'alt'=alternative perspective
+// bc key:   'bc-ok'=green  'bc-neu'=blue  'bc-st'=amber
+
+// WESTERN & EUROPE
+const RC=[
+  {id:'bloomberg', nm:'BLOOMBERG TV',    rg:'USA · Finance',           fl:'🇺🇸', bias:'reliable',bc:'bc-neu',bct:'Finance',
+    hls:'https://liveprodusphoenixeast.akamaized.net/USPhx-HD/Channel-TX-USPhx-AWS-virginia-1/Source-USPhx-16k-1-s6lk2-BP-07-02-81ykIWnsMsg_live.m3u8', fb:'https://www.bloomberg.com/live'},
+  {id:'bbc',       nm:'BBC WORLD NEWS',  rg:'UK · Global Public',      fl:'🇬🇧', bias:'reliable',bc:'bc-ok', bct:'Public Broadcaster',
+    hls:'https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/t=3840/v=pv14/b=5070016/main.m3u8', fb:'https://www.bbc.com/news/av/live/world'},
+  {id:'skynewsuk', nm:'SKY NEWS UK',     rg:'UK · Breaking News',      fl:'🇬🇧', bias:'reliable',bc:'bc-neu',bct:'Comcast/Sky',
+    hls:'https://linear417-gb-hls1-prd-ak.cdn.skycdp.com/100e/Content/HLS_001_1080_30/Live/channel(skynews)/04_1080-30.m3u8', fb:'https://news.sky.com/watch-live'},
+  {id:'dw',        nm:'DW NEWS',         rg:'Germany · International', fl:'🇩🇪', bias:'reliable',bc:'bc-ok', bct:'Public Broadcaster',
+    hls:'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', fb:'https://www.dw.com/en/live-tv'},
+  {id:'fr24',      nm:'FRANCE 24',       rg:'France · International',  fl:'🇫🇷', bias:'reliable',bc:'bc-ok', bct:'Public Broadcaster',
+    hls:'https://uvotv-aniview.global.ssl.fastly.net/hls/live/2120684/france24english/playlist.m3u8', fb:'https://www.france24.com/en/live'},
+  {id:'voa',       nm:'VOA NEWS',        rg:'USA · Voice of America',  fl:'🇺🇸', bias:'state',   bc:'bc-st', bct:'US Govt-Funded',
+    hls:'https://voa-ingest.akamaized.net/hls/live/2033874/tvmc06/playlist.m3u8', fb:'https://www.voanews.com/live'},
+  {id:'tages',     nm:'TAGESSCHAU 24',   rg:'Germany · Public News',   fl:'🇩🇪', bias:'reliable',bc:'bc-ok', bct:'Public Broadcaster',
+    hls:'https://tagesschau.akamaized.net/hls/live/2020115/tagesschau/tagesschau_1/master.m3u8', fb:'https://www.tagesschau.de/live/'},
+];
+
+// ASIA-PACIFIC, AFRICA
+const AC=[
+  {id:'arirang',  nm:'ARIRANG TV',       rg:'South Korea · Asia',      fl:'🇰🇷', bias:'reliable',bc:'bc-ok', bct:'Public Broadcaster',
+    hls:'https://amdlive-ch01-ctnd-com.akamaized.net/arirang_1ch/smil:arirang_1ch.smil/chunklist_b3256000_sleng.m3u8', fb:'https://www.arirang.com/live/'},
+  {id:'cna',      nm:'CNA CHANNEL NEWS ASIA', rg:'Singapore · Asia',  fl:'🇸🇬', bias:'reliable',bc:'bc-ok', bct:'Public Broadcaster',
+    hls:'https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8', fb:'https://www.channelnewsasia.com/watch-live'},
+  {id:'abc_au',   nm:'ABC NEWS AUSTRALIA',rg:'Australia · Public',     fl:'🇦🇺', bias:'reliable',bc:'bc-ok', bct:'Public Broadcaster',
+    hls:'https://abc-news-dmd-streams-1.akamaized.net/out/v1/701126012d044971b3fa89406a440133/index.m3u8', fb:'https://www.abc.net.au/news/newschannel/'},
+  {id:'arise',    nm:'ARISE NEWS',       rg:'Nigeria · Pan-African',   fl:'🇳🇬', bias:'reliable',bc:'bc-ok', bct:'Independent',
+    hls:'https://liveedge-arisenews.visioncdn.com/live-hls/arisenews/arisenews/arisenews_web/master.m3u8', fb:'https://www.arise.tv/live-tv/'},
+  {id:'african',  nm:'AFRICANEWS',       rg:'Africa · Euronews Group', fl:'🌍',  bias:'reliable',bc:'bc-ok', bct:'Independent',
+    hls:'https://rakuten-africanews-1-no.samsung.wurl.com/manifest/playlist.m3u8', fb:'https://www.africanews.com/live'},
+  {id:'sabc',     nm:'SABC NEWS',        rg:'South Africa · Public',   fl:'🇿🇦', bias:'reliable',bc:'bc-ok', bct:'Public Broadcaster',
+    hls:'https://sabconetanw.cdn.mangomolo.com/news/smil:news.stream.smil/chunklist_b250000_t64MjQwcA==.m3u8', fb:'https://www.sabcnews.com/live-stream/'},
+];
+
+// MIDDLE EAST, SOUTH ASIA & ALTERNATIVE PERSPECTIVES
+const MC=[
+  // Qatar
+  {id:'aje',       nm:'AL JAZEERA ENGLISH', rg:'Qatar · International',   fl:'🇶🇦', bias:'state',   bc:'bc-st', bct:'Govt-Funded',
+    hls:'https://live-hls-web-aje.getaj.net/AJE/index.m3u8', fb:'https://www.aljazeera.com/video/live'},
+  // Turkey
+  {id:'trtworld',  nm:'TRT WORLD',          rg:'Turkey · International',  fl:'🇹🇷', bias:'state',   bc:'bc-st', bct:'Govt-Funded',
+    hls:'https://trtworldlive.akamaized.net/hls/live/2002830/trtworld/master.m3u8', fb:'https://www.trtworld.com/live'},
+  // Israel
+  {id:'i24news',   nm:'I24 NEWS ENGLISH',   rg:'Israel · English News',   fl:'🇮🇱', bias:'reliable',bc:'bc-neu',bct:'Independent',
+    hls:null, iframe:'https://video.i24news.tv/live/brightcove/en', fb:'https://www.i24news.tv/en'},
+  // Saudi Arabia
+  {id:'alarabiya', nm:'AL ARABIYA ENGLISH', rg:'Saudi Arabia · Regional', fl:'🇸🇦', bias:'state',   bc:'bc-st', bct:'Govt-Funded',
+    hls:'https://alarabiya-clive-sec.akamaized.net/alarabiya_eng/smil:alarabiya_eng.stream.smil/chunklist_b700000.m3u8', fb:'https://english.alarabiya.net/live-tv'},
+  // Iran
+  // India — unbiased / balanced picks
+  {id:'ddnews',   nm:'DD NEWS',           rg:'India · Public News',    fl:'🇮🇳', bias:'state',   bc:'bc-st', bct:'Govt-Funded (Doordarshan)',
+    hls:'https://dd-lh.akamaized.net/i/ddnews_1@32656/master.m3u8', fb:'https://ddnews.gov.in/live'},
+  {id:'ndtv',     nm:'NDTV 24x7',         rg:'India · English News',   fl:'🇮🇳', bias:'reliable',bc:'bc-neu',bct:'Independent',
+    hls:'https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678-b/ndtv24x7/master_720p.m3u8', fb:'https://www.ndtv.com/live-tv'},
+  // Pakistan
+  // China
+  {id:'cgtn',     nm:'CGTN ENGLISH',      rg:'China · International',  fl:'🇨🇳', bias:'state',   bc:'bc-st', bct:'Govt-Funded',
+    hls:'https://news.cgtn.com/resource/live/english/cgtn-news.m3u8', fb:'https://www.cgtn.com/live'},
+];
+
+// ── Global HLS instance store (for pause/stop) ──────────────────────────────
+const hlsInstances = {};
+
+function canEmb(ch){
+  if(ch.iframe) return 'iframe';
+  if(!ch.hls)   return false;
+  const ok=['akamaized.net','akamaihd.net','getaj.net','skycdp.com','visioncdn.com',
+            'wurl.','cloudfront.net','mangomolo.com','trt.com.tr','trtworld','cgtn.com','dd-lh',
+            'amagi.tv','tsv2.amagi','xumo.com','llnwd.net','france24.com','ntv1.akamaized','fastly.net','rbmn-live','jmp2.uk',
+            'live.france24','abplivetv','samaa.tv/embed','shemaroome.com','smithsonianaus'];
+  return ok.some(d=>ch.hls.includes(d)) ? 'hls' : false;
+}
+
+function mkCard(ch){
+  const et = canEmb(ch);
+  const meta = `<div class="sm"><div><div class="sn">${ch.nm}</div><div class="sr">${ch.rg}</div></div><div class="bc ${ch.bc}">${ch.bct}</div></div>`;
+  const ctls = `<div class="sch-ctls">
+    <button class="sch-btn" onclick="pauseS('${ch.id}')" title="Pause/Resume">⏸</button>
+    <button class="sch-btn" onclick="stopS('${ch.id}')"  title="Stop">⏹</button>
+    <button class="sch-btn" onclick="fullS('${ch.id}')"  title="Fullscreen">⛶</button>
+    <a class="sch-btn" href="${ch.fb}" target="_blank" rel="noopener" title="Open official site">↗</a>
+  </div>`;
+
+  if(et==='iframe') return `<div class="sc ${ch.bias}" id="c-${ch.id}">
+    <div class="svw"><iframe id="v-${ch.id}" src="${ch.iframe}" allowfullscreen allow="autoplay;fullscreen"></iframe></div>
+    ${ctls}${meta}</div>`;
+
+  if(et==='hls') return `<div class="sc ${ch.bias}" id="c-${ch.id}">
+    <div class="svw">
+      <video id="v-${ch.id}" muted playsinline preload="none"></video>
+      <div class="sst" id="s-${ch.id}"></div>
+      <div class="sov" id="o-${ch.id}" data-id="${ch.id}" onclick="loadS(this.dataset.id)">
+        <div class="pflag">${ch.fl}</div><div class="pr">▶</div>
+        <div class="son">${ch.nm}</div>
+        <div style="font-size:9px;color:var(--dim)">Click to load</div>
+      </div>
+    </div>
+    ${ctls}${meta}</div>`;
+
+  // No stream — link card
+  return `<div class="sc ${ch.bias} lc" id="c-${ch.id}">
+    <a class="lci" href="${ch.fb}" target="_blank" rel="noopener">
+      <div class="lcf">${ch.fl}</div>
+      <div style="flex:1"><div class="lcn">${ch.nm}</div><div class="lcr">${ch.rg}</div>
+      <div class="lcc">Watch Live →</div></div>
+    </a>
+    <div class="sm"><div><div class="sn">${ch.nm}</div><div class="sr">${ch.rg}</div></div>
+    <div class="bc ${ch.bc}">${ch.bct}</div></div></div>`;
+}
+
+function loadS(id){
+  const all=[...RC,...AC,...MC,...HU,...LF]; const ch=all.find(c=>c.id===id);
+  if(!ch||!ch.hls) return;
+  const v=document.getElementById('v-'+id),ov=document.getElementById('o-'+id),st=document.getElementById('s-'+id);
+  ov.classList.add('hidden'); st.className='sst loading'; st.textContent='⊙ LOADING';
+  if(typeof Hls!=='undefined'&&Hls.isSupported()){
+    const h=new Hls({maxBufferLength:20,maxMaxBufferLength:40});
+    hlsInstances[id]=h;
+    h.loadSource(ch.hls); h.attachMedia(v);
+    h.on(Hls.Events.MANIFEST_PARSED,()=>{ v.play().catch(()=>{}); st.className='sst live'; st.textContent='● LIVE'; });
+    h.on(Hls.Events.ERROR,(e,d)=>{ if(d.fatal){
+      st.className='sst error'; st.textContent='✗ ERROR';
+      ov.classList.remove('hidden');
+      ov.innerHTML=`<div style="padding:16px;text-align:center;font-size:11px;color:var(--red2)">Stream unavailable<br><a href="${ch.fb}" target="_blank" style="color:var(--blue3)">Open official site →</a></div>`;
+      h.destroy(); delete hlsInstances[id];
+    }});
+  } else if(v.canPlayType('application/vnd.apple.mpegurl')){
+    v.src=ch.hls; v.addEventListener('loadedmetadata',()=>v.play().catch(()=>{}));
+  }
+}
+
+function pauseS(id){
+  const v=document.getElementById('v-'+id); if(!v) return;
+  if(v.paused){ v.play().catch(()=>{}); } else { v.pause(); }
+}
+
+function stopS(id){
+  const v=document.getElementById('v-'+id);
+  if(v){ v.pause(); v.src=''; }
+  if(hlsInstances[id]){ hlsInstances[id].destroy(); delete hlsInstances[id]; }
+  const ov=document.getElementById('o-'+id), st=document.getElementById('s-'+id);
+  if(ov){ ov.classList.remove('hidden'); }
+  if(st){ st.className='sst'; st.textContent=''; }
+}
+
+function fullS(id){
+  const card=document.getElementById('c-'+id);
+  const v=document.getElementById('v-'+id);
+  // Try native video fullscreen first, fall back to card fullscreen
+  const el = (v && v.tagName==='VIDEO') ? v : card;
+  if(!el) return;
+  if(el.requestFullscreen) el.requestFullscreen();
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if(el.mozRequestFullScreen) el.mozRequestFullScreen();
+  else if(el.msRequestFullscreen) el.msRequestFullscreen();
+}
+
+document.getElementById('rGrid').innerHTML=RC.map(mkCard).join('');
+document.getElementById('aGrid').innerHTML=AC.map(mkCard).join('');
+document.getElementById('mGrid').innerHTML=MC.map(mkCard).join('');
+
+// ── HINDI & URDU NEWS ────────────────────────────────────────────────────────
+const HU=[
+  // Hindi — most balanced/reputable picks
+  {id:'aajtakhd', nm:'AAJ TAK HD',        rg:'India · Hindi Breaking',     fl:'🇮🇳', bias:'reliable',bc:'bc-neu',bct:'India Today Group',
+    hls:'https://aajtakhdlive-amd.akamaized.net/hls/live/2014415/aajtakhd/aajtakhdlive/live_720p/chunks.m3u8', fb:'https://www.aajtak.in/livetv'},
+  // Urdu — Pakistan
+  {id:'samaa',    nm:'SAMAA TV',          rg:'Pakistan · Urdu News',       fl:'🇵🇰', bias:'reliable',bc:'bc-ok', bct:'Independent',
+    hls:null, iframe:'https://www.samaa.tv/embed-live/', fb:'https://www.samaa.tv/live'},
+];
+
+// ── LIFESTYLE · COOKING · NATURE · KIDS ─────────────────────────────────────
+const LF=[
+  // Cooking / Food
+  {id:'gusto',    nm:'GUSTO TV',          rg:'Canada · World Cuisine',     fl:'🌍', bias:'reliable',bc:'bc-ok', bct:'Free Stream',
+    hls:'https://cdn-apse1-prod.tsv2.amagi.tv/linear/amg01077-gustoworldwidem-gustotvnz-samsungnz/playlist.m3u8', fb:'https://www.gustotv.com/'},
+  // Kids / Cartoons
+  {id:'teletubs',  nm:'TELETUBBIES 24/7',   rg:'UK · Toddler Cartoons',      fl:'🌈', bias:'reliable',bc:'bc-ok', bct:'Free (Samsung)',
+    hls:'https://dhx-teletubbies-1-gb.samsung.wurl.tv/playlist.m3u8', fb:'https://www.bbc.co.uk/cbeebies/teletubbies'},
+  {id:'afvfam',    nm:'AFV FAMILY',          rg:'USA · Family Fun',           fl:'😂', bias:'reliable',bc:'bc-ok', bct:'Free (Samsung)',
+    hls:'https://futuretoday-afv-family-2-be.samsung.wurl.tv/playlist.m3u8', fb:'https://afv.com/'},
+  {id:'kidsnews',  nm:'KIDSNEWS TODAY',      rg:'Global · Kids Learning',     fl:'📰', bias:'reliable',bc:'bc-ok', bct:'Free Stream',
+    hls:'https://livechannel.shemaroome.com/linearplayout/kids-linear-channel/chunklist_640x360_cf.m3u8', fb:'https://shemaroo.com/'},
+  // Nature / Documentary
+  {id:'smithsoni', nm:'SMITHSONIAN CHANNEL', rg:'Australia · Nature & Docs',  fl:'🔭', bias:'reliable',bc:'bc-ok', bct:'Free (Samsung AU)',
+    hls:'https://smithsonianaus-samsungau.amagi.tv/playlist.m3u8', fb:'https://www.smithsonianchannel.com/'},
+  // Music / Lifestyle
+
+  // More News (bonus — Reuters)
+  {id:'reuters',   nm:'REUTERS NOW',         rg:'Global · Breaking News',     fl:'📡', bias:'reliable',bc:'bc-ok', bct:'Free (Samsung)',
+    hls:'https://reuters-reutersnow-1-nl.samsung.wurl.tv/playlist.m3u8', fb:'https://www.reuters.com/'},
+];
+
+document.getElementById('huGrid').innerHTML=HU.map(mkCard).join('');
+document.getElementById('lfGrid').innerHTML=LF.map(mkCard).join('');
+
+// NEWS SITES (50)
+const NS=[
+  {n:'Reuters',c:'USA',f:'🇺🇸',r:'americas',t:'nt-wire',tl:'Wire Service',u:'https://www.reuters.com'},
+  {n:'AP News',c:'USA',f:'🇺🇸',r:'americas',t:'nt-wire',tl:'Wire Service',u:'https://apnews.com'},
+  {n:'New York Times',c:'USA',f:'🇺🇸',r:'americas',t:'nt-comm',tl:'Newspaper',u:'https://www.nytimes.com'},
+  {n:'Wall Street Journal',c:'USA',f:'🇺🇸',r:'americas',t:'nt-comm',tl:'Financial',u:'https://www.wsj.com'},
+  {n:'Bloomberg',c:'USA',f:'🇺🇸',r:'americas',t:'nt-comm',tl:'Financial',u:'https://www.bloomberg.com'},
+  {n:'CNN',c:'USA',f:'🇺🇸',r:'americas',t:'nt-comm',tl:'Cable News',u:'https://edition.cnn.com'},
+  {n:'NBC News',c:'USA',f:'🇺🇸',r:'americas',t:'nt-comm',tl:'Network',u:'https://www.nbcnews.com'},
+  {n:'CBC News',c:'Canada',f:'🇨🇦',r:'americas',t:'nt-pub',tl:'Public',u:'https://www.cbc.ca/news'},
+  {n:'Washington Post',c:'USA',f:'🇺🇸',r:'americas',t:'nt-comm',tl:'Newspaper',u:'https://www.washingtonpost.com'},
+  {n:'NPR',c:'USA',f:'🇺🇸',r:'americas',t:'nt-pub',tl:'Public Radio',u:'https://www.npr.org/sections/news'},
+  {n:'BBC News',c:'UK',f:'🇬🇧',r:'europe',t:'nt-pub',tl:'Public Broadcaster',u:'https://www.bbc.com/news/world'},
+  {n:'The Guardian',c:'UK',f:'🇬🇧',r:'europe',t:'nt-comm',tl:'Newspaper',u:'https://www.theguardian.com'},
+  {n:'DW News',c:'Germany',f:'🇩🇪',r:'europe',t:'nt-pub',tl:'Public Intl',u:'https://www.dw.com/en'},
+  {n:'Der Spiegel',c:'Germany',f:'🇩🇪',r:'europe',t:'nt-comm',tl:'Magazine',u:'https://www.spiegel.de/international'},
+  {n:'France 24',c:'France',f:'🇫🇷',r:'europe',t:'nt-pub',tl:'Public Intl',u:'https://www.france24.com/en'},
+  {n:'Le Monde',c:'France',f:'🇫🇷',r:'europe',t:'nt-comm',tl:'Newspaper',u:'https://www.lemonde.fr'},
+  {n:'Euronews',c:'Europe',f:'🇪🇺',r:'europe',t:'nt-comm',tl:'Pan-European',u:'https://www.euronews.com'},
+  {n:'Sky News UK',c:'UK',f:'🇬🇧',r:'europe',t:'nt-comm',tl:'Commercial',u:'https://news.sky.com'},
+  {n:'Financial Times',c:'UK',f:'🇬🇧',r:'europe',t:'nt-comm',tl:'Financial',u:'https://www.ft.com'},
+  {n:'The Independent',c:'UK',f:'🇬🇧',r:'europe',t:'nt-comm',tl:'Newspaper',u:'https://www.independent.co.uk'},
+  {n:'Al Jazeera',c:'Qatar',f:'🇶🇦',r:'middleeast',t:'nt-state',tl:'Govt-Funded',u:'https://www.aljazeera.com'},
+  {n:'Arab News',c:'Saudi Arabia',f:'🇸🇦',r:'middleeast',t:'nt-comm',tl:'Newspaper',u:'https://www.arabnews.com'},
+  {n:'Gulf News',c:'UAE',f:'🇦🇪',r:'middleeast',t:'nt-comm',tl:'Newspaper',u:'https://gulfnews.com'},
+  {n:'Dawn',c:'Pakistan',f:'🇵🇰',r:'middleeast',t:'nt-comm',tl:'Newspaper',u:'https://www.dawn.com'},
+  {n:'Daily Sabah',c:'Turkey',f:'🇹🇷',r:'middleeast',t:'nt-comm',tl:'Newspaper',u:'https://www.dailysabah.com'},
+  {n:'TRT World',c:'Turkey',f:'🇹🇷',r:'middleeast',t:'nt-state',tl:'Govt-Funded',u:'https://www.trtworld.com'},
+  {n:'i24 NEWS',c:'Israel',f:'🇮🇱',r:'middleeast',t:'nt-comm',tl:'Independent',u:'https://www.i24news.tv/en'},
+  {n:'The National',c:'UAE',f:'🇦🇪',r:'middleeast',t:'nt-comm',tl:'Newspaper',u:'https://www.thenationalnews.com'},
+  {n:'Middle East Eye',c:'UK/ME',f:'🌍',r:'middleeast',t:'nt-comm',tl:'Independent',u:'https://www.middleeasteye.net'},
+  {n:'Al Arabiya',c:'Saudi Arabia',f:'🇸🇦',r:'middleeast',t:'nt-state',tl:'Govt-Funded',u:'https://english.alarabiya.net'},
+  {n:'Haaretz',c:'Israel',f:'🇮🇱',r:'middleeast',t:'nt-comm',tl:'Newspaper',u:'https://www.haaretz.com'},
+  {n:'NHK World',c:'Japan',f:'🇯🇵',r:'asia',t:'nt-pub',tl:'Public Broadcaster',u:'https://nhkworld.nhk.or.jp/en/news'},
+  {n:'CNA',c:'Singapore',f:'🇸🇬',r:'asia',t:'nt-pub',tl:'Public Broadcaster',u:'https://www.channelnewsasia.com'},
+  {n:'SCMP',c:'Hong Kong',f:'🇭🇰',r:'asia',t:'nt-comm',tl:'Newspaper',u:'https://www.scmp.com'},
+  {n:'Times of India',c:'India',f:'🇮🇳',r:'asia',t:'nt-comm',tl:'Newspaper',u:'https://timesofindia.indiatimes.com'},
+  {n:'The Hindu',c:'India',f:'🇮🇳',r:'asia',t:'nt-comm',tl:'Newspaper',u:'https://www.thehindu.com'},
+  {n:'ABC Australia',c:'Australia',f:'🇦🇺',r:'asia',t:'nt-pub',tl:'Public Broadcaster',u:'https://www.abc.net.au/news'},
+  {n:'Straits Times',c:'Singapore',f:'🇸🇬',r:'asia',t:'nt-comm',tl:'Newspaper',u:'https://www.straitstimes.com'},
+  {n:'Geo News',c:'Pakistan',f:'🇵🇰',r:'asia',t:'nt-comm',tl:'Commercial',u:'https://geo.tv'},
+  {n:'Nikkei Asia',c:'Japan',f:'🇯🇵',r:'asia',t:'nt-comm',tl:'Financial',u:'https://asia.nikkei.com'},
+  {n:'The Nation',c:'Thailand',f:'🇹🇭',r:'asia',t:'nt-comm',tl:'Newspaper',u:'https://www.nationthailand.com'},
+  {n:'Arise News',c:'Nigeria',f:'🇳🇬',r:'africa',t:'nt-comm',tl:'Independent',u:'https://www.arise.tv'},
+  {n:'Daily Nation',c:'Kenya',f:'🇰🇪',r:'africa',t:'nt-comm',tl:'Newspaper',u:'https://nation.africa'},
+  {n:'Daily Maverick',c:'S. Africa',f:'🇿🇦',r:'africa',t:'nt-comm',tl:'Independent',u:'https://www.dailymaverick.co.za'},
+  {n:'Africa News Agency',c:'Africa',f:'🌍',r:'africa',t:'nt-wire',tl:'Wire Service',u:'https://www.africanewsagency.com'},
+  {n:'Africanews',c:'Africa',f:'🌍',r:'africa',t:'nt-comm',tl:'Independent',u:'https://www.africanews.com'},
+  {n:'SABC News',c:'S. Africa',f:'🇿🇦',r:'africa',t:'nt-pub',tl:'Public Broadcaster',u:'https://www.sabcnews.com'},
+  {n:'The East African',c:'East Africa',f:'🌍',r:'africa',t:'nt-comm',tl:'Newspaper',u:'https://www.theeastafrican.co.ke'},
+  {n:'Premium Times',c:'Nigeria',f:'🇳🇬',r:'africa',t:'nt-comm',tl:'Independent',u:'https://www.premiumtimesng.com'},
+  {n:'Mail & Guardian',c:'S. Africa',f:'🇿🇦',r:'africa',t:'nt-comm',tl:'Newspaper',u:'https://mg.co.za'},
+  {n:'The Continent',c:'Africa',f:'🌍',r:'africa',t:'nt-comm',tl:'Independent',u:'https://thecontinent.org'},
+];
+document.getElementById('nsGrid').innerHTML=NS.map(s=>`<a class="ns-card" href="${s.u}" target="_blank" rel="noopener" data-r="${s.r}"><div class="ns-flag">${s.f}</div><div class="ns-name">${s.n}</div><div class="ns-country">${s.c}</div><div class="ns-tag ${s.t}">${s.tl}</div></a>`).join('');
+function filterNS(r,btn){document.querySelectorAll('.rb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.ns-card').forEach(c=>{c.style.display=(r==='all'||c.dataset.r===r)?'':'none';});}
+
+// STOCKS (55 total)
+const STKS=[
+  // TECH
+  {t:'NVDA',n:'NVIDIA Corp.',s:'Tech',h:'halal',hn:'AI chips. Clean activity. AAOIFI compliant.'},
+  {t:'TSM',n:'TSMC',s:'Tech',h:'halal',hn:'Semiconductor foundry. Passes all screens.'},
+  {t:'AAPL',n:'Apple Inc.',s:'Tech',h:'review',hn:'Large cash/interest income — borderline. Verify annually.'},
+  {t:'MSFT',n:'Microsoft Corp.',s:'Tech',h:'review',hn:'Cloud/software permissible. Purify interest income portion.'},
+  {t:'GOOGL',n:'Alphabet Inc.',s:'Tech',h:'review',hn:'Advertising permissible. Verify debt ratios annually.'},
+  {t:'META',n:'Meta Platforms',s:'Tech',h:'review',hn:'Social media permissible. Borderline financial ratios.'},
+  {t:'ADBE',n:'Adobe Inc.',s:'Tech',h:'halal',hn:'Software. Permissible. Passes AAOIFI screens.'},
+  {t:'CRM',n:'Salesforce Inc.',s:'Tech',h:'halal',hn:'Cloud CRM. Permissible. Generally compliant.'},
+  {t:'QCOM',n:'Qualcomm Inc.',s:'Tech',h:'halal',hn:'Semiconductor chips. Permissible. Passes screens.'},
+  {t:'AMAT',n:'Applied Materials',s:'Tech',h:'halal',hn:'Semiconductor equipment. Permissible. Passes AAOIFI.'},
+  // ENERGY
+  {t:'XOM',n:'ExxonMobil Corp.',s:'Energy',h:'halal',hn:'Oil & gas. Permissible. Passes AAOIFI.'},
+  {t:'CVX',n:'Chevron Corp.',s:'Energy',h:'halal',hn:'Energy. Permissible. Passes all screens.'},
+  {t:'NEE',n:'NextEra Energy',s:'Energy',h:'halal',hn:'Renewable energy. Clean. AAOIFI compliant.'},
+  {t:'ENPH',n:'Enphase Energy',s:'Energy',h:'halal',hn:'Solar. Fully AAOIFI compliant.'},
+  {t:'BP',n:'BP plc',s:'Energy',h:'halal',hn:'Energy. Permissible. Verify interest debt ratio.'},
+  {t:'FSLR',n:'First Solar Inc.',s:'Energy',h:'halal',hn:'Solar panels. Clean screen. Compliant.'},
+  {t:'SLB',n:'SLB (Schlumberger)',s:'Energy',h:'halal',hn:'Oilfield services. Permissible. Passes screens.'},
+  {t:'PSX',n:'Phillips 66',s:'Energy',h:'halal',hn:'Energy/refining. Permissible. Passes screens.'},
+  // GOLD
+  {t:'NEM',n:'Newmont Corp.',s:'Gold',h:'halal',hn:'Gold miner. Permissible. Passes AAOIFI.'},
+  {t:'GFI',n:'Gold Fields Ltd.',s:'Gold',h:'halal',hn:'Gold mining. Permissible. Passes all criteria.'},
+  {t:'GOLD',n:'Barrick Gold Corp.',s:'Gold',h:'halal',hn:'Gold miner. Permissible. Passes screens.'},
+  {t:'AEM',n:'Agnico Eagle Mines',s:'Gold',h:'halal',hn:'Gold & silver miner. Permissible. Compliant.'},
+  {t:'GLD',n:'SPDR Gold ETF',s:'Gold',h:'review',hn:'Gold ETF. Generally halal. Some scholars require physical delivery clause.'},
+  {t:'IAU',n:'iShares Gold Trust',s:'Gold',h:'review',hn:'Gold ETF. Same as GLD considerations. Generally permissible.'},
+  // HEALTH
+  {t:'JNJ',n:'Johnson & Johnson',s:'Health',h:'halal',hn:'Pharma & medical. Permissible. Passes AAOIFI.'},
+  {t:'PFE',n:'Pfizer Inc.',s:'Health',h:'halal',hn:'Pharmaceutical. Permissible. Financially compliant.'},
+  {t:'LLY',n:'Eli Lilly',s:'Health',h:'halal',hn:'Drug manufacturer. Permissible. Passes screens.'},
+  {t:'ABT',n:'Abbott Laboratories',s:'Health',h:'halal',hn:'Medical devices. Permissible. AAOIFI compliant.'},
+  {t:'MDT',n:'Medtronic plc',s:'Health',h:'halal',hn:'Medical devices. Permissible. Passes all screens.'},
+  {t:'SYK',n:'Stryker Corp.',s:'Health',h:'halal',hn:'Orthopaedic devices. Permissible. Compliant.'},
+  // INDUSTRIAL
+  {t:'CAT',n:'Caterpillar Inc.',s:'Industrial',h:'halal',hn:'Heavy machinery. Permissible. Passes AAOIFI.'},
+  {t:'HON',n:'Honeywell Intl.',s:'Industrial',h:'review',hn:'Diversified industrial. Some defense exposure — borderline.'},
+  {t:'MMM',n:'3M Company',s:'Industrial',h:'halal',hn:'Industrial. Permissible. Generally compliant.'},
+  {t:'EMR',n:'Emerson Electric',s:'Industrial',h:'halal',hn:'Automation. Permissible. Passes screens.'},
+  {t:'ETN',n:'Eaton Corp.',s:'Industrial',h:'halal',hn:'Power management. Permissible. AAOIFI compliant.'},
+  {t:'ROK',n:'Rockwell Automation',s:'Industrial',h:'halal',hn:'Industrial automation. Permissible. Passes screens.'},
+  // CONSUMER
+  {t:'NKE',n:'Nike Inc.',s:'Consumer',h:'halal',hn:'Apparel. Permissible. Ratios compliant.'},
+  {t:'PG',n:'Procter & Gamble',s:'Consumer',h:'review',hn:'Consumer goods. Minor impermissible lines — verify.'},
+  {t:'KO',n:'Coca-Cola Co.',s:'Consumer',h:'review',hn:'Non-alcoholic beverages halal. Financial ratios borderline.'},
+  {t:'COST',n:'Costco Wholesale',s:'Consumer',h:'review',hn:'Retail. Some alcohol/tobacco sales — borderline AAOIFI.'},
+  {t:'AMZN',n:'Amazon.com',s:'Consumer',h:'review',hn:'E-commerce & AWS permissible. Check ratios annually.'},
+  // TELECOM
+  {t:'TMUS',n:'T-Mobile US',s:'Telecom',h:'halal',hn:'Wireless. Permissible. Passes AAOIFI.'},
+  {t:'VZ',n:'Verizon Comm.',s:'Telecom',h:'review',hn:'Telecom. Permissible activity. Debt ratio borderline.'},
+  {t:'AMT',n:'American Tower',s:'Telecom',h:'review',hn:'Cell towers. Permissible. Debt ratio borderline.'},
+  {t:'ORAN',n:'Orange SA',s:'Telecom',h:'review',hn:'French telecom. Permissible. Verify debt ratios.'},
+  {t:'ERIC',n:'Ericsson',s:'Telecom',h:'halal',hn:'Telecom equipment. Permissible. Passes screens.'},
+  // REIT
+  {t:'PLD',n:'Prologis Inc.',s:'REIT',h:'review',hn:'Industrial REIT. Permissible assets. Verify debt ratio.'},
+  {t:'DLR',n:'Digital Realty',s:'REIT',h:'review',hn:'Data center REIT. Permissible. Verify interest debt.'},
+  {t:'PSA',n:'Public Storage',s:'REIT',h:'review',hn:'Storage REIT. Debt ratio borderline under AAOIFI.'},
+  {t:'WELL',n:'Welltower Inc.',s:'REIT',h:'review',hn:'Healthcare REIT. Permissible assets. Debt check needed.'},
+  // ISLAMIC ETFs
+  {t:'HLAL',n:'Wahed FTSE USA Shariah ETF',s:'ETF',h:'halal',hn:'Fully shariah-screened US ETF. AAOIFI compliant by design.'},
+  {t:'SPUS',n:'SP Funds S&P 500 Sharia ETF',s:'ETF',h:'halal',hn:'S&P 500 shariah-screened. Compliant by design.'},
+  {t:'ISWD',n:'iShares MSCI World Islamic',s:'ETF',h:'halal',hn:'Global Islamic equity ETF. Fully AAOIFI/MSCI screened.'},
+  {t:'AMAGX',n:'Amana Growth Fund',s:'ETF',h:'halal',hn:'Oldest halal US mutual fund. Fully compliant.'},
+  {t:'UMMA',n:'Saturna Sustainable Equity',s:'ETF',h:'halal',hn:'Sustainable & halal equity fund. Fully screened.'},
+];
+
+let curSec='all',hOn=false,pCache={};
+function hBadge(h){return h==='halal'?{c:'hb-h',l:'HALAL ✓'}:h==='haram'?{c:'hb-x',l:'EXCLUDED ✗'}:{c:'hb-r',l:'REVIEW ⚠'};}
+document.getElementById('sGrid').innerHTML=STKS.map(s=>{
+  const b=hBadge(s.h);
+  return`<div class="stk" id="sc${s.t}" data-sec="${s.s}" data-h="${s.h}">
+<div class="stk-top"><div><div class="stk-ticker">${s.t}</div><div class="stk-name">${s.n}</div></div><div class="hbadge ${b.c}">${b.l}</div></div>
+<div class="sprice flat" id="pr${s.t}">—</div>
+<div class="schg flat" id="ch${s.t}">Loading...</div>
+<div class="secpill sp-${s.s}">${s.s}</div>
+<div class="rrow"><div class="rbadge rb-na" id="rb${s.t}">-- LOADING</div><div class="fhr" id="fh${s.t}"></div></div>
+<div class="periods">
+  <div class="pc" data-tk="${s.t}" data-per="1d" onclick="selPer(this)"><span class="pl">1D</span><span class="pv na" id="p1${s.t}">—</span></div>
+  <div class="pc" data-tk="${s.t}" data-per="7d" onclick="selPer(this)"><span class="pl">7D</span><span class="pv na" id="p7${s.t}">—</span></div>
+  <div class="pc" data-tk="${s.t}" data-per="30d" onclick="selPer(this)"><span class="pl">30D</span><span class="pv na" id="p30${s.t}">—</span></div>
+  <div class="pc" data-tk="${s.t}" data-per="1y" onclick="selPer(this)"><span class="pl">1Y</span><span class="pv na" id="p1y${s.t}">—</span></div>
+</div>
+<button class="ai-btn" data-tk="${s.t}" data-nm="${s.n}" data-h="${s.h}" onclick="analyseStk(this)">🧠 Claude Analysis + Halal Review</button>
+<div class="ai-panel" id="ap${s.t}"></div>
+</div>`;}).join('');
+
+function selPer(el){
+  var tk=el.dataset.tk,per=el.dataset.per;
+  var all=document.querySelectorAll('[data-tk="'+tk+'"].pc');
+  all.forEach(function(b){b.classList.remove('act');});
+  el.classList.add('act');
+  var pvMap={d:'p1','7d':'p7','30d':'p30','1y':'p1y'};
+  var pvId=(per==='1d'?'p1':per==='7d'?'p7':per==='30d'?'p30':'p1y')+tk;
+  var lbl={d:'today','7d':'7 days','30d':'30 days','1y':'1 year'};
+  var lblStr=(per==='1d'?'today':per==='7d'?'7 days':per==='30d'?'30 days':'1 year');
+  var pvEl=document.getElementById(pvId);
+  var chEl=document.getElementById('ch'+tk);
+  if(!pvEl||!chEl) return;
+  var val=pvEl.textContent;
+  var up=pvEl.className.indexOf('up')>-1,down=pvEl.className.indexOf('down')>-1;
+  chEl.textContent=(val==='—'?'No data':val)+' - '+lblStr;
+  chEl.className='schg '+(val==='—'?'flat':up?'up':down?'down':'flat');
+}
+
+function setPv(id,val){
+  const e=document.getElementById(id);if(!e)return;
+  if(val===null||isNaN(val)){e.textContent='—';e.className='pv na';return;}
+  const sign=val>=0?'+':'';e.textContent=sign+val.toFixed(2)+'%';e.className='pv '+(val>0.05?'up':val<-0.05?'down':'na');
+}
+function setRating(t,buy,hold,sell,sb,ss){
+  const e=document.getElementById('rb'+t),fh=document.getElementById('fh'+t);if(!e)return;
+  const tot=(buy||0)+(hold||0)+(sell||0)+(sb||0)+(ss||0);
+  if(tot===0){e.textContent='NO DATA';e.className='rbadge rb-na';return;}
+  const sc=((sb||0)*2+(buy||0)*1+(hold||0)*0+(sell||0)*(-1)+(ss||0)*(-2))/tot;
+  let label,cls;
+  if(sc>=1.2){label='STRONG BUY';cls='rb-buy';}else if(sc>=0.4){label='BUY';cls='rb-buy';}else if(sc>=-0.4){label='HOLD';cls='rb-hold';}else if(sc>=-1.2){label='SELL';cls='rb-sell';}else{label='STRONG SELL';cls='rb-sell';}
+  e.textContent=label;e.className='rbadge '+cls;
+  if(fh)fh.textContent=`B:${buy||0} H:${hold||0} S:${sell||0}`;
+}
+async function fetchAll(){
+  if(!FHK)return;
+  const btn=document.getElementById('sGrid').previousElementSibling.querySelector('.rfbtn');
+  if(btn){btn.textContent='⟳ LOADING...';btn.style.opacity='0.5';btn.style.pointerEvents='none';}
+  stkFetched=true;
+  const now=Math.floor(Date.now()/1000);
+  for(let i=0;i<STKS.length;i+=3){
+    const batch=STKS.slice(i,i+3);
+    await Promise.all(batch.map(async s=>{
+      try{
+        const q=await(await fetch(`https://finnhub.io/api/v1/quote?symbol=${s.t}&token=${FHK}`)).json();
+        if(q&&q.c>0){
+          pCache[s.t]=q;
+          const d=q.dp>0.1?'up':q.dp<-0.1?'down':'flat';
+          const pe=document.getElementById('pr'+s.t),ce=document.getElementById('ch'+s.t);
+          if(pe){pe.textContent='$'+q.c.toFixed(2);pe.className='sprice '+d;}
+          if(ce){ce.textContent=(q.dp>=0?'+':'')+q.dp.toFixed(2)+'% today';ce.className='schg '+d;}
+          setPv('p1'+s.t,q.dp);
+        }
+      }catch(e){}
+      try{
+        const rec=await(await fetch(`https://finnhub.io/api/v1/stock/recommendation?symbol=${s.t}&token=${FHK}`)).json();
+        if(rec&&rec.length>0){const r=rec[0];setRating(s.t,r.buy,r.hold,r.sell,r.strongBuy,r.strongSell);}
+      }catch(e){}
+      try{
+        const mf=await(await fetch('https://finnhub.io/api/v1/stock/metric?symbol='+s.t+'&metric=all&token='+FHK)).json();
+        const m=mf&&mf.metric;
+        if(m){
+          if(m.yearToDatePriceReturnDaily!=null) setPv('p1y'+s.t,m.yearToDatePriceReturnDaily);
+          if(m['3MonthPriceReturnDaily']!=null) setPv('p30'+s.t,m['3MonthPriceReturnDaily']);
+          else if(m.monthToDatePriceReturnDaily!=null) setPv('p30'+s.t,m.monthToDatePriceReturnDaily);
+          if(m['1MonthPriceReturnDaily']!=null) setPv('p7'+s.t,m['1MonthPriceReturnDaily']);
+        }
+      }catch(e){}
+    }));
+    await new Promise(r=>setTimeout(r,1400));
+  }
+  if(btn){btn.textContent='⟳ REFRESH';btn.style.opacity='1';btn.style.pointerEvents='auto';}
+  document.getElementById('lupd').textContent='Updated '+new Date().toLocaleTimeString();
+  updateTicker();
+}
+function updateTicker(){
+  // Merge pCache stocks + gmTickerCache (markets/fx/crypto)
+  const items=['AAPL','NVDA','MSFT','XOM','GLD','NEM'];
+  let txt='';
+  items.forEach(t=>{const p=pCache[t];if(p&&p.c>0){const d=p.dp>=0?'▲':'▼';const col=p.dp>=0?'#00d4aa':'#ff4f64';txt+=`${t} <span style="color:#e0f4ff">$${p.c.toFixed(2)}</span> <span style="color:${col}">${d}${Math.abs(p.dp).toFixed(2)}%</span> <span class="dot">◆</span> `;}});
+  if(window.gmTickerCache){Object.keys(window.gmTickerCache).forEach(k=>{txt+=window.gmTickerCache[k]+' <span class="dot">◆</span> ';});}
+  const ti=document.getElementById('tickerInner');
+  if(txt) ti.innerHTML=txt+txt;
+}
+
+async function initTicker(){
+  if(!FHK){
+    const ti=document.getElementById('tickerInner');
+    ti.innerHTML='WorldWatch — Global News &amp; Investment Monitor <span class="dot">◆</span> Add your Magic Key to enable live data <span class="dot">◆</span> WorldWatch — Global News &amp; Investment Monitor <span class="dot">◆</span> Add your Magic Key to enable live data <span class="dot">◆</span>';
+    return;
+  }
+  window.gmTickerCache={};
+  // Stock/ETF quotes
+  const TICKER_SYMS=[
+    {sym:'SPY',label:'S&P 500'},{sym:'QQQ',label:'NASDAQ'},{sym:'DIA',label:'DOW'},
+    {sym:'GLD',label:'Gold'},{sym:'USO',label:'Oil'},{sym:'AAPL',label:'AAPL'},
+    {sym:'NVDA',label:'NVDA'},{sym:'MSFT',label:'MSFT'},{sym:'TSLA',label:'TSLA'},
+  ];
+  await Promise.all(TICKER_SYMS.map(async item=>{
+    try{
+      const r=await fetch('https://finnhub.io/api/v1/quote?symbol='+item.sym+'&token='+FHK);
+      const q=await r.json();
+      if(q&&q.c>0){
+        pCache[item.sym]=q;
+        const d=q.dp>=0?'▲':'▼';const col=q.dp>=0?'#00d4aa':'#ff4f64';
+        window.gmTickerCache[item.sym]=`${item.label} <span style="color:#e0f4ff">$${q.c.toFixed(2)}</span> <span style="color:${col}">${d}${Math.abs(q.dp).toFixed(2)}%</span>`;
+      }
+    }catch(e){}
+  }));
+  // BTC from Coinbase
+  try{
+    const r=await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+    const d=await r.json();const price=parseFloat(d&&d.data&&d.data.amount);
+    if(price>0) window.gmTickerCache['BTC']='BTC <span style="color:#e0f4ff">$'+price.toLocaleString('en-US',{maximumFractionDigits:0})+'</span>';
+  }catch(e){}
+  // FX from frankfurter (majors) + open.er-api (PKR/SAR)
+  try{
+    var [fkResp, erResp] = await Promise.all([
+      fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY'),
+      fetch('https://open.er-api.com/v6/latest/USD'),
+    ]);
+    var fkD = await fkResp.json();
+    var erD = await erResp.json();
+    var fkR = fkD && fkD.rates || {};
+    var erR = erD && erD.rates || {};
+    var merged = Object.assign({}, erR, fkR);
+    [{key:'EUR',label:'EUR/USD',dp:4,inv:true},{key:'GBP',label:'GBP/USD',dp:4,inv:true},
+     {key:'JPY',label:'USD/JPY',dp:2},{key:'PKR',label:'USD/PKR',dp:2},
+     {key:'SAR',label:'USD/SAR',dp:4}
+    ].forEach(fx=>{
+      var rate=fx.inv?(merged[fx.key]>0?1/merged[fx.key]:null):merged[fx.key];
+      if(rate&&rate>0) window.gmTickerCache['fx_'+fx.key]=`${fx.label} <span style="color:#e0f4ff">${rate.toFixed(fx.dp)}</span>`;
+    });
+  }catch(e){}
+  updateTicker();
+  setTimeout(initTicker,5*60*1000);
+}
+
+function filterStk(sec,btn){document.querySelectorAll('.stocks-tb .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curSec=sec;applyF();}
+function applyF(){
+  hOn=document.getElementById('ht').checked;
+  document.querySelectorAll('.stk').forEach(c=>{
+    const sec=c.dataset.sec,h=c.dataset.h;
+    const okSec=curSec==='all'||sec===curSec;
+    const okH=!hOn||h==='halal';
+    c.classList.toggle('hidden',!(okSec&&okH));
+  });
+}
+async function analyseStk(btn){
+  const ticker=btn.dataset.tk,name=btn.dataset.nm,halal=btn.dataset.h;
+  if(!AK){alert('Please save your Claude API key first.');return;}
+  const panel=document.getElementById('ap'+ticker);
+  panel.classList.add('vis');panel.innerHTML='<div style="display:flex;align-items:center;gap:8px;color:var(--dim);font-size:11px;"><div class="spin"></div>Claude is analysing...</div>';
+  btn.disabled=true;btn.textContent='🧠 Analysing...';
+  const price=pCache[ticker];const priceCtx=price?`Current price: $${price.c.toFixed(2)}, Change today: ${price.dp.toFixed(2)}%`:'Price data not loaded.';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:`Analyse ${ticker} (${name}) for a halal investor. ${priceCtx}\n\nProvide:\n### Business Overview\n### Key Strengths\n### Key Risks\n### Halal Screening (AAOIFI)\nHalal status: ${halal}. Explain why.\n### Investor Verdict\nBuy / Hold / Avoid? Short reasoning.\n\nBe concise, 300-400 words.`}]})});
+    const data=await resp.json();
+    const text=data.content?.[0]?.text||'No response.';
+    panel.innerHTML=mdToHtml(text);
+  }catch(e){panel.innerHTML='<span style="color:var(--red2)">Error — check API key.</span>';}
+  btn.disabled=false;btn.textContent='🧠 Claude Analysis + Halal Review';
+}
+
+// NEWS FEED
+const NEWS=[
+  {r:'gl',h:'Fed holds rates steady as inflation nears target; markets rally on guidance',s:'Reuters · Global'},
+  {r:'us',h:'US manufacturing PMI rises for 3rd consecutive month, signalling expansion',s:'AP · Americas'},
+  {r:'eu',h:'ECB signals further rate cuts as Eurozone GDP growth beats expectations',s:'FT · Europe'},
+  {r:'as',h:'China exports surge 12% year-on-year as global demand recovers',s:'SCMP · Asia'},
+  {r:'me',h:'Saudi Arabia boosts sovereign wealth fund targets to $2 trillion by 2030',s:'Arab News · Middle East'},
+  {r:'af',h:'African Development Bank approves $3bn infrastructure investment for East Africa',s:'Daily Nation · Africa'},
+  {r:'gl',h:'IMF upgrades global growth forecast to 3.4% for 2026',s:'IMF · Global'},
+  {r:'eu',h:'Germany announces €200bn green energy investment plan to 2035',s:'DW · Europe'},
+  {r:'us',h:'US jobs report shows 250,000 new jobs added; unemployment steady at 3.9%',s:'Bloomberg · Americas'},
+  {r:'as',h:'India GDP growth hits 7.2% — fastest among G20 economies this quarter',s:'Times of India · Asia'},
+  {r:'me',h:'UAE launches new fintech regulatory sandbox attracting global investment',s:'Gulf News · Middle East'},
+  {r:'af',h:'Nigeria oil output recovers to 1.6 million barrels per day after pipeline fixes',s:'Arise News · Africa'},
+  {r:'gl',h:'Gold hits record high as central banks accelerate reserve diversification',s:'Reuters · Global'},
+  {r:'eu',h:'EU approves landmark AI regulation framework with risk-based compliance tiers',s:'Euronews · Europe'},
+  {r:'as',h:'South Korea semiconductor exports rise 28% driven by AI chip demand',s:'Korea Herald · Asia'},
+  {r:'me',h:'Qatar expands LNG capacity as European energy demand remains elevated',s:'Gulf News · Middle East'},
+  {r:'us',h:'US clean energy investment exceeds fossil fuels for first time on record',s:'NPR · Americas'},
+  {r:'af',h:'Kenya becomes Africas first country to launch nationwide digital ID system',s:'Daily Nation · Africa'},
+  {r:'gl',h:'WTO reports global trade volume up 2.8% as supply chains stabilise',s:'Reuters · Global'},
+  {r:'eu',h:'UK inflation falls to 2.1%, paving way for Bank of England rate cuts',s:'Guardian · Europe'},
+];
+function renderNews(filter){
+  const list=document.getElementById('newsList');
+  const items=filter==='all'?NEWS:NEWS.filter(n=>n.r===filter);
+  list.innerHTML=items.map(n=>`<div class="ni"><div class="rp rp-${n.r}">${n.r.toUpperCase()}</div><div><div class="nh">${n.h}</div><div class="ns">${n.s}</div></div></div>`).join('');
+}
+function filterNews(r,btn){document.querySelectorAll('.nl-row .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderNews(r);}
+renderNews('all');
+
+// AI
+function setQ(id,btn){document.getElementById(id).value=btn.textContent;}
+async function runAI(taId,respId,contentId,btnId,mode){
+  const q=document.getElementById(taId).value.trim();if(!q)return;
+  if(!AK){alert('Please save your Claude API key first.');return;}
+  const btn=document.getElementById(btnId),resp=document.getElementById(respId),content=document.getElementById(contentId);
+  btn.disabled=true;btn.textContent='⊙ THINKING...';
+  resp.classList.add('vis');content.innerHTML='<div style="display:flex;align-items:center;gap:8px;color:var(--dim);"><div class="spin"></div>Claude is thinking...</div>';
+  const sys=mode==='HALAL'?'You are an expert in Islamic finance and AAOIFI halal screening standards. Provide clear, scholarly guidance on halal investing. Use headers and bullet points. 400-500 words.':'You are a senior financial analyst. Provide structured investment analysis. Use ### headers. Factual and balanced. 400-500 words. Always note this is not financial advice.';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages:[{role:'user',content:q}]})});
+    const data=await r.json();
+    content.innerHTML=mdToHtml(data.content?.[0]?.text||'No response.');
+  }catch(e){content.innerHTML='<span style="color:var(--red2)">Error — check API key.</span>';}
+  btn.disabled=false;btn.textContent=mode==='HALAL'?'▶ ASK':'▶ ANALYSE';
+}
+function mdToHtml(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^[-•] (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>')
+    .replace(/\n\n/g,'</p><p>')
+    .replace(/^([^<].+)$/gm,'<p>$1</p>')
+    .replace(/<p><\/p>/g,'');
+}
+// ── YOUTUBE ANALYSTS ──────────────────────────────────────
+var YTA=[
+  {n:'Caspian Report',e:'🌍',l:'english',tg:['geo'],s:'1.8M',u:'https://www.youtube.com/@CaspianReport',ok:true,
+   d:'Independent geopolitics from Baku. Deep research on energy, borders, Eurasia, Middle East. No partisan agenda.'},
+  {n:'Peter Zeihan',e:'🌐',l:'english',tg:['geo','finance'],s:'931K',u:'https://www.youtube.com/@ZeihanOnGeopolitics',ok:true,
+   d:'US demographer & strategist. Energy, trade, demographics. Data-driven forecasts. Ex-Stratfor analyst.'},
+  {n:'VisualPolitik EN',e:'🗺️',l:'english',tg:['geo'],s:'2.1M',u:'https://www.youtube.com/@VisualPolitikEN',ok:true,
+   d:'Professional explainer videos on economics and international relations. Covers every region with historical context.'},
+  {n:'TLDR News Global',e:'📰',l:'english',tg:['geo'],s:'800K',u:'https://www.youtube.com/@TLDRNewsGlobal',ok:true,
+   d:'Concise explainers on world events — wars, elections, economics. Balanced and fast-paced global news analysis.'},
+  {n:'KJ Vids',e:'🌍',l:'english',tg:['geo','mideast'],s:'150K',u:'https://www.youtube.com/@KJVids',ok:true,
+   d:'Non-partisan geopolitics. Focus on Muslim-majority nations, Middle East and global conflicts. Evidence-based.'},
+  {n:'Wendover Productions',e:'✈️',l:'english',tg:['geo','finance'],s:'5M',u:'https://www.youtube.com/@Wendover',ok:true,
+   d:'Deep dives on global systems — logistics, airlines, economics. Exceptional research quality.'},
+  {n:'Economics Explained',e:'📊',l:'english',tg:['finance','geo'],s:'3.5M',u:'https://www.youtube.com/@EconomicsExplained',ok:true,
+   d:'Macro economics, trade, debt, global financial systems explained clearly. Covers countries in depth.'},
+  {n:'Patrick Boyle',e:'📈',l:'english',tg:['finance'],s:'1.1M',u:'https://www.youtube.com/@PBoyle',ok:true,
+   d:'Former hedge fund manager. Finance and economics with academic rigour. Covers macro and micro topics.'},
+  {n:'George Gammon',e:'📉',l:'english',tg:['finance'],s:'600K',u:'https://www.youtube.com/@GeorgeGammon',ok:true,
+   d:'Macro economics, Federal Reserve, monetary policy. Whiteboard-style deep dives with very thorough research.'},
+  {n:'Think School',e:'🎓',l:'english',tg:['finance','geo','southasia'],s:'4.6M',u:'https://www.youtube.com/@ThinkSchool',ok:true,
+   d:'India-based business and geopolitics. Breaks down complex issues in accessible storytelling format.'},
+  {n:'Al Jazeera English',e:'🌍',l:'english',tg:['mideast','geo'],s:'18M',u:'https://www.youtube.com/@AlJazeeraEnglish',ok:true,
+   d:'Qatar-based global news. Strong Middle East coverage. Some editorial slant — cross-reference advised.'},
+  {n:'Independent Urdu',e:'🇵🇰',l:'urdu',tg:['geo','southasia'],s:'469K',u:'https://www.youtube.com/@IndyUrdu',ok:true,
+   d:'BBC-affiliated Urdu news and analysis. Pakistan, South Asia and world affairs. Balanced journalism.'},
+  {n:'Naya Daur TV',e:'🇵🇰',l:'urdu',tg:['southasia'],s:'566K',u:'https://www.youtube.com/@nayadaurpk',ok:true,
+   d:'Progressive Pakistani current affairs. In-depth political and economic analysis in Urdu. Independent stance.'},
+  {n:'Haqeeqat TV',e:'🇵🇰',l:'urdu',tg:['geo','southasia'],s:'8M',u:'https://www.youtube.com/@HaqeeqatTV',ok:false,
+   d:'Pakistan biggest YouTube channel. World affairs and history in Urdu. High production quality. Leans nationalist.'},
+  {n:'Top Analysis',e:'🌍',l:'urdu',tg:['geo','southasia','mideast'],s:'2.5M',u:'https://www.youtube.com/@TopAnalysis',ok:true,
+   d:'Asian Urdu channel covering Pakistan, India and South Asian geopolitics with strong international focus.'},
+  {n:'GooglyNews TV',e:'🇵🇰',l:'urdu',tg:['geo','southasia'],s:'1.8M',u:'https://www.youtube.com/@GooglyNewsTV',ok:true,
+   d:'Uncensored digital media. World affairs and Pakistan coverage with independent perspective.'},
+  {n:'World Affairs Urdu',e:'🌏',l:'urdu',tg:['geo','mideast'],s:'900K',u:'https://www.youtube.com/@WorldAffairsUrdu',ok:true,
+   d:'Global geopolitics in Urdu — Middle East, USA, China, Russia. Accessible analysis for Urdu audiences.'},
+  {n:'Faisal Warraich',e:'🇵🇰',l:'urdu',tg:['southasia'],s:'3.2M',u:'https://www.youtube.com/@FaisalWarraich',ok:false,
+   d:'Senior Pakistani journalist. Covers Pakistani politics, economy and current affairs.'},
+  {n:'Dhruv Rathee',e:'🇮🇳',l:'hindi',tg:['geo','southasia'],s:'22M',u:'https://www.youtube.com/@DhruvRathee',ok:false,
+   d:'India biggest political educator. Environment, economics, geopolitics. Strong independent voice.'},
+  {n:'Mohak Mangal',e:'🇮🇳',l:'hindi',tg:['geo','finance','southasia'],s:'4M',u:'https://www.youtube.com/@MohakMangal',ok:true,
+   d:'Evidence-based analysis of Indian socio-political and economic issues. Clear, balanced explainers.'},
+  {n:'Pranjal Kamra',e:'📊',l:'hindi',tg:['finance'],s:'4M',u:'https://www.youtube.com/@PranjalKamra',ok:true,
+   d:'Stock market, personal finance and economics in Hindi. Practical investment guidance with strong fundamentals.'},
+  {n:'Akshat Shrivastava',e:'💹',l:'hindi',tg:['finance'],s:'2.8M',u:'https://www.youtube.com/@AkshatShrivastava',ok:true,
+   d:'India macro economics, stocks, real estate and global markets. Data-driven financial content.'},
+  {n:'Soch by Mohak',e:'🇮🇳',l:'hindi',tg:['geo','southasia'],s:'2.1M',u:'https://www.youtube.com/@SochByMohak',ok:true,
+   d:'Deep explainers on geopolitics, history and Indian affairs. Research-heavy, neutral tone.'},
+];
+
+// ── INDIA & PAKISTAN CREATORS ────────────────────────────────────────────────
+const CRA = [
+  // ── NEWS CHANNELS ──
+  {n:'Neo News HD',        e:'🇵🇰',tg:['news','pakistan'],  s:'3.2M', u:'https://www.youtube.com/@NeoNewsHD',
+   d:'Pakistani news channel covering politics, current affairs and breaking news 24/7.'},
+  {n:'News18 Urdu',        e:'🇮🇳',tg:['news','india'],     s:'4.1M', u:'https://www.youtube.com/@News18Urdu',
+   d:'Urdu-language news from India\’s News18 network. Politics, society and current affairs.'},
+  {n:'The Wire',           e:'🇮🇳',tg:['news','analyst','india'], s:'2.3M', u:'https://www.youtube.com/@TheWireNews',
+   d:'Independent Indian journalism. In-depth investigative reporting, politics and civil liberties.'},
+
+  // ── ANALYSTS & TALK SHOWS ──
+  {n:'Mario Nawfal',       e:'🌐',tg:['analyst'],           s:'850K', u:'https://www.youtube.com/@MarioNawfal',
+   d:'Global tech, AI and geopolitics talk show host. Round Table discussions with major guests worldwide.'},
+  {n:'Talk Show Central',  e:'🎙️',tg:['analyst','pakistan'],s:'1.2M', u:'https://www.youtube.com/@TalkShowCentral',
+   d:'Pakistani political talk shows and current affairs debates. Aggregates top anchors and discussions.'},
+  {n:'Sabir Shakir',       e:'🇵🇰',tg:['analyst','pakistan'],s:'2.8M', u:'https://www.youtube.com/@SabirShakirOfficial',
+   d:'Former ARY News anchor. Independent political commentary on Pakistan affairs from the UK.'},
+  {n:'Zeeshan Usmani',     e:'🇵🇰',tg:['analyst','pakistan'],s:'620K', u:'https://www.youtube.com/@ZeeshanUsmani',
+   d:'Pakistan foreign policy, data science and geopolitics. Evidence-based analysis.'},
+  {n:'Zia Tabarak',        e:'🇵🇰',tg:['analyst','pakistan'],s:'480K', u:'https://www.youtube.com/@ZiaTabarak',
+   d:'Pakistan political analysis and commentary. In-depth coverage of domestic and regional affairs.'},
+  {n:'Deepak Chaturvedi',  e:'🇮🇳',tg:['analyst','india'],  s:'540K', u:'https://www.youtube.com/@DeepakChaturvedi',
+   d:'Indian journalist covering politics, geopolitics and current affairs with in-depth analysis.'},
+
+  // ── FOOD ──
+  {n:'Food Fusion',        e:'🍳',tg:['food','pakistan'],   s:'4.1M', u:'https://www.youtube.com/@FoodFusion',
+   d:'Pakistan\’s most popular cooking channel. Restaurant-style recipes made easy for home cooks.'},
+  {n:'Street Food PK',     e:'🍢',tg:['food','pakistan','lifestyle'], s:'2.5M', u:'https://www.youtube.com/@StreetFoodPK',
+   d:'Authentic Pakistani street food tours. From Karachi\’s Burns Road to Lahore\'s Food Street.'},
+
+  // ── LIFESTYLE / TRAVEL ──
+  {n:'Wild Lens by Abrar', e:'🎥',tg:['lifestyle','pakistan'],s:'1.8M', u:'https://www.youtube.com/@WildLensbyAbrar',
+   d:'Pakistan travel, nature and adventure. Stunning cinematography exploring remote landscapes and culture.'},
+
+  // ── SPORTS ──
+  {n:'BBN Sports',          e:'🏏',tg:['sports','pakistan'], s:'980K', u:'https://www.youtube.com/@BBNSports',
+   d:'Pakistan and South Asia sports coverage. Cricket analysis, match highlights and sports news.'},
+  {n:'Caught Behind',       e:'🏏',tg:['sports','india','pakistan'], s:'750K', u:'https://www.youtube.com/@CaughtBehind',
+   d:'Cricket analysis, behind-the-scenes and expert commentary. Covers PSL, IPL and international cricket.'},
+  {n:'Sports Central DRM',  e:'🏆',tg:['sports','pakistan'], s:'2.1M', u:'https://www.youtube.com/@SportsCentralDRM',
+   d:'DRM\’s flagship sports channel. Cricket, football and major sports events for South Asian audiences.'},
+
+  // ── INDIA NEWS / ANALYSTS ──
+  {n:'The Deshbhakt',       e:'🇮🇳',tg:['analyst','india'],  s:'2.4M', u:'https://www.youtube.com/@TheDeshbhakt',
+   d:'Satirical political commentary on Indian affairs by Akash Banerjee. Sharp, progressive perspective.'},
+  {n:'Ajit Anjum',          e:'🇮🇳',tg:['analyst','news','india'], s:'3.1M', u:'https://www.youtube.com/@AjitAnjum',
+   d:'Senior Indian journalist. Ground-level investigative reporting and political analysis.'},
+  {n:'Paurush Sharma',      e:'🇮🇳',tg:['analyst','india'],  s:'410K', u:'https://www.youtube.com/@PaurushSharma',
+   d:'Indian political and social commentary. Analysis of current affairs and governance issues.'},
+  {n:'Punya Prasun Bajpai', e:'🇮🇳',tg:['analyst','news','india'], s:'1.9M', u:'https://www.youtube.com/@PunyaPrasunBajpai',
+   d:'Veteran Indian journalist. Hard-hitting political analysis, in-depth interviews and investigative reporting.'},
+  {n:'The Credible History', e:'📜',tg:['analyst','india'],  s:'680K', u:'https://www.youtube.com/@TheCredibleHistory',
+   d:'Deep dives into South Asian history, geopolitics and civilisational narratives with rigorous sourcing.'},
+  {n:'Mani Shankar Aiyar',  e:'🇮🇳',tg:['analyst','india'],  s:'290K', u:'https://www.youtube.com/@ManiShankarAiyar',
+   d:'Senior Indian diplomat and politician. Long-form discussions on India-Pakistan relations and foreign policy.'},
+
+  // ── PAKISTAN NEWS ──
+  {n:'Pak TV',              e:'🇵🇰',tg:['news','pakistan'],  s:'1.4M', u:'https://www.youtube.com/@PakTVOfficial',
+   d:'Pakistan current affairs and breaking news. Politics, society and international coverage.'},
+  {n:'Dr Moeed Pirzada',    e:'🇵🇰',tg:['analyst','pakistan'], s:'1.1M', u:'https://www.youtube.com/@MoeedPirzada',
+   d:'British-Pakistani journalist. Geopolitics, Pakistan foreign policy and international affairs analysis.'},
+  {n:'GNN News',            e:'🇵🇰',tg:['news','pakistan'],  s:'3.5M', u:'https://www.youtube.com/@GNNNewsOfficial',
+   d:'Global News Network Pakistan. Breaking news, political talk shows and live coverage round the clock.'},
+  {n:'Hamid Mir Exclusive', e:'🇵🇰',tg:['analyst','news','pakistan'], s:'2.2M', u:'https://www.youtube.com/@HamidMirExclusive',
+   d:'Senior Pakistani journalist and anchor. Hard-hitting political interviews, exclusives and current affairs analysis.'},
+
+  // ── INDIA ANALYSTS ──
+  {n:'Janta Ka Reporter',   e:'🇮🇳',tg:['analyst','news','india'], s:'4.2M', u:'https://www.youtube.com/@JantaKaReporter',
+   d:'Independent Indian news channel. Ground-level political reporting, whistleblowing journalism and public interest stories.'},
+  {n:'Imran Riaz Khan',      e:'🇵🇰',tg:['analyst','news','pakistan'], s:'6.1M', u:'https://www.youtube.com/@ImranRiazKhanOfficial',
+   d:'Pakistan’s most-watched independent journalist. Bold political commentary, exclusives and fearless coverage of Pakistani affairs.'},
+  {n:'Abhisar Sharma',      e:'🇮🇳',tg:['analyst','news','india'], s:'3.8M', u:'https://www.youtube.com/@AbhisarSharma',
+   d:'Veteran Indian journalist. Fearless independent political commentary, interviews and investigative reporting.'},
+  {n:'Kay Kay D',           e:'🇮🇳',tg:['analyst','india'],  s:'1.6M', u:'https://www.youtube.com/@KayKayD',
+   d:'Indian political analysis and current affairs. Sharp commentary on governance, politics and social issues.'},
+  {n:'Ravish Kumar Official',e:'🇮🇳',tg:['analyst','news','india'], s:'8.2M', u:'https://www.youtube.com/@RavishKumarOfficial',
+   d:'Award-winning senior Indian journalist. Prime Time host, independent voice on democracy and public interest journalism.'},
+  {n:'Harsh Bhogale',       e:'🏏',tg:['sports','cricket','india'], s:'1.1M', u:'https://www.youtube.com/@HarshBhogale',
+   d:'India’s most iconic cricket commentator. Match analysis, player interviews, iconic moments and commentary craft.'},
+
+  // ── INDIAN FOOD ──
+  {n:'Kabita’s Kitchen',   e:'🇮🇳',tg:['food','india'],    s:'12M',  u:'https://www.youtube.com/@KabitasKitchen',
+   d:'Simple Indian home cooking. Vegetarian and non-veg recipes from across India, easy for everyday cooking.'},
+  {n:'Ranveer Brar',        e:'🇮🇳',tg:['food','india'],    s:'7.8M', u:'https://www.youtube.com/@RanveerBrar',
+   d:'Celebrity Chef Ranveer Brar. Restaurant-level Indian cuisine, food history and culinary stories.'},
+  {n:'Hebbars Kitchen',     e:'🇮🇳',tg:['food','india'],    s:'9.2M', u:'https://www.youtube.com/@hebbarskitchen',
+   d:'South Indian cooking and veg recipes. Quick, easy and authentic Indian recipes for all occasions.'},
+
+  // ── ARAB & TURKISH FOOD ──
+  {n:'Manal Al Alem',       e:'🇸🇦',tg:['food','arab'],     s:'5.3M', u:'https://www.youtube.com/@ManalAlalem',
+   d:'Middle East’s top cooking show. Arabic cuisine, Gulf recipes and international dishes by celebrity chef Manal.'},
+  {n:'Sadia’s Kitchen',    e:'🌙',tg:['food','arab','pakistan'], s:'2.1M', u:'https://www.youtube.com/@SadiasKitchen',
+   d:'Pakistani and Arabic fusion cooking. Authentic recipes with easy instructions for home cooks worldwide.'},
+  {n:'Refika’s Kitchen',   e:'🇹🇷',tg:['food','arab','lifestyle'], s:'1.9M', u:'https://www.youtube.com/@RefikasKitchen',
+   d:'Turkish cuisine by chef Refika Birgül. Authentic Turkish recipes, Mediterranean flavours and vibrant food culture.'},
+  {n:'Turkish Recipes',     e:'🇹🇷',tg:['food','arab'],     s:'890K', u:'https://www.youtube.com/@turkishrecipes',
+   d:'Authentic Turkish home cooking. From kebabs and mezes to baklava — real recipes from Turkish kitchens.'},
+  {n:'Cooking with Laila',  e:'🌍',tg:['food','arab'],      s:'1.4M', u:'https://www.youtube.com/@CookingWithLaila',
+   d:'Arabic and Mediterranean cooking. Lebanese, Moroccan and Gulf recipes — traditional and modern fusion.'},
+  {n:'Mediterranean Living',e:'🫒',tg:['food','arab','lifestyle'], s:'760K', u:'https://www.youtube.com/@MediterraneanLiving',
+   d:'Mediterranean diet recipes, lifestyle and culture. Greek, Italian and Levantine food with a healthy focus.'},
+];
+
+function filtCR(f,btn){
+  document.querySelectorAll('#cr-filt .fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const list = f==='all' ? CRA : CRA.filter(c=>c.tg.indexOf(f)>-1);
+  document.getElementById('crGrid').innerHTML = list.map(c=>{
+    const tags = c.tg.map(t=>'<span class="yt-tag">'+t+'</span>').join('');
+    return '<a class="yt-card" href="'+c.u+'" target="_blank" rel="noopener">'
+      +'<div class="yt-thumb">'+c.e+'<div class="yt-play">▶</div></div>'
+      +'<div class="yt-body">'
+      +'<div class="yt-name">'+c.n+'</div>'
+      +'<div class="yt-desc">'+c.d+'</div>'
+      +'<div class="yt-meta"><span class="yt-subs">'+c.s+' subs</span>'+tags+'</div>'
+      +'</div></a>';
+  }).join('');
+}
+filtCR('all', document.querySelector('#cr-filt .fb'));
+function ytLangBadge(l){
+  if(l==='english') return '<span class="yt-lang yl-en">🇬🇧 English</span>';
+  if(l==='urdu') return '<span class="yt-lang yl-ur">🇵🇰 Urdu</span>';
+  return '<span class="yt-lang yl-hi">🇮🇳 Hindi</span>';
+}
+function ytCard(y){
+  var tags=y.tg.map(function(t){return '<span class="yt-tag">'+t+'</span>';}).join('');
+  var neu=y.ok?'<span class="yt-ok">✓ Neutral</span>':'<span class="yt-warn">⚠ Cross-check</span>';
+  return '<a class="yt-card" href="'+y.u+'" target="_blank" rel="noopener">'
+    +'<div class="yt-thumb">'+y.e+'<div class="yt-play">▶</div></div>'
+    +'<div class="yt-body">'
+    +'<div class="yt-name">'+y.n+'</div>'
+    +'<div class="yt-desc">'+y.d+'</div>'
+    +'<div class="yt-meta">'+ytLangBadge(y.l)
+    +'<span class="yt-subs">'+y.s+' subs</span>'+neu+tags
+    +'</div></div></a>';
+}
+function filtYT(f,btn){
+  document.querySelectorAll('#yt-filt .fb').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var list=f==='all'?YTA:(f==='english'||f==='urdu'||f==='hindi')
+    ?YTA.filter(function(y){return y.l===f;})
+    :YTA.filter(function(y){return y.tg.indexOf(f)>-1;});
+  document.getElementById('ytGrid').innerHTML=list.map(ytCard).join('');
+}
+filtYT('all',document.querySelector('#yt-filt .fb'));
+// ══════════════════════════════════════════════════
+// GLOBAL MARKETS TAB
+// ══════════════════════════════════════════════════
+
+// Index definitions: ticker = Finnhub symbol, rss = RSS feed for news
+var GM_INDICES = {
+  americas: [
+    {sym:'SPY',  name:'S&P 500',      full:'USA · S&P 500',    flag:'🇺🇸'},
+    {sym:'QQQ',  name:'NASDAQ 100',   full:'USA · NASDAQ',     flag:'🇺🇸'},
+    {sym:'DIA',  name:'DOW JONES',    full:'USA · Dow Jones',  flag:'🇺🇸'},
+    {sym:'IWM',  name:'RUSSELL 2000', full:'USA · Small Cap',  flag:'🇺🇸'},
+    {sym:'EWC',  name:'TSX CANADA',   full:'Canada',           flag:'🇨🇦'},
+    {sym:'EWZ',  name:'BOVESPA',      full:'Brazil',           flag:'🇧🇷'},
+  ],
+  europe: [
+    {sym:'EWU',  name:'FTSE 100',     full:'UK',               flag:'🇬🇧'},
+    {sym:'EWG',  name:'DAX',          full:'Germany',          flag:'🇩🇪'},
+    {sym:'EWQ',  name:'CAC 40',       full:'France',           flag:'🇫🇷'},
+    {sym:'EWP',  name:'IBEX 35',      full:'Spain',            flag:'🇪🇸'},
+    {sym:'EZA',  name:'JSE S.AFRICA', full:'South Africa',     flag:'🇿🇦'},
+    {sym:'FEZ',  name:'EURO STOXX',   full:'Eurozone',         flag:'🇪🇺'},
+  ],
+  mideast: [
+    {sym:'KSA',  name:'TASI SAUDI',   full:'Saudi Arabia',     flag:'🇸🇦'},
+    {sym:'TUR',  name:'BIST 100',     full:'Turkey',           flag:'🇹🇷'},
+    {sym:'EGPT', name:'EGX EGYPT',    full:'Egypt',            flag:'🇪🇬'},
+    {sym:'VNM',  name:'VN-INDEX',     full:'Vietnam',          flag:'🇻🇳'},
+  ],
+  southasia: [
+    {sym:'INDA', name:'NIFTY 50',     full:'India',            flag:'🇮🇳'},
+    {sym:'INDY', name:'BSE SENSEX',   full:'India · Sensex',   flag:'🇮🇳'},
+    {sym:'PAK',  name:'KSE 100',      full:'Pakistan',         flag:'🇵🇰'},
+  ],
+  asiapac: [
+    {sym:'EWJ',  name:'NIKKEI 225',   full:'Japan',            flag:'🇯🇵'},
+    {sym:'EWH',  name:'HANG SENG',    full:'Hong Kong',        flag:'🇭🇰'},
+    {sym:'MCHI', name:'CSI CHINA',    full:'China',            flag:'🇨🇳'},
+    {sym:'EWY',  name:'KOSPI',        full:'South Korea',      flag:'🇰🇷'},
+    {sym:'EWA',  name:'ASX 200',      full:'Australia',        flag:'🇦🇺'},
+    {sym:'EWS',  name:'STI SINGAPORE',full:'Singapore',        flag:'🇸🇬'},
+  ]
+};
+
+var GM_FX = [
+  {pair:'USDPKR', fh:'OANDA:USD_PKR', dp:2},
+  {pair:'USDINR', fh:'OANDA:USD_INR', dp:2},
+  {pair:'USDSAR', fh:'OANDA:USD_SAR', dp:4},
+  {pair:'USDAED', fh:'OANDA:USD_AED', dp:4},
+  {pair:'GBPUSD', fh:'OANDA:GBP_USD', dp:4},
+  {pair:'EURUSD', fh:'OANDA:EUR_USD', dp:4},
+  {pair:'USDJPY', fh:'OANDA:USD_JPY', dp:2},
+  {pair:'USDCNY', fh:'OANDA:USD_CNY', dp:4},
+  {pair:'XAUUSD', fh:'OANDA:XAU_USD', dp:2},
+];
+
+// RSS sources via allorigins proxy
+var GM_RSS = {
+  'reuters-business': 'https://feeds.reuters.com/reuters/businessNews',
+  'bbc-business':     'https://feeds.bbci.co.uk/news/business/rss.xml',
+  'dw-business':      'https://rss.dw.com/rdf/rss-en-bus',
+  'arabnews':         'https://www.arabnews.com/rss.xml',
+  'hindu-business':   'https://www.thehindu.com/business/feeder/default.rss',
+  'dawn-business':    'https://www.dawn.com/feeds/business',
+};
+
+var gmCache = {};
+var gmNewsCache = {};
+var gmLoaded = false;
+
+// Called when tab first opened
+function initMarkets() {
+  if (gmLoaded) return;
+  gmLoaded = true;
+  renderIndexShells();
+  loadMarkets();
+  loadGlobalHeadlines();
+  loadCommodities();
+  loadCrypto();
+}
+
+// ── Commodities via Finnhub ─────────────────────────────────
+var COM_SYMS = [
+  {sym:'NYMEX:CL1!', label:'WTI Crude',   unit:'bbl', dp:2},
+  {sym:'NYMEX:NG1!', label:'Nat Gas',     unit:'MMBtu', dp:3},
+  {sym:'OANDA:XAU_USD', label:'Gold',     unit:'oz', dp:2},
+  {sym:'OANDA:XAG_USD', label:'Silver',   unit:'oz', dp:3},
+  {sym:'COMEX:HG1!', label:'Copper',      unit:'lb', dp:4},
+  {sym:'COMEX:SI1!', label:'Platinum',    unit:'oz', dp:2},
+];
+
+async function loadCommodities() {
+  if (!FHK) return; // needs Finnhub key
+  for (var i = 0; i < COM_SYMS.length; i++) {
+    var c = COM_SYMS[i];
+    try {
+      var r = await fetch('https://finnhub.io/api/v1/quote?symbol=' + encodeURIComponent(c.sym) + '&token=' + FHK);
+      var q = await r.json();
+      var valEl = document.getElementById('comv-' + c.sym);
+      var chgEl = document.getElementById('comch-' + c.sym);
+      var cardEl = document.getElementById('comc-' + c.sym);
+      if (valEl && q && q.c > 0) {
+        valEl.textContent = q.c.toFixed(c.dp);
+        var dir = q.dp > 0.05 ? 'up' : q.dp < -0.05 ? 'down' : 'flat';
+        var sign = q.dp >= 0 ? '+' : '';
+        chgEl.textContent = sign + q.dp.toFixed(2) + '%';
+        chgEl.className = 'gm-com-chg ' + dir;
+        if (cardEl) cardEl.className = 'gm-com-card ' + dir;
+      } else if (valEl) {
+        valEl.textContent = '--';
+        chgEl.textContent = 'N/A';
+      }
+    } catch(e) {}
+    await new Promise(function(res){setTimeout(res,250);});
+  }
+}
+
+// ── Crypto via Coinbase (no key needed) ─────────────────────
+var CRYPTO_LIST = [
+  {pair:'BTC-USD',  name:'Bitcoin',   sym:'BTC', icon:'₿',  halal:'mixed', hn:'Store of value debate ongoing. Many scholars permit. Avoid speculation.'},
+  {pair:'ETH-USD',  name:'Ethereum',  sym:'ETH', icon:'Ξ',  halal:'mixed', hn:'Smart contracts permissible; staking rewards debated by scholars.'},
+  {pair:'SOL-USD',  name:'Solana',    sym:'SOL', icon:'◎',  halal:'mixed', hn:'Utility platform. Generally permissible for payments/use.'},
+  {pair:'XRP-USD',  name:'XRP',       sym:'XRP', icon:'✕',  halal:'mixed', hn:'Payment protocol. Permissible in principle; avoid speculative trading.'},
+  {pair:'BNB-USD',  name:'BNB',       sym:'BNB', icon:'◈',  halal:'mixed', hn:'Exchange token; Binance processes interest products — use with caution.'},
+  {pair:'ADA-USD',  name:'Cardano',   sym:'ADA', icon:'₳',  halal:'mixed', hn:'PoS staking rewards debated. Utility use generally permissible.'},
+  {pair:'AVAX-USD', name:'Avalanche', sym:'AVAX',icon:'▲',  halal:'mixed', hn:'DeFi platform; avoid interest-bearing DeFi products on it.'},
+  {pair:'DOGE-USD', name:'Dogecoin',  sym:'DOGE',icon:'Ð',  halal:'avoid', hn:'Meme coin — excessive speculation (gharar). Most scholars advise against.'},
+];
+
+async function loadCrypto() {
+  var container = document.getElementById('gm-crypto');
+  if (!container) return;
+
+  // Render shells first
+  container.innerHTML = CRYPTO_LIST.map(function(c) {
+    var badgeClass = c.halal === 'halal' ? 'halal' : c.halal === 'avoid' ? 'avoid' : 'mixed';
+    var badgeLabel = c.halal === 'halal' ? '✓ HALAL' : c.halal === 'avoid' ? '✗ AVOID' : '◑ MIXED';
+    return '<div class="gm-crypto-card">'
+      + '<div class="gm-crypto-icon">' + c.icon + '</div>'
+      + '<div class="gm-crypto-name">' + c.name + '</div>'
+      + '<div class="gm-crypto-sym">' + c.sym + '</div>'
+      + '<div class="gm-crypto-val" id="cry-' + c.sym + '">...</div>'
+      + '<div class="gm-halal-badge ' + badgeClass + '" title="' + c.hn + '">' + badgeLabel + '</div>'
+      + '</div>';
+  }).join('');
+
+  // Fetch prices from Coinbase
+  await Promise.all(CRYPTO_LIST.map(async function(c) {
+    try {
+      var r = await fetch('https://api.coinbase.com/v2/prices/' + c.pair + '/spot');
+      var d = await r.json();
+      var price = parseFloat(d && d.data && d.data.amount);
+      var el = document.getElementById('cry-' + c.sym);
+      if (el && price) {
+        el.textContent = price >= 100
+          ? '$' + price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+          : '$' + price.toFixed(4);
+      }
+    } catch(e) {}
+  }));
+
+  // Auto-refresh every 60s
+  setTimeout(loadCrypto, 60000);
+}
+
+function renderIndexShells() {
+  Object.keys(GM_INDICES).forEach(function(region) {
+    var el = document.getElementById('gm-' + region);
+    if (!el) return;
+    el.innerHTML = GM_INDICES[region].map(function(idx) {
+      return '<div class="gm-card flat" id="gmc-'+idx.sym+'">'
+        + '<div class="gm-name">'+idx.flag+' '+idx.name+'</div>'
+        + '<div class="gm-full">'+idx.full+'</div>'
+        + '<div class="gm-val" id="gmv-'+idx.sym+'">--</div>'
+        + '<div class="gm-chg flat" id="gmch-'+idx.sym+'">fetching...</div>'
+        + '<div class="gm-oc" id="gmo-'+idx.sym+'"></div>'
+        + '<div class="gm-news" id="gmn-'+idx.sym+'"></div>'
+        + '</div>';
+    }).join('');
+  });
+}
+
+async function loadMarkets() {
+  if (!FHK) {
+    document.getElementById('gmLupd').textContent = 'Add Finnhub API key to load prices';
+    return;
+  }
+  var btn = document.querySelector('.gm-rfbtn');
+  if (btn) { btn.textContent = '⟳ LOADING...'; btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
+
+  // Flatten all indices
+  var all = [];
+  Object.keys(GM_INDICES).forEach(function(r) { all = all.concat(GM_INDICES[r]); });
+
+  // Fetch in batches of 4
+  for (var i = 0; i < all.length; i += 4) {
+    var batch = all.slice(i, i + 4);
+    await Promise.all(batch.map(async function(idx) {
+      try {
+        var url = 'https://finnhub.io/api/v1/quote?symbol=' + idx.sym + '&token=' + FHK;
+        var resp = await fetch(url);
+        var q = await resp.json();
+        if (q && q.c > 0) {
+          gmCache[idx.sym] = q;
+          updateIndexCard(idx, q);
+        } else {
+          console.warn('WORLDWATCH: No data for', idx.sym, q);
+          var ce = document.getElementById('gmch-'+idx.sym);
+          if(ce) { ce.textContent='N/A'; ce.className='gm-chg flat'; }
+          var ve = document.getElementById('gmv-'+idx.sym);
+          if(ve) ve.textContent='--';
+        }
+      } catch(e) {
+        console.error('WORLDWATCH: Fetch error for', idx.sym, e);
+        var ce = document.getElementById('gmch-'+idx.sym);
+        if(ce) { ce.textContent='Error'; ce.className='gm-chg flat'; }
+      }
+    }));
+    await new Promise(function(r) { setTimeout(r, 1200); });
+  }
+
+  // Fetch FX
+  await loadFX();
+
+  // Load news per region RSS
+  loadRegionNews();
+
+  if (btn) { btn.textContent = '⟳ REFRESH MARKETS'; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+  document.getElementById('gmLupd').textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+function updateIndexCard(idx, q) {
+  var valEl  = document.getElementById('gmv-'  + idx.sym);
+  var chgEl  = document.getElementById('gmch-' + idx.sym);
+  var cardEl = document.getElementById('gmc-'  + idx.sym);
+  var metaEl = document.getElementById('gmo-'  + idx.sym);
+  if (!valEl) return;
+
+  var dir = q.dp > 0.05 ? 'up' : q.dp < -0.05 ? 'down' : 'flat';
+  var sign = q.dp >= 0 ? '+' : '';
+  var pts  = (q.c - q.pc);
+  var ptsSign = pts >= 0 ? '+' : '';
+
+  valEl.textContent = q.c.toFixed(2);
+  chgEl.textContent = sign + q.dp.toFixed(2) + '% (' + ptsSign + pts.toFixed(2) + ')';
+  chgEl.className = 'gm-chg ' + dir;
+  cardEl.className = 'gm-card ' + dir;
+  metaEl.textContent = 'O: ' + q.o.toFixed(2) + '  H: ' + q.h.toFixed(2) + '  L: ' + q.l.toFixed(2);
+}
+
+async function loadFX() {
+  // Primary: frankfurter.app — free, no key, covers major currencies
+  // Secondary: open.er-api.com — free, no key, covers PKR/SAR/AED
+  try {
+    var [todayResp, yestResp, extResp] = await Promise.all([
+      fetch('https://api.frankfurter.app/latest?from=USD&to=INR,GBP,EUR,JPY,CNY'),
+      fetch('https://api.frankfurter.app/' + (() => { var d=new Date(); d.setDate(d.getDate()-1); return d.toISOString().slice(0,10); })() + '?from=USD&to=INR,GBP,EUR,JPY,CNY'),
+      fetch('https://open.er-api.com/v6/latest/USD'),  // covers PKR, SAR, AED + all others
+    ]);
+    var todayData = await todayResp.json();
+    var yestData  = await yestResp.json();
+    var extData   = await extResp.json();
+
+    var today = todayData && todayData.rates;
+    var yest  = yestData  && yestData.rates;
+    var ext   = extData   && extData.rates;   // has PKR, SAR, AED, and everything else
+
+    // Merge: prefer frankfurter for major pairs, fall back to ext for the rest
+    var merged = Object.assign({}, ext || {}, today || {});
+
+    var FX_MAP = [
+      {pair:'USDPKR', key:'PKR', dp:2,  invert:false},
+      {pair:'USDINR',  key:'INR',  dp:2,  invert:false},
+      {pair:'USDSAR',  key:'SAR',  dp:4,  invert:false},
+      {pair:'USDAED',  key:'AED',  dp:4,  invert:false},
+      {pair:'GBPUSD',  key:'GBP',  dp:4,  invert:true},
+      {pair:'EURUSD',  key:'EUR',  dp:4,  invert:true},
+      {pair:'USDJPY',  key:'JPY',  dp:2,  invert:false},
+      {pair:'USDCNY',  key:'CNY',  dp:4,  invert:false},
+    ];
+
+    // For % change on PKR/SAR/AED use ext prev day from open.er-api (it includes prev_close)
+    var extPrev = extData && extData.rates; // open.er-api doesn’t provide yesterday separately — use yest for majors only
+
+    FX_MAP.forEach(function(fx) {
+      var rateEl = document.getElementById('fx-'  + fx.pair);
+      var chgEl  = document.getElementById('fxc-' + fx.pair);
+      if (!rateEl) return;
+
+      var raw  = merged[fx.key];
+      var rawY = yest && yest[fx.key];  // only available for frankfurter currencies
+
+      if (!raw) { rateEl.textContent='--'; chgEl.textContent='N/A'; return; }
+
+      var rate  = fx.invert ? 1/raw  : raw;
+      rateEl.textContent = rate.toFixed(fx.dp);
+
+      if (rawY) {
+        var rateY = fx.invert ? 1/rawY : rawY;
+        var pct   = ((rate - rateY) / rateY) * 100;
+        var sign  = pct >= 0 ? '+' : '';
+        var dir   = pct > 0.01 ? 'up' : pct < -0.01 ? 'down' : 'flat';
+        chgEl.textContent = sign + pct.toFixed(2) + '%';
+        chgEl.className   = 'gm-fx-chg ' + dir;
+        chgEl.style.color = dir==='up' ? 'var(--green)' : dir==='down' ? 'var(--red2)' : 'var(--dim)';
+      } else {
+        chgEl.textContent = '—';
+        chgEl.className   = 'gm-fx-chg flat';
+      }
+    });
+
+    // Gold (XAU/USD) via Finnhub if key available
+    if (FHK) {
+      try {
+        var fhQ = await (await fetch('https://finnhub.io/api/v1/quote?symbol=OANDA:XAU_USD&token='+FHK)).json();
+        var xauEl = document.getElementById('fx-XAUUSD');
+        var xauCh = document.getElementById('fxc-XAUUSD');
+        if (xauEl && fhQ && fhQ.c > 0) {
+          xauEl.textContent = fhQ.c.toFixed(2);
+          var dir = fhQ.dp > 0.01 ? 'up' : fhQ.dp < -0.01 ? 'down' : 'flat';
+          xauCh.textContent = (fhQ.dp>=0?'+':'')+fhQ.dp.toFixed(2)+'%';
+          xauCh.style.color = dir==='up'?'var(--green)':dir==='down'?'var(--red2)':'var(--dim)';
+        }
+      } catch(e) {}
+    }
+
+  } catch(e) {
+    console.warn('FX load error:', e);
+  }
+}
+
+// ── RSS News Loading ──────────────────────────────────────
+
+function proxyRSS(url) {
+  return 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+}
+
+function parseRSSItems(xml, max) {
+  var items = [];
+  var re = /<item[^>]*>([\s\S]*?)<\/item>/gi;
+  var m;
+  while ((m = re.exec(xml)) !== null && items.length < max) {
+    var block = m[1];
+    var title = (block.match(/<title[^>]*><!\[CDATA\[(.*?)\]\]><\/title>/) ||
+                 block.match(/<title[^>]*>(.*?)<\/title>/) || [])[1] || '';
+    var link  = (block.match(/<link>(.*?)<\/link>/) ||
+                 block.match(/<guid[^>]*>(https?[^<]+)<\/guid>/) || [])[1] || '#';
+    title = title.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#\d+;/g,'').trim();
+    link  = link.trim();
+    if (title.length > 5) items.push({title: title, link: link});
+  }
+  return items;
+}
+
+async function fetchRSS(rssKey, max) {
+  if (gmNewsCache[rssKey]) return gmNewsCache[rssKey];
+  var url = GM_RSS[rssKey];
+  if (!url) return [];
+  try {
+    var r = await fetch(proxyRSS(url));
+    var j = await r.json();
+    var items = parseRSSItems(j.contents || '', max || 3);
+    gmNewsCache[rssKey] = items;
+    return items;
+  } catch(e) { return []; }
+}
+
+async function loadGlobalHeadlines() {
+  var el = document.getElementById('gmHeadlines');
+  if (!el) return;
+  try {
+    var items = await fetchRSS('reuters-business', 6);
+    if (!items.length) {
+      el.innerHTML = '<span style="font-size:10px;color:var(--dim)">Headlines unavailable — check connection</span>';
+      return;
+    }
+    el.innerHTML = items.map(function(it) {
+      return '<div class="gm-strip-item"><a href="'+it.link+'" target="_blank" rel="noopener">'+it.title+'</a>'
+        + '<span class="gm-strip-src">Reuters</span></div>';
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<span style="font-size:10px;color:var(--dim)">Headlines unavailable</span>';
+  }
+}
+
+async function loadRegionNews() {
+  // Map rss key → source label
+  var srcLabel = {
+    'reuters-business':'Reuters','bbc-business':'BBC','dw-business':'DW',
+    'arabnews':'Arab News','hindu-business':'The Hindu','dawn-business':'Dawn'
+  };
+
+  // Collect unique RSS keys needed
+  var needed = {};
+  Object.keys(GM_INDICES).forEach(function(region) {
+    GM_INDICES[region].forEach(function(idx) {
+      needed[idx.rss] = true;
+    });
+  });
+
+  // Pre-fetch all unique feeds
+  var feeds = {};
+  var keys = Object.keys(needed);
+  for (var i = 0; i < keys.length; i++) {
+    feeds[keys[i]] = await fetchRSS(keys[i], 4);
+    await new Promise(function(r) { setTimeout(r, 300); });
+  }
+
+  // Assign headlines to cards
+  Object.keys(GM_INDICES).forEach(function(region) {
+    GM_INDICES[region].forEach(function(idx) {
+      var el = document.getElementById('gmn-' + idx.sym);
+      if (!el) return;
+      var items = feeds[idx.rss] || [];
+      if (!items.length) { el.innerHTML = ''; return; }
+      // Show 2 headlines per card
+      var show = items.slice(0, 2);
+      el.innerHTML = show.map(function(it) {
+        return '<div class="gm-nl"><a href="'+it.link+'" target="_blank" rel="noopener">'+it.title+'</a>'
+          + '</div><div class="gm-src">'+srcLabel[idx.rss]+'</div>';
+      }).join('');
+    });
+  });
+}
+
+// ── M3U UI TOGGLES ──────────────────────────────────────────────────────────
+let m3uLoaderOpen  = true;
+let m3uExpanded    = false;
+
+function toggleM3ULoader() {
+  m3uLoaderOpen = !m3uLoaderOpen;
+  const body    = document.getElementById('m3uLoaderBody');
+  const chevron = document.getElementById('m3uLoaderChevron');
+  body.style.display    = m3uLoaderOpen ? '' : 'none';
+  chevron.textContent   = m3uLoaderOpen ? '▲' : '▼';
+  chevron.style.transform = m3uLoaderOpen ? '' : 'rotate(0deg)';
+}
+
+function toggleM3UExpand() {
+  m3uExpanded = !m3uExpanded;
+  const layout = document.getElementById('m3uLayout');
+  const btn    = document.getElementById('m3uExpandBtn');
+  layout.classList.toggle('expanded', m3uExpanded);
+  btn.textContent = m3uExpanded ? '⛶ COLLAPSE' : '⛶ EXPAND';
+  // Collapse the loader panel to give more space when expanding
+  if (m3uExpanded && m3uLoaderOpen) toggleM3ULoader();
+}
+
+// ── M3U PLAYER ──────────────────────────────────────────────────────────────
+let m3uChannels = [];
+let m3uFiltered  = [];
+let m3uHls       = null;
+let m3uActiveIdx = -1;
+let m3uFavorites = {};          // keyed by channel URL
+let m3uSavedURLs = [];          // [{label, url, added}]
+let m3uCurrentUrl = '';         // active loaded URL (empty if file)
+
+const M3U_FAV_KEY   = 'ww_m3u_favs';
+const M3U_SAVES_KEY = 'ww_m3u_saved';
+
+// ── persist helpers ──
+function m3uLoadStorage() {
+  try { m3uFavorites = JSON.parse(localStorage.getItem(M3U_FAV_KEY) || '{}'); } catch(e){ m3uFavorites={}; }
+  try { m3uSavedURLs = JSON.parse(localStorage.getItem(M3U_SAVES_KEY) || '[]'); } catch(e){ m3uSavedURLs=[]; }
+}
+function m3uSaveFavs()  { try { localStorage.setItem(M3U_FAV_KEY,   JSON.stringify(m3uFavorites)); } catch(e){} }
+function m3uSaveURLs()  { try { localStorage.setItem(M3U_SAVES_KEY, JSON.stringify(m3uSavedURLs)); } catch(e){} }
+
+// ── parse ──
+function cleanM3UName(name) {
+  return name
+    .replace(/\[Not 24\/7\]/gi, '')
+    .replace(/\[Geo-?[A-Za-z]*\]/gi, '')
+    .replace(/\[Geo[^\]]*\]/gi, '')
+    .replace(/\(1080p\)|\(720p\)|\(480p\)|\(360p\)/gi, '')
+    .replace(/\[1080p\]|\[720p\]|\[480p\]/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function parseM3U(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const channels = [];
+  let current = null;
+  for (const line of lines) {
+    if (line.startsWith('#EXTINF')) {
+      current = { name:'', group:'Uncategorized', logo:'', url:'' };
+      const nameMatch = line.match(/,(.+)$/);
+      if (nameMatch) current.name = cleanM3UName(nameMatch[1].trim());
+      const g = line.match(/group-title="([^"]*)"/i);
+      if (g) {
+        // Take first segment of semicolon-compound group e.g. "News;Public" → "News"
+        const primaryGroup = g[1].trim().split(';')[0].trim();
+        current.group = primaryGroup || 'Uncategorized';
+      }
+      const l = line.match(/tvg-logo="([^"]*)"/i);    if (l) current.logo  = l[1].trim();
+      const n = line.match(/tvg-name="([^"]*)"/i);    if (n && n[1]) current.name = cleanM3UName(n[1].trim());
+    } else if (/^(http|rtmp|rtsp)/.test(line)) {
+      if (current) { current.url = line; channels.push(current); current = null; }
+    }
+  }
+  return channels;
+}
+
+// ── saved playlist UI ──
+function renderSavedPlaylists() {
+  const wrap = document.getElementById('m3uSavedWrap');
+  const list = document.getElementById('m3uSavedList');
+  if (!m3uSavedURLs.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = m3uSavedURLs.map((p, i) => {
+    const isActive = p.url === m3uCurrentUrl;
+    const date = new Date(p.added).toLocaleDateString();
+    return `<div style="display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--panel);border:1px solid ${isActive?'var(--blue)':'var(--border)'};border-radius:3px;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${p.url}">${p.label}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);">Saved ${date}</div>
+      </div>
+      <button onclick="loadSavedPlaylist(${i})" title="Load" style="background:var(--blue);color:#fff;border:none;padding:5px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;border-radius:3px;cursor:pointer;">▶ LOAD</button>
+      <button onclick="refreshSavedPlaylist(${i})" title="Refresh / re-fetch" style="background:var(--panel);border:1px solid var(--border);color:var(--ink);padding:5px 8px;font-size:11px;border-radius:3px;cursor:pointer;" title="Refresh">🔄</button>
+      <button onclick="deleteSavedPlaylist(${i})" title="Remove this saved link" style="background:var(--panel);border:1px solid var(--border);color:var(--red2);padding:5px 8px;font-size:11px;border-radius:3px;cursor:pointer;">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function saveCurrentUrl(url) {
+  if (!url || m3uSavedURLs.find(p => p.url === url)) return;
+  const label = url.split('/').pop().replace(/\?.*/, '') || url;
+  m3uSavedURLs.unshift({ label, url, added: Date.now() });
+  m3uSaveURLs();
+  renderSavedPlaylists();
+}
+
+function loadSavedPlaylist(i) {
+  const p = m3uSavedURLs[i];
+  if (!p) return;
+  document.getElementById('m3uUrlInput').value = p.url;
+  fetchAndApplyUrl(p.url);
+}
+
+function refreshSavedPlaylist(i) {
+  const p = m3uSavedURLs[i];
+  if (!p) return;
+  setM3UStatus('🔄 Refreshing ' + p.label + '...', false);
+  fetchAndApplyUrl(p.url);
+}
+
+function deleteSavedPlaylist(i) {
+  const p = m3uSavedURLs[i];
+  if (p && p.url === m3uCurrentUrl) clearM3U();
+  m3uSavedURLs.splice(i, 1);
+  m3uSaveURLs();
+  renderSavedPlaylists();
+}
+
+// ── favorites ──
+function isFav(url) { return !!m3uFavorites[url]; }
+
+function toggleFav(url, name, group, logo) {
+  if (m3uFavorites[url]) {
+    delete m3uFavorites[url];
+  } else {
+    m3uFavorites[url] = { name, group, logo };
+  }
+  m3uSaveFavs();
+  filterM3U(); // re-render list to update star states
+  renderGroupButtons(); // update fav count in button
+}
+
+// ── groups + filters ──
+function renderGroupButtons() {
+  const favCount = Object.keys(m3uFavorites).length;
+  const groups = [...new Set(m3uChannels.map(c => c.group))];
+  const container = document.getElementById('m3uGroupBtns');
+  const activeBtn = container.querySelector('.active');
+  const activeGrp = activeBtn ? activeBtn.dataset.grp : 'All';
+
+  const buttons = [
+    { grp: 'All',       label: 'All' },
+    { grp: '⭐ Favorites', label: `⭐ Favorites${favCount ? ' ('+favCount+')' : ''}` },
+    ...groups.map(g => ({ grp: g, label: g }))
+  ];
+
+  container.innerHTML = buttons.map(b =>
+    `<button class="fb${b.grp===activeGrp?' active':''}" data-grp="${b.grp}"
+      onclick="filterM3UByGroup('${b.grp.replace(/'/g,"\\'")}',this)"
+      style="font-size:9px;padding:4px 10px;flex-shrink:0;white-space:nowrap;">${b.label}</button>`
+  ).join('');
+}
+
+function renderM3UList(channels) {
+  const list = document.getElementById('m3uList');
+  if (!channels.length) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--dim);font-size:11px;">No channels match</div>';
+    return;
+  }
+  list.innerHTML = channels.map((ch, i) => {
+    const fav = isFav(ch.url);
+    const logo = ch.logo
+      ? `<img class="m3u-ch-logo" src="${ch.logo}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+         <div class="m3u-ch-logo-placeholder" style="display:none">📺</div>`
+      : `<div class="m3u-ch-logo-placeholder">📺</div>`;
+    const escapedName  = ch.name.replace(/'/g,"\\'");
+    const escapedGroup = ch.group.replace(/'/g,"\\'");
+    const escapedLogo  = ch.logo.replace(/'/g,"\\'");
+    const escapedUrl   = ch.url.replace(/'/g,"\\'");
+    return `<div class="m3u-ch" id="m3uch-${i}" onclick="playM3UCh(${i})">
+      ${logo}
+      <div class="m3u-ch-info">
+        <div class="m3u-ch-name">${ch.name || 'Unnamed Channel'}</div>
+        <div class="m3u-ch-grp">${ch.group}</div>
+      </div>
+      <button class="m3u-fav-btn${fav?' active':''}" title="${fav?'Remove from favorites':'Add to favorites'}"
+        onclick="event.stopPropagation();toggleFav('${escapedUrl}','${escapedName}','${escapedGroup}','${escapedLogo}')"
+      >${fav?'⭐':'☆'}</button>
+    </div>`;
+  }).join('');
+}
+
+function filterM3U() {
+  const q   = document.getElementById('m3uSearch').value.toLowerCase();
+  const btn = document.querySelector('#m3uGroupBtns .fb.active');
+  const grp = btn ? btn.dataset.grp : 'All';
+
+  if (grp === '⭐ Favorites') {
+    // Show all favorited channels from the full list (even if not in current playlist)
+    const favUrls = Object.keys(m3uFavorites);
+    // Try to find them in loaded channels first
+    const fromPlaylist = m3uChannels.filter(ch => favUrls.includes(ch.url));
+    // Channels in favs but not in current playlist (still show them)
+    const extra = favUrls
+      .filter(u => !fromPlaylist.find(ch => ch.url === u))
+      .map(u => ({ ...m3uFavorites[u], url: u }));
+    m3uFiltered = [...fromPlaylist, ...extra].filter(ch =>
+      !q || ch.name.toLowerCase().includes(q) || (ch.group||'').toLowerCase().includes(q)
+    );
+  } else {
+    m3uFiltered = m3uChannels.filter(ch => {
+      const matchQ = !q || ch.name.toLowerCase().includes(q) || ch.group.toLowerCase().includes(q);
+      const matchG = grp === 'All' || ch.group === grp;
+      return matchQ && matchG;
+    });
+  }
+  renderM3UList(m3uFiltered);
+}
+
+function filterM3UByGroup(grp, btn) {
+  document.querySelectorAll('#m3uGroupBtns .fb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterM3U();
+}
+
+// ── status ──
+function setM3UStatus(msg, isErr) {
+  const el = document.getElementById('m3uStatus');
+  el.style.display = 'block';
+  el.style.color = isErr ? 'var(--red2)' : 'var(--dim)';
+  el.textContent = msg;
+}
+
+// ── apply parsed playlist ──
+function applyM3U(text, sourceName, sourceUrl) {
+  m3uChannels = parseM3U(text);
+  if (!m3uChannels.length) {
+    setM3UStatus('⚠ No channels found. Make sure this is a valid M3U/M3U8 playlist.', true);
+    return;
+  }
+  m3uFiltered    = [...m3uChannels];
+  m3uCurrentUrl  = sourceUrl || '';
+  if (sourceUrl) saveCurrentUrl(sourceUrl);
+  setM3UStatus(`✓ Loaded ${m3uChannels.length} channels from ${sourceName}`, false);
+  document.getElementById('m3uControls').style.display = 'flex';
+  document.getElementById('m3uControls').style.flexDirection = 'column';
+  document.getElementById('m3uLayout').style.display   = 'flex';
+  document.getElementById('m3uSearch').value = '';
+  // Auto-collapse loader to give more space
+  if (m3uLoaderOpen) toggleM3ULoader();
+  renderGroupButtons();
+  renderM3UList(m3uFiltered);
+  renderSavedPlaylists();
+}
+
+// ── fetch URL (with CORS proxy fallback) ──
+function fetchAndApplyUrl(url) {
+  setM3UStatus('⏳ Fetching playlist...', false);
+  const label = url.split('/').pop().replace(/\?.*/, '') || url;
+  fetch(url)
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+    .then(text => applyM3U(text, label, url))
+    .catch(() => {
+      setM3UStatus('⏳ Retrying via proxy...', false);
+      fetch('https://corsproxy.io/?' + encodeURIComponent(url))
+        .then(r => r.text())
+        .then(text => applyM3U(text, label, url))
+        .catch(() => setM3UStatus('✗ Could not fetch playlist. Try uploading the file directly.', true));
+    });
+}
+
+function loadM3UFromUrl() {
+  const url = document.getElementById('m3uUrlInput').value.trim();
+  if (!url) return;
+  fetchAndApplyUrl(url);
+}
+
+function loadM3UFromFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => applyM3U(e.target.result, file.name, '');
+  reader.readAsText(file);
+}
+
+// ── play ──
+function playM3UCh(idx) {
+  const ch = m3uFiltered[idx];
+  if (!ch) return;
+  document.querySelectorAll('.m3u-ch').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('m3uch-' + idx);
+  if (el) { el.classList.add('active'); el.scrollIntoView({ block: 'nearest' }); }
+  document.getElementById('m3uNowPlaying').textContent = '▶  ' + ch.name + '  ·  ' + ch.group;
+  m3uActiveIdx = idx;
+  const video = document.getElementById('m3uVideo');
+  if (m3uHls) { m3uHls.destroy(); m3uHls = null; }
+  if (Hls && Hls.isSupported() && (ch.url.includes('.m3u8') || ch.url.includes('hls'))) {
+    m3uHls = new Hls({ enableWorker: true });
+    m3uHls.loadSource(ch.url);
+    m3uHls.attachMedia(video);
+    m3uHls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+    m3uHls.on(Hls.Events.ERROR, (e, d) => {
+      if (d.fatal) document.getElementById('m3uNowPlaying').textContent = '⚠ Stream error — ' + ch.name;
+    });
+  } else {
+    video.src = ch.url;
+    video.play().catch(() => {});
+  }
+}
+
+// ── clear (view only — keeps saved URLs and favorites) ──
+function clearM3U() {
+  m3uChannels = []; m3uFiltered = []; m3uActiveIdx = -1; m3uCurrentUrl = '';
+  // Reset expand
+  if (m3uExpanded) { m3uExpanded = false; document.getElementById('m3uLayout').classList.remove('expanded'); document.getElementById('m3uExpandBtn').textContent = '⛶ EXPAND'; }
+  // Re-open loader if collapsed
+  if (!m3uLoaderOpen) toggleM3ULoader();
+  if (m3uHls) { m3uHls.destroy(); m3uHls = null; }
+  const video = document.getElementById('m3uVideo');
+  video.pause(); video.src = '';
+  document.getElementById('m3uList').innerHTML    = '';
+  document.getElementById('m3uControls').style.display = 'none';
+  document.getElementById('m3uLayout').style.display   = 'none';
+  document.getElementById('m3uStatus').style.display   = 'none';
+  document.getElementById('m3uUrlInput').value   = '';
+  document.getElementById('m3uFileInput').value  = '';
+  document.getElementById('m3uNowPlaying').textContent = 'Select a channel to begin';
+  renderSavedPlaylists();
+}
+
+// ── Fix sticky nav top dynamically ──
+function fixNavTop(){
+  const ticker=document.querySelector('.ticker-wrap');
+  const header=document.querySelector('header');
+  const apiBar=document.querySelector('.api-bar');
+  const nav=document.querySelector('nav');
+  if(!nav) return;
+  const h=(ticker?ticker.offsetHeight:0)+(header?header.offsetHeight:0)+(apiBar?apiBar.offsetHeight:0);
+  nav.style.top=h+'px';
+}
+window.addEventListener('load', fixNavTop);
+window.addEventListener('resize', fixNavTop);
+// Script is at bottom of body — DOM is already ready here
+// Lock screen starts visible (CSS default: display:flex)
+// If valid key exists, hide lock screen and init dashboard immediately
+if(AK && AK.startsWith('sk-ant-') && AK.length >= 40){
+  unlockUI();
+} // else: lock screen stays visible, user must enter key
+
+// ── WORLD CLOCK TICKER ───────────────────────────────────────────────────────
+const CLOCK_CITIES = [
+  { label: '📍 LOCAL',      tz: null                  },
+  { label: '🗽 NEW YORK',   tz: 'America/New_York'    },
+  { label: '🇧🇷 BRASILIA',  tz: 'America/Sao_Paulo'   },
+  { label: '🇬🇧 LONDON',    tz: 'Europe/London'       },
+  { label: '🇩🇪 BERLIN',    tz: 'Europe/Berlin'       },
+  { label: '🇹🇷 ISTANBUL',  tz: 'Europe/Istanbul'     },
+  { label: '🇸🇦 RIYADH',    tz: 'Asia/Riyadh'         },
+  { label: '🇦🇪 DUBAI',     tz: 'Asia/Dubai'          },
+  { label: '🇵🇰 KARACHI',   tz: 'Asia/Karachi'        },
+  { label: '🇮🇳 NEW DELHI', tz: 'Asia/Kolkata'        },
+  { label: '🇧🇩 DHAKA',     tz: 'Asia/Dhaka'          },
+  { label: '🇸🇬 SINGAPORE', tz: 'Asia/Singapore'      },
+  { label: '🇨🇳 BEIJING',   tz: 'Asia/Shanghai'       },
+  { label: '🇯🇵 TOKYO',     tz: 'Asia/Tokyo'          },
+  { label: '🇦🇺 CANBERRA',  tz: 'Australia/Sydney'    },
+  { label: '🇳🇿 WELLINGTON',tz: 'Pacific/Auckland'    },
+];
+
+function fmtTZ(tz) {
+  const opts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+  if (tz) opts.timeZone = tz;
+  return new Date().toLocaleTimeString('en-US', opts);
+}
+
+function buildClockHTML() {
+  // Build two copies with unique IDs (a/b) for seamless infinite scroll
+  const makeSegment = (pfx) => CLOCK_CITIES.map((c, i) =>
+    `<span style="color:#3a7090;font-size:10px;letter-spacing:.06em;margin-right:4px;">${c.label}</span>` +
+    `<span id="clt${pfx}${i}" style="color:#e0f4ff;font-weight:600;margin-right:2px;">${fmtTZ(c.tz)}</span>` +
+    `<span class="cdot">◆</span>`
+  ).join('');
+  return makeSegment('a') + makeSegment('b');
+}
+
+function initWorldClock() {
+  const el = document.getElementById('clockTickerInner');
+  if (!el) return;
+  el.innerHTML = buildClockHTML(); // build once, never rebuild
+  setInterval(() => {
+    CLOCK_CITIES.forEach((c, i) => {
+      const t = fmtTZ(c.tz);
+      const ea = document.getElementById('clta' + i);
+      const eb = document.getElementById('cltb' + i);
+      if (ea) ea.textContent = t;
+      if (eb) eb.textContent = t;
+    });
+  }, 1000);
+}
+
+initWorldClock();
+
+// ── NEWS HEADLINE TICKER ─────────────────────────────────────────────────────
+const NEWS_RSS_SOURCES = [
+  'https://feeds.bbci.co.uk/news/world/rss.xml',
+  'https://rss.dw.com/rss/en-top',
+  'https://feeds.skynews.com/feeds/rss/world.xml',
+];
+
+const NEWS_FALLBACK = [
+  'WorldWatch — Live Global News & Markets Monitor',
+  'Track stocks, forex, crypto and global indices in real time',
+  'Live cricket scores updated every 2 minutes',
+  'AI-powered market analysis available in the Analysis tab',
+  'Stream any IPTV playlist using the Magic Player',
+];
+
+function setTickerHeadlines(headlines) {
+  const el = document.getElementById('newsTickerInner');
+  if (!el || !headlines.length) return;
+  const html = [...headlines, ...headlines].map(h => h + '<span class="ndot">◆</span>').join(' ');
+  el.innerHTML = html;
+  const speed = Math.max(80, headlines.join('').length * 0.2);
+  el.style.animation = 'newstick ' + speed + 's linear infinite';
+}
+
+setTickerHeadlines(NEWS_FALLBACK);
+
+async function fetchNewsHeadlines() {
+  const src = NEWS_RSS_SOURCES[Math.floor(Math.random() * NEWS_RSS_SOURCES.length)];
+  const apis = [
+    'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(src) + '&count=15',
+    'https://api.allorigins.win/get?url=' + encodeURIComponent(src),
+    'https://corsproxy.io/?' + encodeURIComponent(src),
+  ];
+  for (const api of apis) {
+    try {
+      const resp = await fetch(api, { signal: AbortSignal.timeout(7000) });
+      if (!resp.ok) continue;
+      const data = await resp.json();
+      let headlines = [];
+      if (data.items) {
+        headlines = data.items.map(i => (i.title||'').replace(/<[^>]+>/g,'').trim()).filter(h=>h.length>8).slice(0,15);
+      } else if (data.contents) {
+        const xml = new DOMParser().parseFromString(data.contents, 'text/xml');
+        headlines = Array.from(xml.querySelectorAll('item title')).map(t=>t.textContent.replace(/<!\[CDATA\[|\]\]>/g,'').trim()).filter(h=>h.length>8).slice(0,15);
+      }
+      if (headlines.length) { setTickerHeadlines(headlines); return; }
+    } catch(e) {}
+  }
+}
+
+fetchNewsHeadlines();
+setInterval(fetchNewsHeadlines, 10 * 60 * 1000);
+
+// ── CRICKET SCORES ───────────────────────────────────────────────────────────
+let CRIC_KEY = localStorage.getItem('wwCricKey') || '';
+let cricAllMatches = [];
+
+let cricFilter = 'all';
+
+function saveCricKey() {
+  const v = document.getElementById('cricKeyInp').value.trim();
+  if (!v) return;
+  CRIC_KEY = v;
+  localStorage.setItem('wwCricKey', v);
+  document.getElementById('cricKeySt').textContent = '✓ Key saved';
+  document.getElementById('cricKeySt').style.color = '#00ff88';
+  loadCricket();
+}
+
+function setCricKeyUI() {
+  const inp = document.getElementById('cricKeyInp');
+  const st = document.getElementById('cricKeySt');
+  if (!inp || !st) return;
+  if (CRIC_KEY) {
+    inp.value = CRIC_KEY;
+    st.textContent = '✓ Active';
+    st.style.color = '#00ff88';
+  }
+}
+
+function matchType(m) {
+  const name = (m.matchType || m.series || '').toLowerCase();
+  if (name.includes('test')) return 'test';
+  if (name.includes('odi') || name.includes('one day')) return 'odi';
+  if (name.includes('t20') || name.includes('twenty')) return 't20';
+  return 'other';
+}
+
+function cricWatchLink(m) {
+  // Try to generate a useful watch/info link
+  const q = encodeURIComponent((m.teams || []).join(' vs ') + ' live cricket');
+  return `https://www.google.com/search?q=${q}`;
+}
+
+function renderCricCard(m) {
+  const isLive = m.matchStarted && !m.matchEnded;
+  const type = matchType(m);
+  const typeLabels = { test: '🎩 TEST', odi: '🏆 ODI', t20: '⚡ T20', other: '◈ INTL' };
+  const teams = (m.teams || ['TBA', 'TBA']);
+  const team1 = teams[0] || 'TBA';
+  const team2 = teams[1] || 'TBA';
+  const scores = m.score || [];
+  const scoreHTML = scores.length
+    ? scores.map(s => `<div>${s.inning}: <strong>${s.r}/${s.w}</strong> (${s.o} ov)</div>`).join('')
+    : '<div style="color:var(--dim)">Match not yet started</div>';
+
+  return `<a class="cric-card ${isLive ? 'live-now' : ''}" href="${cricWatchLink(m)}" target="_blank" rel="noopener">
+    <div class="cric-type ${type}">${typeLabels[type]}</div>
+    <div class="cric-series">${m.series || m.name || 'International Cricket'}</div>
+    <div class="cric-teams">
+      ${isLive ? '<span class="cric-live-dot"></span>' : ''}${team1}<br><span style="color:var(--dim);font-size:13px;">vs</span> ${team2}
+    </div>
+    <div class="cric-score">${scoreHTML}</div>
+    <div class="cric-status">${m.status || (isLive ? 'In Progress' : 'Scheduled')}</div>
+    <div class="cric-watch">▶ Watch / Follow Live →</div>
+  </a>`;
+}
+
+function filtCric(f, btn) {
+  cricFilter = f;
+  document.querySelectorAll('#cricFilt .fb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCricMatches();
+}
+
+function renderCricMatches() {
+  const grid = document.getElementById('cricGrid');
+  const msg = document.getElementById('cricMsg');
+  if (!grid) return;
+
+  // Filter men's international only — exclude women's and domestic
+  let matches = cricAllMatches.filter(m => {
+    const name = (m.name || m.series || '').toLowerCase();
+    if (name.includes("women") || name.includes("w vs w") || name.includes("girls")) return false;
+    return true;
+  });
+
+  if (cricFilter !== 'all') {
+    matches = matches.filter(m => matchType(m) === cricFilter);
+  }
+
+  if (matches.length === 0) {
+    grid.innerHTML = '';
+    msg.textContent = cricFilter === 'all'
+      ? 'No live international men\'s matches right now. Check back during match hours.'
+      : `No live ${cricFilter.toUpperCase()} matches right now.`;
+    return;
+  }
+  msg.textContent = '';
+  grid.innerHTML = matches.map(renderCricCard).join('');
+}
+
+async function loadCricket() {
+  const grid = document.getElementById('cricGrid');
+  const msg = document.getElementById('cricMsg');
+  if (!grid || !msg) return;
+
+  if (!CRIC_KEY) {
+    msg.innerHTML = '🏏 Get a free API key at <a href="https://cricketdata.org" target="_blank" style="color:var(--cyan)">cricketdata.org</a> — 100 calls/day free. Enter it above to enable live scores.';
+    return;
+  }
+
+  msg.textContent = '🏏 Loading live cricket scores...';
+  grid.innerHTML = '';
+
+  try {
+    const url = `https://api.cricapi.com/v1/currentMatches?apikey=${CRIC_KEY}&offset=0`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.status !== 'success') {
+      msg.textContent = '⚠ API error: ' + (data.reason || data.status || 'Unknown error');
+      return;
+    }
+
+    cricAllMatches = (data.data || []).filter(m => {
+      // Men's international only — exclude IPL, BBL, etc domestic leagues unless international
+      const name = (m.name || m.series || '').toLowerCase();
+      const isWomens = name.includes('women') || name.includes(' w ') || name.includes("women's");
+      return !isWomens;
+    });
+
+    if (cricAllMatches.length === 0) {
+      msg.textContent = '🏏 No international men\'s matches currently live. Check back soon.';
+      return;
+    }
+
+    renderCricMatches();
+    // Auto-refresh every 2 minutes when tab is active
+    setTimeout(loadCricket, 2 * 60 * 1000);
+  } catch(e) {
+    msg.textContent = '⚠ Could not load cricket scores. Check your key or try again.';
+    console.error('Cricket API error:', e);
+  }
+}
+
+setCricKeyUI();
+
+// ── PWA SERVICE WORKER — registered via sw.js on GitHub Pages only ──────────
+// To enable: upload sw.js to your GitHub repo root alongside this file.
+</script>
+<script>
+// ── PWA: Register real sw.js from same folder ────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    var swPath = '/worldwatch/sw.js';
+    navigator.serviceWorker.register(swPath)
+      .then(function() { console.log('SW registered'); })
+      .catch(function(e) { console.warn('SW failed:', e); });
+  });
+}
+</script>
+</body>
+</html>
