@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WorldWatch — News & Markets</title>
-<link rel="manifest" id="pwaManifest">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00c8ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2803,29 +2803,15 @@ setCricKeyUI();
 // To enable: upload sw.js to your GitHub repo root alongside this file.
 </script>
 <script>
-// ── PWA: Dynamic manifest (no SW — blob SW not supported on GitHub Pages) ───
-(function(){
-  const base = window.location.pathname.replace(/\/[^\/]*$/, '/');
-  const manifest = {
-    name: "WorldWatch",
-    short_name: "WorldWatch",
-    description: "Global News & Investment Monitor",
-    start_url: window.location.pathname,
-    scope: base,
-    display: "standalone",
-    background_color: "#071830",
-    theme_color: "#00c8ff",
-    orientation: "any",
-    icons: [
-      { src: base + "icon-192x192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
-      { src: base + "icon-512x512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
-    ]
-  };
-  try {
-    const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
-    document.getElementById('pwaManifest').href = URL.createObjectURL(blob);
-  } catch(e) {}
-})();
+// ── PWA: Register real sw.js from same folder ────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    var swPath = window.location.pathname.replace(/\/[^\/]*$/, '/') + 'sw.js';
+    navigator.serviceWorker.register(swPath)
+      .then(function() { console.log('SW registered'); })
+      .catch(function(e) { console.warn('SW failed:', e); });
+  });
+}
 </script>
 </body>
 </html>
