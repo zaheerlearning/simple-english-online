@@ -463,14 +463,14 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
 
     <div class="lock-label">CLMAGIC — REQUIRED TO UNLOCK</div>
     <div class="lock-row">
-      <input id="lockKeyInp" type="password" class="lock-inp" placeholder="Enter your CLMAGIC key..." onkeydown="if(event.key==='Enter')tryUnlock()">
+      <input id="lockKeyInp" type="password" class="lock-inp" placeholder="••••••••••••••••••••" onkeydown="if(event.key==='Enter')tryUnlock()">
       <button class="lock-btn" onclick="tryUnlock()">UNLOCK →</button>
     </div>
     <div class="lock-err" id="lockErr"></div>
 
     <div class="lock-label" style="margin-top:14px;opacity:0.6;">FINMAGIC — OPTIONAL (enables live stock data)</div>
     <div class="lock-row">
-      <input id="lockFhInp" type="password" class="lock-inp" placeholder="Enter your FINMAGIC key..." onkeydown="if(event.key==='Enter')tryUnlock()">
+      <input id="lockFhInp" type="password" class="lock-inp" placeholder="••••••••••••••••••••" onkeydown="if(event.key==='Enter')tryUnlock()">
     </div>
 
     <div class="lock-note">
@@ -919,7 +919,7 @@ function unlockUI() {
   if(FHK){ document.getElementById('fhInp').value=FHK; setFhSt(true); }
   // Show keys bar only if CLMAGIC not set yet
   const bar = document.getElementById('apiBar');
-  if(!AK || AK.length < 20) {
+  if(!AK || !AK.startsWith('sk-ant-') || AK.length < 40) {
     bar.style.display = 'flex';
   } else {
     bar.style.display = 'none';
@@ -953,7 +953,7 @@ function lockApp() {
   const saved = localStorage.getItem('ww19AK') || localStorage.getItem('wwAK') || '';
   const wbEl = document.getElementById('lockWelcomeBack');
   const featEl = document.getElementById('lockFeatures');
-  if (saved && saved.length >= 20) {
+  if (saved && saved.startsWith('sk-ant-') && saved.length >= 40) {
     if (wbEl) wbEl.style.display = 'block';
     if (featEl) featEl.style.display = 'none';
     document.getElementById('lockKeyInp').value = '';
@@ -969,7 +969,7 @@ function tryUnlock() {
   const fv = document.getElementById('lockFhInp').value.trim();
   const err = document.getElementById('lockErr');
   if (!v) { err.textContent = '⚠ Please enter your key.'; return; }
-  if (v.length < 20) { err.textContent = '⚠ Key too short. Please check and try again.'; return; }
+  if (!v.startsWith('sk-ant-') || v.length < 40) { err.textContent = '⚠ Invalid key. Please check and try again.'; return; }
   err.textContent = '';
   AK = v;
   localStorage.setItem('ww19AK', v);
@@ -2537,7 +2537,7 @@ function fixNavTop(){
 window.addEventListener('load', fixNavTop);
 window.addEventListener('resize', fixNavTop);
 window.addEventListener('DOMContentLoaded', function(){
-  if(AK && AK.length >= 20){
+  if(AK && AK.startsWith('sk-ant-') && AK.length >= 40){
     unlockUI(); // valid key saved — go straight to dashboard, no flash
   } else {
     document.getElementById('wwLockScreen').classList.add('visible'); // show lock screen only now
