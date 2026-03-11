@@ -11,10 +11,17 @@
 <meta name="apple-mobile-web-app-title" content="WorldWatch">
 <link rel="apple-touch-icon" href="icon-192x192.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+<script>
+// Run immediately - hide lock screen before render if key exists
+var _ak = localStorage.getItem('ww19AK') || localStorage.getItem('wwAK') || '';
+if (_ak && _ak.startsWith('sk-ant-') && _ak.length >= 40) {
+  document.write('<style>#wwLockScreen{display:none!important}</style>');
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
 <style>
 :root{--bg:#050d1a;--bg2:#091428;--bg3:#0d1f3c;--panel:#0b1a32;--border:#1a3356;--border2:#244370;--blue:#0a6ebd;--blue2:#1a8fe0;--blue3:#3db3ff;--cyan:#00d4ff;--navy:#051020;--ink:#e8f4ff;--ink2:#b8d4f0;--ink3:#7fa8cc;--dim:#4a7099;--red:#e03030;--red2:#ff4444;--amber:#e08020;--amber2:#ffaa00;--green:#00c864;}
 *{margin:0;padding:0;box-sizing:border-box;}
