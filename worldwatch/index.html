@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!-- WorldWatch v19.8 - 2026-03-10 -->
 <html lang="en">
@@ -6,7 +7,14 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WorldWatch — News & Markets</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/worldwatch/manifest.json">
+<script>
+// Force correct manifest — overrides any cached wrong path
+(function(){
+  var el = document.querySelector('link[rel="manifest"]');
+  if(el) el.href = '/worldwatch/manifest.json';
+})();
+</script>
 <meta name="theme-color" content="#00c8ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2806,7 +2814,7 @@ setCricKeyUI();
 // ── PWA: Register real sw.js from same folder ────────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    var swPath = window.location.pathname.replace(/[^/]*$/, '') + 'sw.js';
+    var swPath = '/worldwatch/sw.js';
     navigator.serviceWorker.register(swPath)
       .then(function() { console.log('SW registered'); })
       .catch(function(e) { console.warn('SW failed:', e); });
