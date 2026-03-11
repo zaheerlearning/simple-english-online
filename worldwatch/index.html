@@ -2536,19 +2536,12 @@ function fixNavTop(){
 }
 window.addEventListener('load', fixNavTop);
 window.addEventListener('resize', fixNavTop);
-// Runs immediately — lock screen already visible in HTML
-// If valid key found, hide it instantly before first paint
-(function(){
-  if(AK && AK.startsWith('sk-ant-') && AK.length >= 40){
-    // Hide lock screen immediately — no DOMContentLoaded delay needed
-    // Use a style tag injected now so it takes effect before render
-    const s = document.createElement('style');
-    s.textContent = '#wwLockScreen{display:none!important}';
-    document.head.appendChild(s);
-    window.addEventListener('DOMContentLoaded', function(){ unlockUI(); });
-  }
-  // else: lock screen stays visible (default)
-})();
+// Script is at bottom of body — DOM is already ready here
+// Lock screen starts visible (CSS default: display:flex)
+// If valid key exists, hide lock screen and init dashboard immediately
+if(AK && AK.startsWith('sk-ant-') && AK.length >= 40){
+  unlockUI();
+} // else: lock screen stays visible, user must enter key
 
 // ── WORLD CLOCK TICKER ───────────────────────────────────────────────────────
 const CLOCK_CITIES = [
