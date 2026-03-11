@@ -1,7 +1,11 @@
 <!DOCTYPE html>
+<!-- WorldWatch v19.8 - 2026-03-10 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WorldWatch — News & Markets</title>
 <link rel="manifest" id="pwaManifest">
@@ -12,11 +16,16 @@
 <link rel="apple-touch-icon" href="icon-192x192.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
 <script>
-// Run immediately - hide lock screen before render if key exists
-var _ak = localStorage.getItem('ww19AK') || localStorage.getItem('wwAK') || '';
-if (_ak && _ak.startsWith('sk-ant-') && _ak.length >= 40) {
-  document.write('<style>#wwLockScreen{display:none!important}</style>');
-}
+// Inline critical CSS to prevent flash — runs synchronously before body renders
+try {
+  var _ak = localStorage.getItem('ww19AK') || localStorage.getItem('wwAK') || '';
+  if (_ak && _ak.startsWith('sk-ant-') && _ak.length >= 40) {
+    var _s = document.createElement('style');
+    _s.id = 'no-lock';
+    _s.textContent = '#wwLockScreen{display:none!important}';
+    document.head.appendChild(_s);
+  }
+} catch(e){}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +34,7 @@ if (_ak && _ak.startsWith('sk-ant-') && _ak.length >= 40) {
 <style>
 :root{--bg:#050d1a;--bg2:#091428;--bg3:#0d1f3c;--panel:#0b1a32;--border:#1a3356;--border2:#244370;--blue:#0a6ebd;--blue2:#1a8fe0;--blue3:#3db3ff;--cyan:#00d4ff;--navy:#051020;--ink:#e8f4ff;--ink2:#b8d4f0;--ink3:#7fa8cc;--dim:#4a7099;--red:#e03030;--red2:#ff4444;--amber:#e08020;--amber2:#ffaa00;--green:#00c864;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:13px;overflow-x:hidden;}
+html{background:#050d1a;}body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:13px;overflow-x:hidden;}
 .ticker-wrap{background:linear-gradient(90deg,#071830,#0d2a50,#071830);border-bottom:2px solid var(--cyan);overflow:hidden;white-space:nowrap;padding:7px 0;position:sticky;top:0;z-index:1000;}
 .ticker-label{display:inline-block;background:var(--cyan);color:var(--navy);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.2em;padding:2px 14px;margin-right:14px;vertical-align:middle;}
 .ticker-inner{display:inline-block;animation:tickermove 160s linear infinite;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#e0f4ff;}
