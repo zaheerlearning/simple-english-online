@@ -410,7 +410,7 @@ footer{border-top:1px solid var(--border);padding:14px 20px;text-align:center;fo
 }
 
 /* ── LOCK SCREEN ── */
-#wwLockScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:0;}
+#wwLockScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;}
 #wwLockScreen.visible{display:flex;}
 #wwLockScreen.hidden{display:none;}
 .lock-box{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:40px 44px;max-width:480px;width:90%;text-align:center;}
@@ -2536,13 +2536,19 @@ function fixNavTop(){
 }
 window.addEventListener('load', fixNavTop);
 window.addEventListener('resize', fixNavTop);
-window.addEventListener('DOMContentLoaded', function(){
+// Runs immediately — lock screen already visible in HTML
+// If valid key found, hide it instantly before first paint
+(function(){
   if(AK && AK.startsWith('sk-ant-') && AK.length >= 40){
-    unlockUI(); // valid key saved — go straight to dashboard, no flash
-  } else {
-    document.getElementById('wwLockScreen').classList.add('visible'); // show lock screen only now
+    // Hide lock screen immediately — no DOMContentLoaded delay needed
+    // Use a style tag injected now so it takes effect before render
+    const s = document.createElement('style');
+    s.textContent = '#wwLockScreen{display:none!important}';
+    document.head.appendChild(s);
+    window.addEventListener('DOMContentLoaded', function(){ unlockUI(); });
   }
-});
+  // else: lock screen stays visible (default)
+})();
 
 // ── WORLD CLOCK TICKER ───────────────────────────────────────────────────────
 const CLOCK_CITIES = [
@@ -2799,15 +2805,14 @@ setCricKeyUI();
 // To enable: upload sw.js to your GitHub repo root alongside this file.
 </script>
 <script>
-// ── PWA: Inline manifest + Service Worker ───────────────────────────────────
+// ── PWA: Dynamic manifest (no SW — blob SW not supported on GitHub Pages) ───
 (function(){
-  // Build manifest dynamically so it works on any path
   const base = window.location.pathname.replace(/\/[^\/]*$/, '/');
   const manifest = {
     name: "WorldWatch",
     short_name: "WorldWatch",
     description: "Global News & Investment Monitor",
-    start_url: window.location.href.split('?')[0] + "?pwa=1",
+    start_url: window.location.pathname,
     scope: base,
     display: "standalone",
     background_color: "#071830",
@@ -2818,35 +2823,10 @@ setCricKeyUI();
       { src: base + "icon-512x512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
     ]
   };
-  const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
-  const url = URL.createObjectURL(blob);
-  document.getElementById('pwaManifest').href = url;
-
-  // Inline Service Worker via blob
-  if('serviceWorker' in navigator){
-    const swCode = `
-const CACHE = 'worldwatch-v1';
-const OFFLINE = ['${window.location.href.split('?')[0]}'];
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE).catch(()=>{})));
-  self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-  const url = e.request.url;
-  if(url.includes('api.') || url.includes('.m3u8') || url.includes('stream') || url.includes('live')) return;
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-});
-`;
-    const swBlob = new Blob([swCode], {type:'application/javascript'});
-    const swUrl = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl, {scope: base})
-      .then(() => console.log('WorldWatch SW ready'))
-      .catch(e => console.warn('SW:', e));
-  }
+  try {
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+    document.getElementById('pwaManifest').href = URL.createObjectURL(blob);
+  } catch(e) {}
 })();
 </script>
 </body>
