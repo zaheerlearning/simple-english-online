@@ -2,7 +2,7 @@
   "name": "WorldWatch",
   "short_name": "WorldWatch",
   "description": "Global News & Investment Monitor",
-  "start_url": "/simple-english-online/worldwatch/index.html",
+  "start_url": "/simple-english-online/worldwatch/",
   "scope": "/simple-english-online/worldwatch/",
   "display": "standalone",
   "background_color": "#050d1a",
